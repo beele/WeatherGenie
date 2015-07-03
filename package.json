@@ -1,0 +1,33 @@
+{
+  "name": "weather-genie",
+  "version": "0.0.1",
+  "description": "WeatherGenie application!",
+  "author": "Kevin Van den Abeele <info@beeles-place.be>",
+  "contributors": [{
+    "name": "Kevin Van den Abeele",
+    "email": "info@beeles-place.be"
+  }],
+  "readme": "Weathergenie application readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/beele/WeatherGenie"
+  },
+
+  "scripts": {
+    "start": "node src/startup.js",
+    "predeploy": "=============== WEATHERGENIE ===============",
+    "postdeploy": "============================================"
+  },
+  "dependencies": {
+    "fs-extra": "0.18.x",
+    "formidable": "1.0.x",
+    "twitter": "1.2.5",
+    "get-pixels": "3.2.2",
+    "async": "1.2.0",
+    "mime": "1.3.4",
+    "ws": "0.7.2"
+  },
+  "engines" : { "node" : ">=0.10.3" },
+
+  "license": "CC-BY-NC-4.0"
+}

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html ng-app="weatherGenie">
+    <head lang="en">
+        <title>Weather Genie</title>
+
+        <!-- Can also use the below lines because of the mvc:resources tags in weatherGenie-dispatcher-servlet.xml -->
+        <!-- With the config in weatherGenie-dispatcher-servlet.xml and the file locations relative to the .jsp pages, the IDE has content assist! -->
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+        <link rel="image_src" href="img/thumb.jpg" />
+
+        <!-- Web fonts! -->
+        <link href='http://fonts.googleapis.com/css?family=Lato:400' rel='stylesheet' type='text/css'>
+
+        <!-- Local stylesheets -->
+        <link href="css/lightbox.css"    rel="stylesheet" media="screen">
+        <link href="css/master.css"      rel="stylesheet" media="screen">
+        <link href="css/components.css"  rel="stylesheet" media="screen">
+
+        <!-- Meta information -->
+        <meta charset="UTF-8">
+        <meta name="author"             content="Kevin Van den Abeele">
+        <meta name="keywords"           content="Weather Belgium forecast rain wind mist fog drizzle sun sunshine thunder thunderstorm precipitation conditions">
+        <meta name="description"        content="Your number one source for weather information!">
+        <meta property="og:description" content="Your number one source for weather information!"/>
+
+        <!-- TODO: Testing -->
+        <!--<link rel="stylesheet" href="http://leaflet.cloudmade.com/dist/leaflet.css">-->
+    </head>
+
+    <body ng-controller="weatherController">
+
+        <div id="backgroundWrapper">
+            <img id="bgImage1" src="img/bgs/bg_ClearSky.jpg" alt="Clear sky"/>
+            <img id="bgImage2" class="transparent" src="img/bgs/bg_FewClouds.jpg" alt="Few clouds"/>
+            <img id="bgImage3" class="transparent" src="img/bgs/bg_FewClouds2.jpg" alt="Scattered clouds"/>
+            <img id="bgImage4" class="transparent" src="img/bgs/bg_BrokenClouds.jpg" alt="Broken clouds"/>
+            <img id="bgImage5" class="transparent" src="img/bgs/bg_ShowerRain.jpg" alt="Showers"/>
+            <img id="bgImage6" class="transparent" src="img/bgs/bg_Rain.jpg" alt="Rain"/>
+            <img id="bgImage7" class="transparent" src="img/bgs/bg_Thunderstorm.jpg" alt="Thunderstorm"/>
+            <img id="bgImage8" class="transparent" src="img/bgs/bg_Snow.jpg" alt="Snow"/>
+            <img id="bgImage9" class="transparent" src="img/bgs/bg_Mist.jpg" alt="Mist"/>
+        </div>
+
+        <header id="headerWrapper">
+            <div id="headerContent">
+                <div id="headerTitle">
+                    <h1>Weather Genie</h1>
+                </div>
+                <div id="headerSearch">
+                    <form class="searchForm" action="" ng-submit="getCityInformation()">
+                        <input type="text" placeholder="Search city" name="search" class="searchText" ng-model="city"/>
+                        <input type="submit" class="searchSubmit" value=" "/><br style="clear:both;"/>
+                    </form>
+                </div>
+            </div>
+        </header>
+
+        <main id="contentWrapper" class="content">
+            <section id="content" class="content">
+                <article>
+                    <div id="weatherLocation">Weather in {{weatherData.location}} </div>
+
+                    <div id="temperatureWrapper">
+                        <div class="largeText">Min:&nbsp;&nbsp; {{ weatherData.minTemp | number:0 }} &deg;C</div>
+                        <div class="largeText">Max:&nbsp; {{ weatherData.maxTemp | number:0 }} &deg;C</div>
+                        <div class="largeText">Now:&nbsp; {{ weatherData.avgTemp | number:0 }} &deg;C</div>
+                    </div>
+
+                    <div id="humidityWrapper">
+                        <div class="largeText">RH: {{ weatherData.relHumidity }} %</div>
+                    </div>
+
+                    <div id="pressureWrapper">
+                        <div class="largeText">PB: {{ weatherData.pressure | number:0 }} hPa</div>
+                    </div>
+
+                    <!--<div id="weatherConditionsTitle">Weather conditions:</div>-->
+                    <div id="weatherConditionsWrapper">
+                        <div class="weatherCondition" ng-repeat="condition in weatherData.conditions">
+                            {{ condition.description }}
+                        </div>
+                    </div>
+
+                </article>
+                <div id="blockWrapper">
+                    <article class="blockLeftArticle">
+                        <div id="sunPath"></div>
+                        <div id="sunWrapper">
+                            <div id="sun">&#9679;</div>
+                        </div>
+                        <div id="sunUpText">Sunrise at {{ weatherData.sunriseString }}</div>
+                        <div id="sunDownText">Sunset at {{ weatherData.sunsetString }}</div>
+                    </article>
+                    <article class="blockRightArticle">
+                        <div id="windDirectionText">Wind direction: {{ weatherData.avgWindDirectionCardinal }}</div>
+                        <div id="windSpeedText">Wind Speed: {{ (weatherData.avgWindSpeed * 3.6) | number:0 }} km/h</div>
+
+                        <div id="compassWrapper">
+                            <div id="compass"></div>
+                            <div id="needle"></div>
+                        </div>
+
+                        <div id="windWrapper">
+                            <div id="windPost"></div>
+                            <div id="windArms"></div>
+                        </div>
+                    </article>
+                </div>
+                <article>
+                    <div id="lightningTitle">Lightning:</div>
+                    <div id="lightning">
+                        <a href="http://images.blitzortung.org/Images/image_b_fr.png" data-lightbox="image-1" data-title="Lightning">
+                            <img src="http://images.blitzortung.org/Images/image_b_fr.png" alt="lightning">
+                        </a>
+                    </div>
+
+                    <div id="precipitationTitle">Precipitation:</div>
+                    <div id="buienradar" class="map">
+                        <a href="http://www.buienradar.be/image" data-lightbox="image-2" data-title="Precipitation">
+                            <img src="http://www.buienradar.be/image" alt="precipitation"/>
+                        </a>
+                    </div>
+                </article>
+            </section>
+        </main>
+
+        <footer id="footerWrapper">
+            <div id="footerContent">
+                Weather Genie uses Node.js and AngularJS! All resources used for educational purposes.
+            </div>
+        </footer>
+
+        <!-- TODO: Testing -->
+        <!--<div id="map" class="map" style="position: fixed; top: 0; left: 0; width: 800px; height: 400px;"></div>-->
+
+        <!-- Load scripts -->
+        <!-- TODO: Testing -->
+        <!--<script src="http://leaflet.cloudmade.com/dist/leaflet.js"></script>-->
+        <script src="js/lib/jquery.js"></script>
+        <script src="js/lib/lightbox.min.js"></script>
+        <script src="js/lib/blockui.js"></script>
+        <script src="js/lib/angular.min.js"></script>
+        <script src="js/utils.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>

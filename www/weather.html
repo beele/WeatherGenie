@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html ng-app="weatherGenie" lang="en">
+    <head lang="en">
+        <!-- Meta information -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible"  content="IE=edge">
+        <meta name="viewport"               content="width=device-width, initial-scale=1">
+        <meta name="author"                 content="Kevin Van den Abeele">
+        <meta name="keywords"               content="Weather Belgium forecast rain wind mist fog drizzle sun sunshine thunder thunderstorm precipitation conditions">
+        <meta name="description"            content="Your number one source for weather information!">
+        <meta property="og:description"     content="Your number one source for weather information!"/>
+
+        <!-- Page title -->
+        <title>Weather Genie</title>
+
+        <!-- Can also use the below lines because of the mvc:resources tags in weatherGenie-dispatcher-servlet.xml -->
+        <!-- With the config in weatherGenie-dispatcher-servlet.xml and the file locations relative to the .jsp pages, the IDE has content assist! -->
+        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+        <link rel="image_src" href="img/thumb.jpg" />
+
+        <!-- Web fonts! -->
+        <link href='http://fonts.googleapis.com/css?family=Lato:400' rel='stylesheet' type='text/css'>
+
+        <!-- Local stylesheets -->
+        <link href="css/lib/bootstrap.min.css"  rel="stylesheet">
+        <link href="css/lib/lightbox.css"       rel="stylesheet" media="screen">
+        <link href="css/master.css"           rel="stylesheet" media="screen">
+        <link href="css/components.css"     rel="stylesheet" media="screen">
+    </head>
+
+    <body ng-controller="weatherController">
+        <div id="backgroundWrapper">
+            <div id="bgImage1" class="bgImage"              style="background-image: url(img/bgs/bg_ClearSky.jpg);">        </div>
+            <div id="bgImage2" class="bgImage transparent"  style="background-image: url(img/bgs/bg_FewClouds.jpg);">       </div>
+            <div id="bgImage3" class="bgImage transparent"  style="background-image: url(img/bgs/bg_FewClouds2.jpg);">      </div>
+            <div id="bgImage4" class="bgImage transparent"  style="background-image: url(img/bgs/bg_BrokenClouds.jpg);">    </div>
+            <div id="bgImage5" class="bgImage transparent"  style="background-image: url(img/bgs/bg_ShowerRain.jpg);">      </div>
+            <div id="bgImage6" class="bgImage transparent"  style="background-image: url(img/bgs/bg_Rain.jpg);">            </div>
+            <div id="bgImage7" class="bgImage transparent"  style="background-image: url(img/bgs/bg_Thunderstorm.jpg);">    </div>
+            <div id="bgImage8" class="bgImage transparent"  style="background-image: url(img/bgs/bg_Snow.jpg);">            </div>
+            <div id="bgImage9" class="bgImage transparent"  style="background-image: url(img/bgs/bg_Mist.jpg);">            </div>
+        </div>
+
+        <header id="headerWrapper">
+            <div id="headerContent">
+                <div id="headerTitle">
+                    <h1>Weather Genie</h1>
+                </div>
+                <div id="headerSearch">
+                    <form class="searchForm" action="" ng-submit="getCityInformation()">
+                        <input type="text" placeholder="Search city" name="search" class="searchText" ng-model="city"/>
+                        <input type="submit" class="searchSubmit" value=" "/><br style="clear:both;"/>
+                    </form>
+                </div>
+            </div>
+        </header>
+
+        <div id="content" class="container topSpacing">
+            <!-- Temp, humidity and pressure -->
+            <div class="row">
+                <article class="col-xs-12 col-md-4 bottomSpacing">
+                    <h2 id="weatherLocation">Weather in {{weatherData.location}}:</h2>
+
+                    <div id="weatherConditionsWrapper">
+                        <h2 class="weatherCondition" ng-repeat="condition in weatherData.conditions">
+                            - {{ condition.description }}
+                        </h2>
+                    </div>
+
+                    <div id="temperatureWrapper">
+                        <div class="largeText">Now:&nbsp; {{ weatherData.avgTemp | number:0 }} &deg;C</div>
+                    </div>
+                </article>
+                <article class="col-xs-12 col-md-4 bottomSpacing">
+                    <div id="humidityWrapper">
+                        <div class="largeText">RH: {{ weatherData.relHumidity }} %</div>
+                    </div>
+                </article>
+                <article class="col-xs-12 col-md-4 bottomSpacing">
+                    <div id="pressureWrapper">
+                        <div class="largeText">BP: {{ weatherData.pressure | number:0 }} hPa</div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Sun and wind -->
+            <div class="row">
+                <article class="col-xs-12 col-md-6 bottomSpacing">
+                    <div class="animationDiv">
+                        <div id="sunPath"></div>
+                        <div id="sunWrapper">
+                            <div id="sun">&#9679;</div>
+                        </div>
+                        <div id="sunUpText">Sunrise at {{ weatherData.sunriseString }}</div>
+                        <div id="sunDownText">Sunset at {{ weatherData.sunsetString }}</div>
+                    </div>
+                </article>
+                <article class="col-xs-12 col-md-6 bottomSpacing">
+                    <div class="animationDiv">
+                        <div id="windDirectionText">Wind direction: {{ weatherData.avgWindDirectionCardinal }}</div>
+                        <div id="windSpeedText">Wind Speed: {{ (weatherData.avgWindSpeed * 3.6) | number:0 }} km/h</div>
+
+                        <div id="compassWrapper">
+                            <div id="compass"></div>
+                            <div id="needle"></div>
+                        </div>
+
+                        <div id="windWrapper">
+                            <div id="windPost"></div>
+                            <div id="windArms"></div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Rain and thunder -->
+            <div class="row">
+                <article class="col-xs-12 col-md-6 bottomSpacing">
+                    <div class="graphDiv">
+                        <h4>Current conditions:</h4>
+                        <canvas id="currentCanvas" width="350" height="205"></canvas>
+                    </div>
+                </article>
+                <article class="col-xs-12 col-md-6 bottomSpacing">
+                    <div class="graphDiv">
+                        <h4>Predicted conditions:</h4>
+                        <canvas id="predictCanvas" width="350" height="225"></canvas>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Maps -->
+            <div class="row">
+                <article class="col-xs-12 col-md-6 bottomSpacing">
+                    <div class="mapDiv">
+                        <h4>Lightning:</h4>
+                        <div id="lightning">
+                            <a href="http://images.blitzortung.org/Images/image_b_fr.png" data-lightbox="image-1" data-title="Lightning">
+                                <img src="http://images.blitzortung.org/Images/image_b_fr.png" alt="lightning">
+                            </a>
+                        </div>
+                    </div>
+                </article>
+                <article class="col-xs-12 col-md-6 bottomSpacing">
+                    <div class="mapDiv">
+                        <h4>Precipitation:</h4>
+                        <div id="buienradar" class="map">
+                            <a href="http://www.buienradar.be/image" data-lightbox="image-2" data-title="Precipitation">
+                                <img src="http://www.buienradar.be/image" alt="precipitation"/>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+
+        <footer id="footer">
+            Weather Genie uses Node.js and AngularJS! All resources used for educational purposes.
+        </footer>
+
+        <script src="js/lib/jquery.js"></script>
+        <script src="js/lib/bootstrap.min.js"></script>
+        <script src="js/lib/lightbox.min.js"></script>
+        <script src="js/lib/blockui.js"></script>
+        <script src="js/lib/angular.min.js"></script>
+        <script src="js/lib/chart.js"></script>
+        <script src="js/utils.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>

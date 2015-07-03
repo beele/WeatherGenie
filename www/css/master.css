@@ -1,0 +1,190 @@
+/******************************
+***  CSS for page content   ***
+******************************/
+html {
+    font-family: 'Lato', sans-serif!important;
+    color: #fffaeb;
+
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    color: #fffaeb;
+}
+
+h1, h2, h3, h4, h5 {
+    color: #fffaeb;
+    margin: 0 0 0 0;!important;
+}
+
+.topSpacing {
+    margin-top: 80px;
+}
+
+.bottomSpacing {
+    margin-bottom: 20px;
+}
+
+article {
+    height: 250px;
+    padding: 15px;
+
+    background-color: rgba(20,20,20,0.4);
+}
+
+.animationDiv {
+    width: 405px;
+    height: 100%;
+    margin: 0px auto;
+    margin-top: -15px;
+}
+
+.mapDiv {
+    width: 350px;
+    height: 100%;
+    margin: 0px auto;
+    overflow: hidden;
+}
+
+.graphDiv {
+    width: 350px;
+    height: 100%;
+    margin: 0px auto;
+}
+
+.svg {
+    fill: rgb(41, 128, 185);
+
+    width: 100%;
+    height: 100%;
+}
+
+.svgWrapper {
+    position: absolute;
+    display: block;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 1rem;
+    padding: 1rem;
+}
+
+/******************************
+***   CSS for page header   ***
+******************************/
+#headerTitle {
+    float: left;
+    margin-top: 10px;
+}
+
+#headerTitle h1 {
+    margin: 0!important;
+}
+
+#headerSearch {
+    float: right;
+}
+
+#headerWrapper {
+    background-color: rgba(20,20,20,0.8);
+
+    width:100%;
+    height:60px;
+
+    top:0;
+    left:0;
+    position:fixed;
+
+    z-index: 1000;
+}
+
+#headerContent {
+    height: 60px;
+    padding-left: 15px;
+    padding-right: 15px;
+
+    line-height:60px;
+    text-align:center;
+    margin:0 auto;
+}
+
+@media(max-width:767px){
+    #headerContent{
+        width:600px;
+    }
+}
+@media(min-width:768px){
+    #headerContent{
+        width:767px;
+    }
+}
+@media(min-width:992px){
+    #headerContent{
+        width:960px;
+    }
+}
+@media(min-width:1200px){
+    #headerContent{
+        width:1200px;
+    }
+}
+
+/******************************
+***   CSS for page footer   ***
+******************************/
+#footer {
+    background-color: rgba(20,20,20,0.8);
+
+    width:100%;
+    margin:0 auto;
+    padding-left: 15px;
+    padding-right: 15px;
+
+    line-height:30px;
+    text-align:center;
+}
+
+/******************************
+*** CSS for page background ***
+******************************/
+#backgroundWrapper {
+    margin: 0 auto;
+
+    width: 100%;
+    height: 100%;
+
+    top: 0;
+    left: 0;
+    z-index: -1;
+    position: fixed;
+}
+
+#backgroundWrapper img {
+    width: auto;
+    height: 100%;
+
+    left:0;
+    position:absolute;
+
+    transition: opacity 1s ease-in-out;
+}
+
+.bgImage {
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+
+    transition: opacity 1s ease-in-out;
+}
+
+.transparent {
+    opacity:0;
+}

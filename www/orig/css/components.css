@@ -1,0 +1,378 @@
+/*************************
+*** CSS for search box ***
+*************************/
+input {
+    outline: 0!important;
+}
+
+form.searchForm input.searchText {
+    font-size: 120%;
+    color: #8D8D8D;
+    -webkit-font-smoothing: antialiased;
+    font-family: sans-serif;
+    background-color: rgba(255,255,255,0.8);
+    display: block;
+    width: 200px;
+    height: 20px;
+    padding: 5px 15px;
+    border: none;
+    float: left;
+}
+
+form.searchForm input.searchSubmit {
+    display: block;
+    height: 30px;
+    width: 30px;
+    border: none;
+    background: url("../img/search-icon.png");
+    background-size: contain;
+    float: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+form.searchForm input.searchSubmit:hover{
+    background-image: url("../img/search-icon-hover.png");
+    background-size: contain;
+}
+
+form.searchForm {
+    margin: 13px 0px 10px 0px;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,0.8);
+    width: 260px;
+    height: 30px;
+}
+
+form.searchForm input.searchText::-webkit-input-placeholder   {
+    color: #FFF;
+    transition: all 0.2s ease;
+}
+
+form.searchForm input.searchText::-moz-placeholder    {
+    color: #FFF;
+    transition: all 0.2s ease;
+}
+
+form.searchForm input.searchText:-ms-input-placeholder{
+    color: #FFF;
+    transition: all 0.2s ease;
+}
+
+form.searchForm input.searchText:focus::-webkit-input-placeholder {color:transparent;}
+form.searchForm input.searchText:focus::-moz-placeholder {color:transparent;}
+form.searchForm input.searchText:focus:-ms-input-placeholder {color:transparent;}
+
+
+
+/******************************************
+*** CSS for general weather information ***
+******************************************/
+#weatherLocation {
+    position: absolute;
+    margin-top: 10px;
+}
+
+#temperatureWrapper {
+    position: absolute;
+    margin-top: 45px;
+}
+
+.largeText {
+    font-size: 300%;
+}
+
+#humidityWrapper {
+    position: absolute;
+    margin-top: 45px;
+    margin-left: 340px;
+}
+
+#pressureWrapper {
+    position: absolute;
+    margin-top: 45px;
+    margin-left: 620px;
+}
+
+#weatherConditionsTitle {
+    position: absolute;
+    margin-top: 10px;
+}
+
+#weatherConditionsWrapper {
+    position: absolute;
+    margin-top: 110px;
+    margin-left: 340px;
+
+    font-size: 200%;
+}
+
+.weatherCondition {
+    text-transform: capitalize;
+}
+
+
+
+/****************************
+*** CSS for sun animation ***
+****************************/
+@-webkit-keyframes sunAnimation {
+    from { -webkit-transform:rotate(270deg); }
+    to { -webkit-transform:rotate(271deg); }
+}
+
+@keyframes sunAnimation {
+    from { transform:rotate(270deg); }
+    to { transform:rotate(271deg); }
+}
+
+#sunPath {
+    border-radius: 50%;
+    border: 3px dotted #CCC;
+
+    width: 380px;
+    height: 380px;
+    position: absolute;
+    margin-left: 25px;
+    margin-top: 80px;
+
+    clip: rect(0px, 500px, 170px, 0px);
+}
+
+#sunWrapper {
+    float: left;
+    margin-left: 190px;
+}
+
+#sun {
+    width:100px;
+    height:100px;
+    margin: 18px auto 0;
+    color:orange;
+    font-size:100px;
+    line-height:1;
+
+    visibility: hidden;
+}
+
+.animateSun {
+    visibility: visible!important;
+
+    -webkit-animation-duration: 3s;
+    -webkit-animation-timing-function: ease-in-out;
+    -webkit-animation-name: sunAnimation;
+    -webkit-animation-fill-mode: forwards;
+    -webkit-animation-direction: alternate;
+
+    animation-duration: 3s;
+    animation-timing-function: ease-in-out;
+    animation-name: sunAnimation;
+    animation-fill-mode: forwards;
+
+    -webkit-transform-origin:30% 250px;
+    transform-origin:30% 250px;
+}
+
+#sunUpText {
+    position: absolute;
+    margin-top: 10px;
+}
+
+#sunDownText {
+    position: absolute;
+    margin-top: 10px;
+    margin-left: 330px;
+}
+
+
+
+/***************************************
+*** CSS for wind direction animation ***
+***************************************/
+@-webkit-keyframes windDirAnimation {
+    from { -webkit-transform:rotate(0deg); }
+    to { -webkit-transform:rotate(0deg); }
+}
+
+@keyframes windDirAnimation {
+    from { transform:rotate(0deg); }
+    to { transform:rotate(0deg); }
+}
+
+.animateWindDir {
+    -webkit-animation-duration: 3s;
+    -webkit-animation-timing-function: ease-in-out;
+    -webkit-animation-name: windDirAnimation;
+    -webkit-animation-fill-mode: forwards;
+
+    animation-duration: 3s;
+    animation-timing-function: ease-in-out;
+    animation-name: windDirAnimation;
+    animation-fill-mode: forwards;
+}
+
+#compassWrapper {
+    position: absolute;
+    margin-top: 48px;
+    margin-left: -10px;
+}
+
+#compass {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+
+    background-image: url("../img/compass.png");
+    background-size: cover;
+}
+
+#needle {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+
+    background-image: url("../img/needle.png");
+    background-size: 100px;
+    background-repeat: no-repeat;
+    background-position: 50px;
+}
+
+@-webkit-keyframes windSpeedAnimation {
+    from { -webkit-transform:rotate(0deg); }
+    to { -webkit-transform:rotate(360deg); }
+}
+
+@keyframes windSpeedAnimation {
+    from { transform:rotate(0deg); }
+    to { transform:rotate(360deg); }
+}
+
+#windWrapper {
+    position: absolute;
+    margin-top: 25px;
+    margin-left: 230px;
+}
+
+#windPost {
+    position: absolute;
+    margin-top: 98px;
+    margin-left: 96px;
+
+    width: 7px;
+    height: 110px;
+
+    background-color: #CCCCCC;
+}
+
+#windArms {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+
+    background-image: url("../img/windArms.png");
+    background-size: 200px;
+    background-repeat: no-repeat;
+}
+
+#windDirectionText {
+    position: absolute;
+    margin-top: 10px;
+}
+
+#windSpeedText {
+    position: absolute;
+    margin-top: 10px;
+    margin-left: 295px;
+}
+
+.windSlow {
+    -webkit-animation-duration: 9s;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-name: windSpeedAnimation;
+
+    animation-duration: 9s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-name: windSpeedAnimation;
+}
+
+.windMedium {
+    -webkit-animation-duration: 5s;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-name: windSpeedAnimation;
+
+    animation-duration: 5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-name: windSpeedAnimation;
+}
+
+.windFast {
+    -webkit-animation-duration: 2s;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-name: windSpeedAnimation;
+
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-name: windSpeedAnimation;
+}
+
+.windStorm {
+    -webkit-animation-duration: 1s;
+    -webkit-animation-timing-function: linear;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-name: windSpeedAnimation;
+
+    animation-duration: 1s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-name: windSpeedAnimation;
+}
+
+
+
+/*********************************
+*** CSS for weather conditions ***
+*********************************/
+#lightningTitle {
+    position: absolute;
+    margin-top: 10px;
+}
+
+#lightning {
+    position: absolute;
+    margin-top: -47px;
+    margin-left: -75px;
+
+    -webkit-transform: scale(0.65);
+    transform: scale(0.65);
+}
+
+#lightning img {
+    position: absolute;
+    clip: rect(90px, 712px, 435px, 250px);
+}
+
+#precipitationTitle {
+    position: absolute;
+    margin-top: 10px;
+    margin-left: 475px;
+}
+
+#buienradar {
+    position: absolute;
+    margin-left: 530px;
+    margin-top: -65px;
+
+    -webkit-transform: scale(0.65);
+    transform: scale(0.65);
+}
+
+#buienradar img {
+    position: absolute;
+    clip: rect(120px, 550px, 460px, 90px);
+}
