@@ -93,8 +93,8 @@ function lightningDataMessageHandler(msg) {
         var oLon = msg.originalParams.lon;
 
         var strikes = [];
-        for(var i = 0 ; i < msg.value.data.length ; i++) {
-            var strike = msg.value.data[i];
+        for(var i = 0 ; i < msg.value.length ; i++) {
+            var strike = msg.value[i];
             var dist = getDistanceFromLatLonInKm(oLat, oLon, strike.lat, strike.lon);
             strikes.push({timestamp: strike.timestamp, distance: dist});
         }
