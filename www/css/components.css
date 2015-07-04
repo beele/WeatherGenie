@@ -11,25 +11,31 @@ form.searchForm input.searchText {
     -webkit-font-smoothing: antialiased;
     font-family: sans-serif;
     background-color: rgba(255,255,255,0.8);
-    display: block;
     width: 228px;
     height: 28px;
     padding: 5px 15px;
     border: none;
     float: left;
     line-height: normal;!important;
+
+    -webkit-appearance: none;
+    display: block;
+    border-radius: 0;
 }
 
 form.searchForm input.searchSubmit {
     display: block;
     height: 28px;
     width: 30px;
-    border: none;
     background: url("../img/search-icon.png");
     background-size: contain;
     float: left;
     cursor: pointer;
     transition: all 0.2s ease;
+
+    -webkit-appearance: none;
+    border: none;
+    border-radius: 0;
 }
 
 form.searchForm input.searchSubmit:hover{
@@ -94,33 +100,86 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {color:transparent;
     to { transform:rotate(271deg); }
 }
 
+#sunContainer {
+    overflow: hidden;
+}
+@media(max-width:767px){
+    #sunContainer{
+        /*250 sun container width + 50 to prevent sun being cut of*/
+        width: 300px;
+        /*125 pixels height + 125 pixels for margin*/
+        height: 250px;
+    }
+}
+@media(min-width:767px){
+    #sunContainer{
+        /*400 sun container width + 50 to prevent sun being cut of*/
+        width: 450px;
+        /*200 pixels height + 50 pixels for margin*/
+        height: 250px;
+    }
+}
+
 #sunPath {
-    border-radius: 50%;
+    float: left;
+
     border: 3px dotted #CCC;
-
-    width: 380px;
-    height: 380px;
-    position: absolute;
-    margin-left: 25px;
-    margin-top: 70px;
-
-    clip: rect(0px, 500px, 170px, 0px);
+    border-radius: 50%;
+}
+@media(max-width:767px){
+    #sunPath{
+        margin-top: 125px;
+        margin-left: 25px;
+        width:250px;
+        height:250px;
+        /*clip: rect(0px, 250px, 125px, 0px);*/
+    }
+}
+@media(min-width:767px){
+    #sunPath{
+        margin-top: 50px;
+        margin-left: 20px;
+        width:400px;
+        height:400px;
+        /*clip: rect(0px, 400px, 200px, 0px);*/
+    }
 }
 
 #sunWrapper {
+    /*Testing*/
+    /*border: 1px solid green;*/
+
     float: left;
-    margin-left: 190px;
+    visibility: hidden;
+}
+@media(max-width:767px){
+    #sunWrapper{
+        margin-left: -237px;
+        /*12 for correction of sun 125 for margin*/
+        margin-top: 137px;
+
+        width:225px;
+        height:225px;
+    }
+}
+@media(min-width:767px){
+    #sunWrapper{
+        margin-left: -367px;
+        /*30 for correction of sun 50 for margin*/
+        margin-top: 80px;
+
+        width: 335px;
+        height: 335px;
+    }
 }
 
 #sun {
-    width:100px;
-    height:100px;
-    margin: 18px auto 0;
-    color:orange;
-    font-size:100px;
-    line-height:1;
+    width:50px;
+    height:50px;
+    background:orange;
+    border-radius:50%;
 
-    visibility: hidden;
+    visibility: inherit;
 }
 
 .animateSun {
@@ -130,26 +189,23 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {color:transparent;
     -webkit-animation-timing-function: ease-in-out;
     -webkit-animation-name: sunAnimation;
     -webkit-animation-fill-mode: forwards;
-    -webkit-animation-direction: alternate;
 
     animation-duration: 3s;
     animation-timing-function: ease-in-out;
     animation-name: sunAnimation;
     animation-fill-mode: forwards;
-
-    -webkit-transform-origin:30% 250px;
-    transform-origin:30% 250px;
 }
 
 #sunUpText {
     position: absolute;
-    margin-top: 10px;
+    margin-top: -230px;
+    margin-left: -20px;
 }
 
 #sunDownText {
     position: absolute;
-    margin-top: 10px;
-    margin-left: 330px;
+    margin-top: -230px;
+    margin-left: 340px;
 }
 
 /***************************************

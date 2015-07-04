@@ -41,23 +41,22 @@ article {
 }
 
 .animationDiv {
-    width: 405px;
+    width: 500px;
     height: 100%;
-    margin: 0px auto;
-    margin-top: -15px;
+    margin: -15px auto 0;
 }
 
 .mapDiv {
     width: 350px;
     height: 100%;
-    margin: 0px auto;
+    margin: 0 auto;
     overflow: hidden;
 }
 
 .graphDiv {
     width: 350px;
     height: 100%;
-    margin: 0px auto;
+    margin: 0 auto;
 }
 
 .svg {

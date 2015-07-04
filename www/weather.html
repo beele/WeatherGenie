@@ -67,18 +67,19 @@
                         </h2>
                     </div>
 
-                    <div id="temperatureWrapper">
-                        <div class="largeText">Now:&nbsp; {{ weatherData.avgTemp | number:0 }} &deg;C</div>
-                    </div>
                 </article>
                 <article class="col-xs-12 col-md-4 bottomSpacing">
+                    <div id="temperatureWrapper">
+                        <h2>Now:&nbsp; {{ weatherData.avgTemp | number:0 }} &deg;C</h2>
+                    </div>
+
                     <div id="humidityWrapper">
-                        <div class="largeText">RH: {{ weatherData.relHumidity }} %</div>
+                        <h2>RH: {{ weatherData.relHumidity }} %</h2>
                     </div>
                 </article>
                 <article class="col-xs-12 col-md-4 bottomSpacing">
                     <div id="pressureWrapper">
-                        <div class="largeText">BP: {{ weatherData.pressure | number:0 }} hPa</div>
+                        <h2>BP: {{ weatherData.pressure | number:0 }} hPa</h2>
                     </div>
                 </article>
             </div>
@@ -87,18 +88,22 @@
             <div class="row">
                 <article class="col-xs-12 col-md-6 bottomSpacing">
                     <div class="animationDiv">
-                        <div id="sunPath"></div>
-                        <div id="sunWrapper">
-                            <div id="sun">&#9679;</div>
+
+                        <div id="sunContainer">
+                            <div id="sunPath"></div>
+                            <div id="sunWrapper">
+                                <div id="sun"></div>
+                            </div>
                         </div>
-                        <div id="sunUpText">Sunrise at {{ weatherData.sunriseString }}</div>
-                        <div id="sunDownText">Sunset at {{ weatherData.sunsetString }}</div>
+
+                        <h4 id="sunUpText">Sunrise at {{ weatherData.sunriseString }}</h4>
+                        <h4 id="sunDownText">Sunset at {{ weatherData.sunsetString }}</h4>
                     </div>
                 </article>
                 <article class="col-xs-12 col-md-6 bottomSpacing">
                     <div class="animationDiv">
-                        <div id="windDirectionText">Wind direction: {{ weatherData.avgWindDirectionCardinal }}</div>
-                        <div id="windSpeedText">Wind Speed: {{ (weatherData.avgWindSpeed * 3.6) | number:0 }} km/h</div>
+                        <h4 id="windDirectionText">Wind direction: {{ weatherData.avgWindDirectionCardinal }}</h4>
+                        <h4 id="windSpeedText">Wind Speed: {{ (weatherData.avgWindSpeed * 3.6) | number:0 }} km/h</h4>
 
                         <div id="compassWrapper">
                             <div id="compass"></div>
@@ -117,13 +122,13 @@
             <div class="row">
                 <article class="col-xs-12 col-md-6 bottomSpacing">
                     <div class="graphDiv">
-                        <h4>Current conditions:</h4>
+                        <h4>Current rain conditions:</h4>
                         <canvas id="currentCanvas" width="350" height="205"></canvas>
                     </div>
                 </article>
                 <article class="col-xs-12 col-md-6 bottomSpacing">
                     <div class="graphDiv">
-                        <h4>Predicted conditions:</h4>
+                        <h4>Predicted rain conditions:</h4>
                         <canvas id="predictCanvas" width="350" height="225"></canvas>
                     </div>
                 </article>

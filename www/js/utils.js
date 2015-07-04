@@ -116,9 +116,9 @@ function calculateAndAnimsateSunPosition(weatherData) {
     var nowMinutes = now.getHours() * 60 + now.getMinutes();
 
     var degPerMinute = 180 / sunIsUpMinutes;
-    var sunDeg = 270 + Math.round((nowMinutes - (sunUp.getHours() * 60 + sunUp.getMinutes())) * degPerMinute);
+    var sunDeg = 315 + Math.round((nowMinutes - (sunUp.getHours() * 60 + sunUp.getMinutes())) * degPerMinute);
 
-    restartAnimation("sunAnimation", "animateSun", "sunWrapper", "sun" ,"to", "transform:rotate(" + sunDeg + "deg);");
+    restartAnimation("sunAnimation", "animateSun", "sunContainer", "sunWrapper" ,"to", "transform:rotate(" + sunDeg + "deg);");
 }
 
 function calculateAndAnimateWindDirectionPosition(weatherData) {
