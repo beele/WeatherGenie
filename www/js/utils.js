@@ -151,6 +151,47 @@ function calculateAndAnimateWindSpeed(weatherData) {
     },100);
 }
 
+function createChartData(data, isForCurrentRainData) {
+    var conditions = null;
+    if(isForCurrentRainData) {
+        conditions = data.currentConditions;
+    } else {
+        conditions = data.predictedConditions;
+    }
+
+    var labels = [];
+    var datasets = [];
+    var dataset =
+    {
+        label: "Current conditions",
+        fillColor: "rgba(10,123,255,0.3)",
+        strokeColor: "rgba(10,123,255,0.7)",
+        pointColor: "rgba(10,123,255,1)",
+        pointStrokeColor: "rgba(10,123,255,0.7)",
+        pointHighlightFill: "rgba(10,123,255,0.7)",
+        pointHighlightStroke: "rgba(10,123,255,0.7)",
+        data: []
+    };
+    datasets.push(dataset);
+
+    for( var i = 0; i < conditions.data.length ; i++) {
+        var input = conditions.data;
+
+        labels.push(input[i].time);
+        dataset.data.push(input[i].intensity);
+    }
+
+    var result = {};
+    result.labels = labels;
+    result.datasets = datasets;
+    return result;
+}
+
+/*----------------------------------------------------------------------------------
+------------------------------------------------------------------------------------
+                   Non weather specific javascript util functions
+------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------*/
 /**
  * Converts any given UNIX timestamp into a timeString (hh:mm).
  * @param unixTimeStamp The timestamp to convert.

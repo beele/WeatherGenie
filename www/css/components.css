@@ -83,10 +83,6 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {color:transparent;
     text-transform: capitalize;
 }
 
-#weatherConditionsWrapper {
-    margin-top: 10px;
-}
-
 /****************************
 *** CSS for sun animation ***
 ****************************/
@@ -198,13 +194,12 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {color:transparent;
 
 #sunUpText {
     position: absolute;
-    margin-top: -230px;
-    margin-left: -20px;
+    margin-top: -240px;
 }
 
 #sunDownText {
     position: absolute;
-    margin-top: -230px;
+    margin-top: -240px;
     margin-left: 340px;
 }
 

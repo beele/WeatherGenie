@@ -60,6 +60,7 @@
             <div class="row">
                 <article class="col-xs-12 col-md-4 bottomSpacing">
                     <h2 id="weatherLocation">Weather in {{weatherData.location}}:</h2>
+                    <br/>
 
                     <div id="weatherConditionsWrapper">
                         <h2 class="weatherCondition" ng-repeat="condition in weatherData.conditions">
@@ -69,17 +70,31 @@
 
                 </article>
                 <article class="col-xs-12 col-md-4 bottomSpacing">
+                    <h2>Measurements:</h2>
+                    <br/>
+
                     <div id="temperatureWrapper">
-                        <h2>Now:&nbsp; {{ weatherData.avgTemp | number:0 }} &deg;C</h2>
+                        <h2>Temp: {{ weatherData.avgTemp | number:0 }} &deg;C</h2>
                     </div>
 
                     <div id="humidityWrapper">
                         <h2>RH: {{ weatherData.relHumidity }} %</h2>
                     </div>
-                </article>
-                <article class="col-xs-12 col-md-4 bottomSpacing">
+
                     <div id="pressureWrapper">
                         <h2>BP: {{ weatherData.pressure | number:0 }} hPa</h2>
+                    </div>
+                </article>
+                <article class="col-xs-12 col-md-4 bottomSpacing">
+                    <h2>Rain and lightning:</h2>
+                    <br/>
+
+                    <div id="rainWrapper">
+                        <h2>Rain: {{ rainData.intensity }} mm/u</h2>
+                    </div>
+
+                    <div id="lightningWrapper">
+                        <h2>Lightning: {{ lightningData.closestStrike.distance | number:0 }} km</h2>
                     </div>
                 </article>
             </div>
