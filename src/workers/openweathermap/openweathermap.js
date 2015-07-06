@@ -190,8 +190,7 @@ function getRemoteWeather(countryCode, placeName, callbackId) {
             payload.cacheName = "weather";
             payload.value = info;
             process.send(payload);
-
-            callback(info);
+            
             callbacks[callbackId](info);
             delete callbacks[callbackId];
         });
