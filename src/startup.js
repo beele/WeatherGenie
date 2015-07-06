@@ -127,7 +127,8 @@ function startWorkerInstance() {
     } else if(process.env['name'] === "broker") {
         dataBroker.initialise();
 
-        //Create one weather cache:
+        //Create caches:
+        blitzortung.setupLightningCache();
         openweathermap.setupWeatherCache();
     } else {
         //Add a listener on the worker for messages.
