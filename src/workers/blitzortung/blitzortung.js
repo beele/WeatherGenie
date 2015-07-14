@@ -5,9 +5,20 @@ var logger = require("../../logging/logger").makeLogger("SERVIC");
 
 //Variables.
 var ws = null;
-var clbck = null;
+var callbacks = {};
 
 var retryCount = 0;
+
+function setupLightningCache() {
+    var payload = {};
+    payload.origin = cluster.worker.id;
+    payload.originFunc = "startupLightingSocket";
+    payload.target = "broker";
+    payload.targetFunc = "createCache";
+    payload.cacheName = "lightning";
+    payload.maxSize = 100;
+    process.send(payload);
+}
 
 function setupBlitzortungWebSocket() {
     //Safety check.
@@ -20,15 +31,6 @@ function setupBlitzortungWebSocket() {
     ws = new WebSocket("ws://ws.blitzortung.org:808" + retryCount, "", {headers: {origin: "http://www.blitzortung.org"}});
     ws.on('open', function startupLightingSocket() {
         retryCount = 0;
-
-        var payload = {};
-        payload.origin = cluster.worker.id;
-        payload.originFunc = "startupLightingSocket";
-        payload.target = "broker";
-        payload.targetFunc = "createCache";
-        payload.cacheName = "lightning";
-        payload.maxSize = 100;
-        process.send(payload);
 
         //North america.
         //ws.send('{"west":-130,"east":-60,"north":62.5,"south":2.3}');
@@ -66,8 +68,8 @@ function onWebsocketFailure(data, flags) {
 
 function lightningData(callback, lat, lon) {
     logger.INFO("lightningData method was called!");
-
-    clbck = callback;
+    var id = new Date().getTime() + "--" + (Math.random() * 6);
+    callbacks[id] = callback;
 
     var payload = {};
     payload.origin = cluster.worker.id;
@@ -75,7 +77,7 @@ function lightningData(callback, lat, lon) {
     payload.target = "broker";
     payload.targetFunc = "retrieveCache";
     payload.cacheName = "lightning";
-    payload.originalParams = {lat: lat, lon: lon};
+    payload.originalParams = {lat: lat, lon: lon, callbackId: id};
     process.send(payload);
 }
 
@@ -87,7 +89,9 @@ function lightningDataMessageHandler(msg) {
 
     if(msg.value === undefined || msg.value.length === 0) {
         logger.DEBUG("No data available, returning error!");
-        clbck({ERROR: "No lightning data available!"});
+
+        callbacks[msg.originalParams.callbackId]({ERROR: "No lightning data available!"});
+        delete callbacks[msg.originalParams.callbackId];
     } else {
         var oLat = msg.originalParams.lat;
         var oLon = msg.originalParams.lon;
@@ -99,14 +103,15 @@ function lightningDataMessageHandler(msg) {
             strikes.push({timestamp: strike.timestamp, distance: dist});
         }
 
-        clbck({lat: oLat, lon: oLon, data: strikes});
+        callbacks[msg.originalParams.callbackId]({lat: oLat, lon: oLon, data: strikes});
+        delete callbacks[msg.originalParams.callbackId];
     }
 }
 
 function showLightingCache(callback) {
     logger.INFO("showLightingCache method was called!");
-
-    clbck = callback;
+    var id = new Date().getTime() + "--" + (Math.random() * 6);
+    callbacks[id] = callback;
 
     var payload = {};
     payload.origin = cluster.worker.id;
@@ -114,13 +119,15 @@ function showLightingCache(callback) {
     payload.target = "broker";
     payload.targetFunc = "retrieveCache";
     payload.cacheName = "lightning";
+    payload.originalParams = {callbackId: id};
     process.send(payload);
 }
 
 function showLightingCacheMessageHandler(msg) {
     logger.DEBUG("blitzortung data received: " + msg.value);
 
-    clbck({data: msg.value});
+    callbacks[msg.originalParams.callbackId](msg.value);
+    delete callbacks[msg.originalParams.callbackId];
 }
 
 /*-------------------------------------------------------------------------------------------------
@@ -145,6 +152,7 @@ function deg2rad(deg) {
     return deg * (Math.PI/180)
 }
 
+exports.setupLightningCache             = setupLightningCache;
 exports.setupBlitzortungWebSocket       = setupBlitzortungWebSocket;
 
 exports.lightningData                   = lightningData;

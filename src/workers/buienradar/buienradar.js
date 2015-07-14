@@ -5,7 +5,7 @@ var logger = require("../../logging/logger").makeLogger("SERVIC");
 //Variables.
 var currentRainMap = null;
 var predictRainMap = null;
-var clbck = null;
+var callbacks = {};
 
 /**
  * Make a prediction based on the given geographic coordinates.
@@ -16,10 +16,8 @@ var clbck = null;
  */
 function geographicPrediction(lat, lon, callback) {
     logger.INFO("buienradar service geographicPrediction method was called!");
-
-    //TODO: This is dirty, but if we use the callback in the process.on closure we lock the initial callback into it, and the next calls will still have the old callback!
-    //TODO: We could put the request in the message we send, and in the end just pull it of again and use it.
-    clbck = callback;
+    var id = new Date().getTime() + "--" + (Math.random() * 6);
+    callbacks[id] = callback;
 
     var payload = {};
     payload.origin = cluster.worker.id;
@@ -27,7 +25,7 @@ function geographicPrediction(lat, lon, callback) {
     payload.target = "broker";
     payload.targetFunc = "retrieveData";
     payload.key = "rainMaps";
-    payload.originalParams = {lat: lat, lon: lon};
+    payload.originalParams = {lat: lat, lon: lon, callbackId: id};
     process.send(payload);
 }
 
@@ -37,7 +35,8 @@ function geographicPredictionMessageHandler(msg) {
     //Null safety check!
     if(msg.value === undefined || msg.value.currentRainMap === undefined || msg.value.predictRainMap === undefined) {
         logger.DEBUG("No data available, returning error!");
-        clbck({ERROR: "No rain maps available!"});
+        callbacks[msg.originalParams.callbackId]({ERROR: "No rain maps available!"});
+        delete callbacks[msg.originalParams.callbackId];
     } else {
         currentRainMap = msg.value.currentRainMap;
         predictRainMap = msg.value.predictRainMap;
@@ -48,21 +47,23 @@ function geographicPredictionMessageHandler(msg) {
 
         var current = currentWeather(x,y);
         var predict = comingWeather(x,y);
-        clbck({currentConditions: current, predictedConditions: predict});
+        callbacks[msg.originalParams.callbackId]({currentConditions: current, predictedConditions: predict});
+        delete callbacks[msg.originalParams.callbackId];
     }
 }
 
 function geographicPredictionForBlock(x, y, callback) {
     logger.INFO("buienradar service geographicPredictionForBlock method was called!");
+    var id = new Date().getTime() + "--" + (Math.random() * 6);
+    callbacks[id] = callback;
 
-    clbck = callback;
     var payload = {};
     payload.origin = cluster.worker.id;
     payload.originFunc = "geographicPredictionForBlock";
     payload.target = "broker";
     payload.targetFunc = "retrieveData";
     payload.key = "rainMaps";
-    payload.originalParams = {x: x, y: y};
+    payload.originalParams = {x: x, y: y, callbackId: id};
     process.send(payload);
 }
 
@@ -72,32 +73,37 @@ function geographicPredictionForBlockMessageHandler(msg) {
     //Null safety check!
     if(msg.value === undefined || msg.value.currentRainMap === undefined || msg.value.predictRainMap === undefined) {
         logger.DEBUG("No data available, returning error!");
-        clbck({ERROR: "No rain maps available!"});
+        callbacks[msg.originalParams.callbackId]({ERROR: "No rain maps available!"});
+        delete callbacks[msg.originalParams.callbackId];
     } else {
         currentRainMap = msg.value.currentRainMap;
         predictRainMap = msg.value.predictRainMap;
 
         var current = currentWeather(msg.originalParams.x, msg.originalParams.y);
         var predict = comingWeather(msg.originalParams.x, msg.originalParams.y);
-        clbck({currentConditions: current, predictedConditions: predict});
+        callbacks[msg.originalParams.callbackId]({currentConditions: current, predictedConditions: predict});
+        delete callbacks[msg.originalParams.callbackId];
     }
 }
 
 function showRainMaps(callback) {
     logger.INFO("buienradar service showRainMaps method was called!");
+    var id = new Date().getTime() + "--" + (Math.random() * 6);
+    callbacks[id] = callback;
 
-    clbck = callback;
     var payload = {};
     payload.origin = cluster.worker.id;
     payload.originFunc = "showRainMaps";
     payload.target = "broker";
     payload.targetFunc = "retrieveData";
     payload.key = "rainMaps";
+    payload.originalParams = {callbackId: id};
     process.send(payload);
 }
 
 function showRainMapsMessageHandler(msg) {
-    clbck(msg);
+    callbacks[msg.originalParams.callbackId](msg);
+    delete callbacks[msg.originalParams.callbackId];
 }
 
 /*------------------------------------------------------------------------------------------------

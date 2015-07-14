@@ -92,7 +92,12 @@ function addToCache(cacheName, value) {
 }
 
 function retrieveCache(cacheName) {
-    return dataStore[cacheName].data;
+    if(dataStore[cacheName] !== undefined) {
+        return dataStore[cacheName].data;
+    } else {
+        logger.ERROR("Cannot find cache: " + cacheName + " in dataStore");
+        return null;
+    }
 }
 
 function removeFromCache(cacheName, values) {

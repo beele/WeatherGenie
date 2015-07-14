@@ -4,7 +4,7 @@ var cluster = require('cluster');
 var logger = require("../../logging/logger").makeLogger("SERVIC");
 
 //Variables.
-var clbck = null;
+var callbacks = {};
 var threshold = 120 * 60 * 1000;
 
 function setupWeatherCache() {
@@ -27,8 +27,8 @@ function setupWeatherCache() {
  */
 function retrieveWeatherInfo(placeName, callback) {
     logger.INFO("retrieveWeatherInfo method was called!");
-
-    clbck = callback;
+    var id = new Date().getTime() + "--" + (Math.random() * 6);
+    callbacks[id] = callback;
 
     var payload = {};
     payload.origin = cluster.worker.id;
@@ -36,7 +36,7 @@ function retrieveWeatherInfo(placeName, callback) {
     payload.target = "broker";
     payload.targetFunc = "retrieveCache";
     payload.cacheName = "weather";
-    payload.originalParams = {placeName: placeName};
+    payload.originalParams = {placeName: placeName, callbackId: id};
     process.send(payload);
 }
 
@@ -65,9 +65,10 @@ function retrieveWeatherInfoMessageHandler(msg) {
     }
 
     if(result === null) {
-        getRemoteWeather("BE", placeName, clbck);
+        getRemoteWeather("BE", placeName, msg.originalParams.callbackId);
     } else {
-        clbck(result);
+        callbacks[msg.originalParams.callbackId](result);
+        delete callbacks[msg.originalParams.callbackId];
     }
 
     //Send the obsolete indexes if any to the broker to have them removed!
@@ -85,8 +86,8 @@ function retrieveWeatherInfoMessageHandler(msg) {
 
 function showWeatherCache(callback) {
     logger.INFO("showWeatherCache method was called!");
-
-    clbck = callback;
+    var id = new Date().getTime() + "--" + (Math.random() * 6);
+    callbacks[id] = callback;
 
     var payload = {};
     payload.origin = cluster.worker.id;
@@ -94,13 +95,15 @@ function showWeatherCache(callback) {
     payload.target = "broker";
     payload.targetFunc = "retrieveCache";
     payload.cacheName = "weather";
+    payload.originalParams = {callbackId: id};
     process.send(payload);
 }
 
 function showWeatherCacheMessageHandler(msg) {
     logger.DEBUG("weather cache data received");
 
-    clbck(msg.value);
+    callbacks[msg.originalParams.callbackId](msg.value);
+    delete callbacks[msg.originalParams.callbackId];
 }
 
 /*-------------------------------------------------------------------------------------------------
@@ -113,9 +116,9 @@ function showWeatherCacheMessageHandler(msg) {
  *
  * @param countryCode The two char ISO country code.
  * @param placeName The name of the city.
- * @param callback callback function.
+ * @param callbackId callback id.
  */
-function getRemoteWeather(countryCode, placeName, callback) {
+function getRemoteWeather(countryCode, placeName, callbackId) {
     logger.INFO("Retrieving weather info from remote service...");
 
     var options = {
@@ -187,8 +190,9 @@ function getRemoteWeather(countryCode, placeName, callback) {
             payload.cacheName = "weather";
             payload.value = info;
             process.send(payload);
-
-            callback(info);
+            
+            callbacks[callbackId](info);
+            delete callbacks[callbackId];
         });
     }).end();
 }
