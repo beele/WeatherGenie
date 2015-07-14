@@ -17,7 +17,7 @@ function setupBlitzortungWebSocket() {
     }
 
     //Connect to websocket from blitzortung.org
-    ws = new WebSocket("ws://ws.blitzortung.org:803" + retryCount);
+    ws = new WebSocket("ws://ws.blitzortung.org:808" + retryCount, "", {headers: {origin: "http://www.blitzortung.org"}});
     ws.on('open', function startupLightingSocket() {
         retryCount = 0;
 
@@ -35,8 +35,8 @@ function setupBlitzortungWebSocket() {
         //Western europe.
         ws.send('{"west":-12,"east":20,"north":56,"south":33.6}');
     });
-    ws.on('message', function lightningDataReceived(data, flags) {
-        data = JSON.parse(data);
+    ws.on('message', function lightningDataReceived(data) {
+        var data = JSON.parse(data);
 
         //Check to see if the strike was in the radius (300km) of the geographic center of belgium.
         //Only send the strike when in range.
@@ -57,7 +57,7 @@ function setupBlitzortungWebSocket() {
 }
 
 function onWebsocketFailure(data, flags) {
-    logger.ERROR("Websocket failure: " + data + "( " + flags + ")");
+    logger.ERROR("Websocket failure: " + JSON.stringify(data) + " - " + JSON.stringify(flags));
 
     //The retrycount acts as the count for retries and as the port number.
     retryCount++;
