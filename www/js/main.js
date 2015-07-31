@@ -59,7 +59,7 @@ app.controller('weatherController', function($scope, $http) {
     };
 
     $scope.retrieveRainInformation = function(lat, lon) {
-        $http({method: 'GET', url: 'weather/geo/' + lat + "&" + lon}).
+        $http({method: 'GET', url: 'weather/rain/' + lat + "&" + lon}).
             success(function(data, status, headers, config) {
                 //Charting!
                 var ctxCurrent = document.getElementById("currentCanvas").getContext("2d");

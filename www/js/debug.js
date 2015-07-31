@@ -21,7 +21,7 @@ function getDataForBox(x, y) {
     console.log("X: " + x + " Y: " + y);
 
     //Retrieve rain data for given x/y block!
-    $.getJSON("/weather/geo/xy/" + x + "&" + y,
+    $.getJSON("/weather/rain/xy/" + x + "&" + y,
         function (data) {
             console.log(JSON.stringify(data, null, 4));
 
