@@ -37,9 +37,9 @@ function start(debug) {
     //Custom services
     handles["/weather"]             = weather.showWeatherCache;
     handles["/weather/*"]           = weather.retrieveWeather;
-    handles["/weather/geo"]         = weather.showRainMaps;
-    handles["/weather/geo/*"]       = weather.geographicPrediction;
-    handles["/weather/geo/xy/*"]    = weather.geographicPredictionForBlock;
+    handles["/weather/rain"]        = weather.showRainMaps;
+    handles["/weather/rain/*"]      = weather.geographicPrediction;
+    handles["/weather/rain/xy/*"]   = weather.geographicPredictionForBlock;
 
     handles["/weather/lightning"]   = weather.showLightingCache;
     handles["/weather/lightning/*"] = weather.lightningData;

@@ -95,11 +95,21 @@ function showLightingCache(request, response) {
 function retrieveWeather(request, response) {
     logger.INFO("retrieveWeather method was called!");
 
+    //First call the openweathermap to retrieve the general weather information.
+    //Once in the callback for that function, make a call to the forecast of the buienradar.
+    //Consolidate the data in the second callback end write the response.
+
     var callback = function(data) {
-        var resp = response;
-        resp.writeHead(200, {});
-        resp.write(JSON.stringify(data, 0, 4));
-        resp.end();
+        var callback2 = function(data2) {
+            data.predictions = data2;
+
+            var resp = response;
+            resp.writeHead(200, {});
+            resp.write(JSON.stringify(data, 0, 4));
+            resp.end();
+        };
+
+        buienradar.geographicConditionForecast(data.location, callback2);
     };
 
     var pieces = request.url.split("/");

@@ -1,3 +1,4 @@
+var http = require("http");
 var cluster = require('cluster');
 
 var logger = require("../../logging/logger").makeLogger("SERVIC");
@@ -106,11 +107,84 @@ function showRainMapsMessageHandler(msg) {
     delete callbacks[msg.originalParams.callbackId];
 }
 
+function geographicConditionForecast(city, callback) {
+    var clbck = function(data) {
+        retrieveDailyForecast(data, callback)
+    };
+
+    retrieveLocationIdForCity(city, clbck);
+}
+
 /*------------------------------------------------------------------------------------------------
 * ------------------------------------------------------------------------------------------------
 *                                    Main buienradar functions
 * ------------------------------------------------------------------------------------------------
  ------------------------------------------------------------------------------------------------*/
+function retrieveLocationIdForCity(city, callback) {
+    var options = {
+        host: 'www.buienradar.be',
+        port: '80',
+        path: '/json/Places?term=' + city,
+        method: 'POST'
+    };
+
+    http.request(options, function(res) {
+        var data = '';
+        res.setEncoding('utf8');
+
+        res.on('data', function(chunk) {
+            data += chunk;
+        });
+        res.on('end', function() {
+            logger.DEBUG(data);
+            data = JSON.parse(data);
+
+            //Check for errors in the data that has been returned.
+            if (data.cod === "404") {
+                logger.ERROR(data.message);
+                callback(info);
+                return;
+            }
+
+            if(data.length > 0) {
+                callback(data[0].id);
+            }
+        });
+    }).end();
+}
+
+function retrieveDailyForecast(locationId, callback) {
+    var options = {
+        host: 'www.buienradar.be',
+        port: '80',
+        path: '/json/GetDailyForecast?geolocationid=' + locationId,
+        method: 'POST'
+    };
+
+    http.request(options, function(res) {
+        var data = '';
+        res.setEncoding('utf8');
+
+        res.on('data', function(chunk) {
+            data += chunk;
+        });
+        res.on('end', function() {
+            logger.DEBUG(data);
+            data = JSON.parse(data);
+
+            //Check for errors in the data that has been returned.
+            if (data.cod === "404") {
+                logger.ERROR(data.message);
+                callback(info);
+                return;
+            }
+
+            //TODO: Clean up data and only return 5 days instead of 14!
+
+            callback(data.days);
+        });
+    }).end();
+}
 
 /**
  * Converts the given data which contains a gif with frames to rain intensity information per block.
@@ -357,6 +431,7 @@ exports.geographicPrediction = geographicPrediction;
 exports.geographicPredictionForBlock = geographicPredictionForBlock;
 exports.convertImageToRainMap = convertImageToRainMap;
 exports.showRainMaps = showRainMaps;
+exports.geographicConditionForecast = geographicConditionForecast;
 
 //Message handlers:
 exports.geographicPredictionMessageHandler = geographicPredictionMessageHandler;

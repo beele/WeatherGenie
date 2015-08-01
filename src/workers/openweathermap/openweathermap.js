@@ -148,6 +148,7 @@ function getRemoteWeather(countryCode, placeName, callbackId) {
                 return;
             }
 
+            info.id = data.id;
             info.placeName = placeName;
             info.location =  data.name;
             info.latitude = data.coord.lat;
