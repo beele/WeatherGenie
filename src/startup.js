@@ -137,6 +137,7 @@ function startWorkerInstance() {
 
             //TODO: Introduce something that can generically determine the function on the target object!
             //TODO: This would eliminate the need to adapt this switch case for every new function!
+            //TODO: Use something like this: buienradar["geographicPredictionMessageHandler"](msg);
             switch (msg.originFunc) {
                 case "geographicPrediction":
                     buienradar.geographicPredictionMessageHandler(msg);
