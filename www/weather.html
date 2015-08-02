@@ -2,29 +2,30 @@
 <html ng-app="weatherGenie" lang="en">
     <head lang="en">
         <!-- Meta information -->
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible"  content="IE=edge">
-        <meta name="viewport"               content="width=device-width, initial-scale=1">
-        <meta name="author"                 content="Kevin Van den Abeele">
-        <meta name="keywords"               content="weather belgium forecast rain wind mist fog drizzle sun sunshine thunder thunderstorm precipitation conditions storm weather prediction">
-        <meta name="description"            content="Your number one source for weather information!">
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible"  content="IE=edge"/>
+        <meta name="viewport"               content="width=device-width, initial-scale=1"/>
+        <meta name="author"                 content="Kevin Van den Abeele"/>
+        <meta name="keywords"               content="Weather Belgium forecast rain wind mist fog drizzle sun sunshine thunder thunderstorm precipitation conditions"/>
+        <meta name="description"            content="Your number one source for weather information!"/>
         <meta property="og:description"     content="Your number one source for weather information!"/>
 
         <!-- Page title -->
         <title>Weather Genie</title>
 
-        <!-- Favicon and thumbnail -->
-        <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
-        <link rel="image_src" href="img/thumb.jpg" />
+        <!-- Can also use the below lines because of the mvc:resources tags in weatherGenie-dispatcher-servlet.xml -->
+        <!-- With the config in weatherGenie-dispatcher-servlet.xml and the file locations relative to the .jsp pages, the IDE has content assist! -->
+        <link rel="shortcut icon"   href="favicon.ico" type="image/x-icon" />
+        <link rel="image_src"       href="img/thumb.jpg" />
 
         <!-- Web fonts! -->
-        <link href='http://fonts.googleapis.com/css?family=Lato:400' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Lato:400' rel='stylesheet' type='text/css' />
 
         <!-- Local stylesheets -->
-        <link href="css/lib/bootstrap.min.css"  rel="stylesheet">
-        <link href="css/lib/lightbox.css"       rel="stylesheet" media="screen">
-        <link href="css/master.css"           rel="stylesheet" media="screen">
-        <link href="css/components.css"     rel="stylesheet" media="screen">
+        <link href="css/lib/bootstrap.min.css"  rel="stylesheet" />
+        <link href="css/lib/lightbox.css"       rel="stylesheet" media="screen" />
+        <link href="css/master.css"             rel="stylesheet" media="screen" />
+        <link href="css/components.css"         rel="stylesheet" media="screen" />
     </head>
 
     <body ng-controller="weatherController">
@@ -40,21 +41,37 @@
             <div id="bgImage9" class="bgImage transparent"  style="background-image: url(img/bgs/bg_Mist.jpg);">            </div>
         </div>
 
-        <header id="headerWrapper">
+        <header id="headerWrapper" class="transparent hidden">
             <div id="headerContent">
                 <div id="headerTitle">
                     <h1>Weather Genie</h1>
                 </div>
                 <div id="headerSearch">
-                    <form class="searchForm" action="" ng-submit="getCityInformation()">
-                        <input type="text" placeholder="Search city" name="search" class="searchText" ng-model="city"/>
-                        <input type="submit" class="searchSubmit" value=" "/><br style="clear:both;"/>
+                    <form class="searchForm searchFormNormal" action="" ng-submit="search()">
+                        <input type="text" placeholder="Search for city" name="search" spellcheck="false" class="searchText searchTextNormal" ng-model="city"/>
+                        <input type="submit" class="searchSubmit searchButtonNormal" value=" "/><br style="clear:both;"/>
                     </form>
                 </div>
             </div>
         </header>
 
-        <div id="content" class="container topSpacing">
+        <div id="initialSearch">
+            <h1 id="initialSearchTitle">Weather Genie</h1>
+
+            <form class="searchForm searchFormLarge" action="" ng-submit="initialSearch()">
+                <input type="text" placeholder="How is the weather in..." name="search" autocomplete="off" spellcheck="false" class="searchText searchTextLarge" ng-model="city"/>
+                <input type="submit" class="searchSubmit searchButtonLarge" value=" "/><br style="clear:both;"/>
+            </form>
+
+            <div id="initialImages">
+                <img src="img/svg/sun.svg"          class="svg svgSquare75 svgFirst"/>
+                <img src="img/svg/rain.svg"         class="svg svgSquare75 svgInbetween"/>
+                <img src="img/svg/lightning.svg"    class="svg svgSquare75 svgInbetween"/>
+                <img src="img/svg/temp.svg"         class="svg svgSquare75 svgLast"/>
+            </div>
+        </div>
+
+        <div id="content" class="container topSpacing transparent hidden">
             <!-- Temp, humidity and pressure -->
             <div class="row">
                 <article class="col-xs-12 col-md-4 bottomSpacing">
@@ -173,7 +190,7 @@
             </div>
         </div>
 
-        <footer id="footer">
+        <footer id="footer" class="transparent hidden">
             Weather Genie uses Node.js and AngularJS! All resources used for educational purposes.
         </footer>
 

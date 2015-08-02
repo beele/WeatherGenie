@@ -6,13 +6,11 @@ input {
 }
 
 form.searchForm input.searchText {
-    font-size: 120%;
     color: #8D8D8D;
     -webkit-font-smoothing: antialiased;
     font-family: sans-serif;
     background-color: rgba(255,255,255,0.8);
-    width: 228px;
-    height: 28px;
+
     padding: 5px 15px;
     border: none;
     float: left;
@@ -23,10 +21,20 @@ form.searchForm input.searchText {
     border-radius: 0;
 }
 
+.searchTextNormal {
+    font-size: 120%;
+    width: 228px;
+    height: 28px;
+}
+
+.searchTextLarge {
+    font-size: 200%;
+    width: 448px;
+    height: 48px;
+}
+
 form.searchForm input.searchSubmit {
     display: block;
-    height: 28px;
-    width: 30px;
     background: url("../img/search-icon.png");
     background-size: contain;
     float: left;
@@ -38,30 +46,49 @@ form.searchForm input.searchSubmit {
     border-radius: 0;
 }
 
-form.searchForm input.searchSubmit:hover{
+.searchButtonNormal {
+    height: 28px;
+    width: 30px;
+}
+
+.searchButtonLarge {
+    height: 48px;
+    width: 50px;
+}
+
+form.searchForm input.searchSubmit:hover {
     background-image: url("../img/search-icon-hover.png");
     background-size: contain;
 }
 
 form.searchForm {
-    margin: 13px 0px 10px 0px;
     padding: 0;
     border: 1px solid rgba(255,255,255,0.8);
+}
+
+.searchFormNormal {
+    margin: 13px 0 10px 0;
     width: 260px;
     height: 30px;
 }
 
-form.searchForm input.searchText::-webkit-input-placeholder   {
+.searchFormLarge {
+    margin: 75px auto 0;
+    width: 500px;
+    height: 50px;
+}
+
+form.searchForm input.searchText::-webkit-input-placeholder {
     color: #FFF;
     transition: all 0.2s ease;
 }
 
-form.searchForm input.searchText::-moz-placeholder    {
+form.searchForm input.searchText::-moz-placeholder {
     color: #FFF;
     transition: all 0.2s ease;
 }
 
-form.searchForm input.searchText:-ms-input-placeholder{
+form.searchForm input.searchText:-ms-input-placeholder {
     color: #FFF;
     transition: all 0.2s ease;
 }
