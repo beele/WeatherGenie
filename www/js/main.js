@@ -1,3 +1,6 @@
+/************************************************************
+ ***         Main javascript file for application         ***
+ ***********************************************************/
 //Init charts:
 Chart.defaults.global.scaleOverride = true;
 Chart.defaults.global.scaleSteps = 5;
@@ -9,58 +12,39 @@ Chart.defaults.global.scaleFontColor = "rgba(255,255,255,.7)";
 
 //Start angularJS.
 var app = angular.module('weatherGenie', []);
-var bgInterval;
 
+/**
+ * Use this as the entry point for the application.
+ * Executed when everything angular related has started!
+ */
 app.run(function($rootScope) {
-    //Get the user's GEOlocation.
+    convertIMGtoSVG();
     determineGeoLocation();
     //Loop through all the backgrounds. This will be stopped when a search has been done.
-    bgInterval = setInterval(toggleBackground, 10000);
-
-    $('img.svg').each(function(){
-        var $img = jQuery(this);
-        var imgID = $img.attr('id');
-        var imgClass = $img.attr('class');
-        var imgURL = $img.attr('src');
-
-        jQuery.get(imgURL, function(data) {
-            // Get the SVG tag, ignore the rest
-            var $svg = jQuery(data).find('svg');
-
-            // Add replaced image's ID to the new SVG
-            if(typeof imgID !== 'undefined') {
-                $svg = $svg.attr('id', imgID);
-            }
-            // Add replaced image's classes to the new SVG
-            if(typeof imgClass !== 'undefined') {
-                $svg = $svg.attr('class', imgClass+' replaced-svg');
-            }
-
-            // Remove any invalid XML tags as per http://validator.w3.org
-            $svg = $svg.removeAttr('xmlns:a');
-
-            // Replace image with new SVG
-            $img.replaceWith($svg);
-
-        }, 'xml');
-
-    });
+    $rootScope.bgInterval = setInterval(toggleBackground, 10000);
 });
 
+//TODO: Split up the code below into separate controllers!
 app.controller('weatherController', function($scope, $http) {
 
     $scope.initialSearch = function() {
-        $("#initialSearch").animate({bottom: 2000, opacity: 0, height: 50}, 1500, "swing", function complete() {
+        //TODO: Perhaps this can and should all be done with CSS animations?
+        //Perform some animations to go away from the initial screen.
+        $("#initialSearch").animate({bottom: 1500, opacity: 0, height: 50}, 1500, "swing", function complete() {
             $(this).toggleClass("hidden");
         });
 
-        $("#headerWrapper").toggleClass("hidden");
-        $("#headerWrapper").fadeTo(2000, 1);
-        $("#content").toggleClass("hidden");
-        $("#content").fadeTo(2000, 1);
-        $("#footer").toggleClass("hidden");
-        $("#footer").fadeTo(2000, 1);
+        var item = $("#headerWrapper");
+        item.toggleClass("hidden");
+        item.fadeTo(2000, 1);
+        item = $("#content");
+        item.toggleClass("hidden");
+        item.fadeTo(2000, 1);
+        item = $("#footer");
+        item.toggleClass("hidden");
+        item.fadeTo(2000, 1);
 
+        //Perform the actual search!
         $scope.search();
     };
 
@@ -85,9 +69,11 @@ app.controller('weatherController', function($scope, $http) {
                 data.sunriseString = unixTimeToTimeString(data.sunrise);
                 data.sunsetString = unixTimeToTimeString(data.sunset);
 
-                if(bgInterval !== null) {
-                    clearInterval(bgInterval);
-                    bgInterval = null;
+                var interval = $scope.bgInterval;
+                if(interval !== null) {
+                    clearInterval(interval);
+                    interval = null;
+                    $scope.bgInterval = null;
                 }
 
                 determineBackgroundImage(data);

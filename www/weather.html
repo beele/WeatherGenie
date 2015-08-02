@@ -43,9 +43,11 @@
 
         <header id="headerWrapper" class="transparent hidden">
             <div id="headerContent">
-                <div id="headerTitle">
-                    <h1>Weather Genie</h1>
-                </div>
+                <a href="javascript:window.location.reload(true)">
+                    <div id="headerTitle">
+                        <h1>Weather Genie</h1>
+                    </div>
+                </a>
                 <div id="headerSearch">
                     <form class="searchForm searchFormNormal" action="" ng-submit="search()">
                         <input type="text" placeholder="Search for city" name="search" spellcheck="false" class="searchText searchTextNormal" ng-model="city"/>

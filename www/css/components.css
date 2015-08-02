@@ -97,8 +97,6 @@ form.searchForm input.searchText:focus::-webkit-input-placeholder {color:transpa
 form.searchForm input.searchText:focus::-moz-placeholder {color:transparent;}
 form.searchForm input.searchText:focus:-ms-input-placeholder {color:transparent;}
 
-
-
 /******************************************
 *** CSS for general weather information ***
 ******************************************/
@@ -384,6 +382,7 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {color:transparent;
 *** CSS for weather conditions ***
 *********************************/
 #lightning {
+
 }
 
 #lightning img {

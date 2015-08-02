@@ -59,6 +59,14 @@ article {
     margin: 0 auto;
 }
 
+.transparent {
+    opacity:0;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
 /******************************
 ***   CSS for page header   ***
 ******************************/
@@ -119,6 +127,36 @@ article {
     }
 }
 
+/*********************************
+***   CSS for welcome search   ***
+*********************************/
+#initialSearch {
+    position: absolute;
+    margin: auto;
+
+    padding: 20px;
+    height: 400px;
+
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+
+    background-color: rgba(20,20,20,0.6);
+}
+
+#initialSearchTitle {
+    margin: 0 auto;
+    width: 500px;
+
+    font-size: 530%;
+}
+
+#initialImages {
+    margin: 80px auto;
+    width: 500px;
+}
+
 /******************************
 ***   CSS for page footer   ***
 ******************************/
@@ -168,41 +206,9 @@ article {
     transition: opacity 1s ease-in-out;
 }
 
-#initialSearch {
-    position: absolute;
-    margin: auto;
-
-    padding: 20px;
-    height: 400px;
-
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-
-    background-color: rgba(20,20,20,0.6);
-}
-
-#initialSearchTitle {
-    margin: 0 auto;
-    width: 500px;
-
-    font-size: 530%;
-}
-
-#initialImages {
-    margin: 80px auto;
-    width: 500px;
-}
-
-.transparent {
-    opacity:0;
-}
-
-.hidden {
-    visibility: hidden;
-}
-
+/*******************************
+*** CSS for SVG based images ***
+*******************************/
 .svg {
     fill: white;
 }
