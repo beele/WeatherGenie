@@ -109,7 +109,7 @@ function retrieveWeather(request, response) {
             resp.end();
         };
 
-        buienradar.geographicConditionForecast(data.location, callback2);
+        buienradar.geographicConditionForecast(data.placeName, callback2);
     };
 
     var pieces = request.url.split("/");
@@ -129,6 +129,7 @@ function showWeatherCache(request, response) {
     openweathermap.showWeatherCache(callback);
 }
 
+//Function exports:
 exports.retrieveWeather     = retrieveWeather;
 exports.showWeatherCache    = showWeatherCache;
 exports.showRainMaps        = showRainMaps;

@@ -60,9 +60,9 @@ function tryAndServeFile(response, fullPath) {
 
                     displayError(response, 500, "Error while serving content!");
                 } else {
-                    logger.INFO("Serving: " + fullPath);
+                    logger.DEBUG("Serving: " + fullPath);
                     var cntType = mime.lookup(fullPath);
-                    logger.INFO("Of type: " + cntType);
+                    logger.DEBUG("Of type: " + cntType);
 
                     //Present the file.
                     response.setHeader("Content-Type", cntType);
@@ -115,4 +115,5 @@ function displayError(response, type, message, pathName) {
     response.end();
 }
 
+//Function exports:
 exports.route = route;

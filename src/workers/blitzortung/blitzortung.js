@@ -42,7 +42,7 @@ function setupBlitzortungWebSocket() {
 
         //Check to see if the strike was in the radius (300km) of the geographic center of belgium.
         //Only send the strike when in range.
-        if(getDistanceFromLatLonInKm(50.6404438,4.66775, data.lat, data.lon) <= 300) {
+        if(getDistanceBetweenTwoLatLonPoints(50.6404438,4.66775, data.lat, data.lon) <= 300) {
             var payload = {};
             payload.origin = cluster.worker.id;
             payload.originFunc = "lightningDataReceived";
@@ -61,7 +61,7 @@ function setupBlitzortungWebSocket() {
 function onWebsocketFailure(data, flags) {
     logger.ERROR("Websocket failure: " + JSON.stringify(data) + " - " + JSON.stringify(flags));
 
-    //The retrycount acts as the count for retries and as the port number.
+    //The retryCount acts as the count for retries and as the port number.
     retryCount++;
     setupBlitzortungWebSocket();
 }
@@ -99,8 +99,11 @@ function lightningDataMessageHandler(msg) {
         var strikes = [];
         for(var i = 0 ; i < msg.value.length ; i++) {
             var strike = msg.value[i];
-            var dist = getDistanceFromLatLonInKm(oLat, oLon, strike.lat, strike.lon);
-            strikes.push({timestamp: strike.timestamp, distance: dist});
+            var dist = getDistanceBetweenTwoLatLonPoints(oLat, oLon, strike.lat, strike.lon);
+            strikes.push({
+                timestamp: new Date(Math.floor(strike.timestamp/1000000)),
+                distance: dist
+            });
         }
 
         callbacks[msg.originalParams.callbackId]({lat: oLat, lon: oLon, data: strikes});
@@ -135,7 +138,16 @@ function showLightingCacheMessageHandler(msg) {
  *                                  Internal blitzortung functions
  * ------------------------------------------------------------------------------------------------
  ------------------------------------------------------------------------------------------------*/
-function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+/**
+ * Calculates the distance in km between to given points in lat/lon
+ *
+ * @param lat1 Latitude of point 1.
+ * @param lon1 Longitude of point 1.
+ * @param lat2 Latitude of point 2.
+ * @param lon2 Latitude of point 2.
+ * @returns {number} The distance between the two points in kilometers.
+ */
+function getDistanceBetweenTwoLatLonPoints(lat1, lon1, lat2, lon2) {
     var R = 6371;
     var dLat = deg2rad(lat2-lat1);
     var dLon = deg2rad(lon2-lon1);
@@ -148,14 +160,22 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
     return d;
 }
 
+/**
+ * Converts degrees to radians.
+ *
+ * @param deg The number of degrees to convert.
+ * @returns {number} The amount of radians.
+ */
 function deg2rad(deg) {
     return deg * (Math.PI/180)
 }
 
+//Function exports:
 exports.setupLightningCache             = setupLightningCache;
 exports.setupBlitzortungWebSocket       = setupBlitzortungWebSocket;
-
 exports.lightningData                   = lightningData;
-exports.lightningDataMessageHandler     = lightningDataMessageHandler;
 exports.showLightingCache               = showLightingCache;
+
+//Message handlers:
+exports.lightningDataMessageHandler     = lightningDataMessageHandler;
 exports.showLightingCacheMessageHandler = showLightingCacheMessageHandler;
