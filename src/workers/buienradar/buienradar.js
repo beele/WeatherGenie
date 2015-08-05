@@ -120,11 +120,18 @@ function geographicConditionForecast(city, callback) {
 *                                    Main buienradar functions
 * ------------------------------------------------------------------------------------------------
  ------------------------------------------------------------------------------------------------*/
+/**
+ * Retrieves the location id for the given city.
+ * Will call the callback with null as data if no location id can be found or an error occurred.
+ *
+ * @param city The city for which the location id should be found.
+ * @param callback The callback function to execute after the data has been received and processed.
+ */
 function retrieveLocationIdForCity(city, callback) {
     var options = {
         host: 'www.buienradar.be',
         port: '80',
-        path: '/json/Places?term=' + city,
+        path: '/json/Places?term=' + encodeURI(city),
         method: 'POST'
     };
 
@@ -136,23 +143,32 @@ function retrieveLocationIdForCity(city, callback) {
             data += chunk;
         });
         res.on('end', function() {
-            logger.DEBUG(data);
-            data = JSON.parse(data);
+            if(this.statusCode !== 200) {
+                logger.ERROR("Cannot find location id for: " + city);
+                callback(null);
+            } else {
+                logger.DEBUG(data);
+                data = JSON.parse(data);
 
-            //Check for errors in the data that has been returned.
-            if (data.cod === "404") {
-                logger.ERROR(data.message);
-                callback(info);
-                return;
-            }
-
-            if(data.length > 0) {
-                callback(data[0].id);
+                if(data.length !== undefined && data.length > 0) {
+                    callback(data[0].id);
+                } else {
+                    logger.ERROR("Cannot find location id for: " + city);
+                    callback(null);
+                }
             }
         });
     }).end();
 }
 
+/**
+ * Retrieves the daily forecasts for the given location id.
+ * Will call the callback with null as data if no forecast was found or an error occurred.
+ * Forecasts are limited to the 5 first days!
+ *
+ * @param locationId The location id of the city for which we want the daily forecasts.
+ * @param callback The callback function to execute after the data has been received and processed.
+ */
 function retrieveDailyForecast(locationId, callback) {
     var options = {
         host: 'www.buienradar.be',
@@ -169,19 +185,21 @@ function retrieveDailyForecast(locationId, callback) {
             data += chunk;
         });
         res.on('end', function() {
-            logger.DEBUG(data);
-            data = JSON.parse(data);
+            if(this.statusCode !== 200) {
+                logger.ERROR("No daily forecast found for city with id: " + locationId);
+                callback(null);
+            } else {
+                logger.DEBUG(data);
+                data = JSON.parse(data);
 
-            //Check for errors in the data that has been returned.
-            if (data.cod === "404") {
-                logger.ERROR(data.message);
-                callback(info);
-                return;
+                if(data.days !== undefined && data.days.length > 0) {
+                    //Only return the five first days!
+                    callback(data.days.splice(0, 5));
+                } else {
+                    logger.ERROR("No daily forecast found for city with id: " + locationId);
+                    callback(null);
+                }
             }
-
-            //TODO: Clean up data and only return 5 days instead of 14!
-
-            callback(data.days);
         });
     }).end();
 }
@@ -427,13 +445,13 @@ function isRaining(R, G, B) {
 }
 
 //Function exports:
-exports.geographicPrediction = geographicPrediction;
-exports.geographicPredictionForBlock = geographicPredictionForBlock;
-exports.convertImageToRainMap = convertImageToRainMap;
-exports.showRainMaps = showRainMaps;
-exports.geographicConditionForecast = geographicConditionForecast;
+exports.geographicPrediction            = geographicPrediction;
+exports.geographicPredictionForBlock    = geographicPredictionForBlock;
+exports.convertImageToRainMap           = convertImageToRainMap;
+exports.showRainMaps                    = showRainMaps;
+exports.geographicConditionForecast     = geographicConditionForecast;
 
 //Message handlers:
-exports.geographicPredictionMessageHandler = geographicPredictionMessageHandler;
-exports.geographicPredictionForBlockMessageHandler = geographicPredictionForBlockMessageHandler;
-exports.showRainMapsMessageHandler = showRainMapsMessageHandler;
+exports.geographicPredictionMessageHandler          = geographicPredictionMessageHandler;
+exports.geographicPredictionForBlockMessageHandler  = geographicPredictionForBlockMessageHandler;
+exports.showRainMapsMessageHandler                  = showRainMapsMessageHandler;
