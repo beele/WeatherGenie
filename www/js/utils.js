@@ -1,15 +1,44 @@
-/* Contains util methods*/
-
-//Evil global vars.
-//TODO: clean up.
+/************************************************************
+ ***                  Contains util methods               ***
+ ***********************************************************/
+//TODO: Remove evil global vars.
 var bgCounter = 1;
 var bgTotal = 9;
-var bgInterval = null;
 
 var lat = null;
 var lon = null;
 
 var styleSheetSelection = null;
+
+/**
+ * Converts all img tags with the class svg to real svg tags.
+ * The main advantage of this is that we can style the svgs.
+ */
+function convertIMGtoSVG() {
+    $('img.svg').each(function(){
+        var $img = $(this);
+        var imgID = $img.attr('id');
+        var imgClass = $img.attr('class');
+        var imgURL = $img.attr('src');
+
+        $.get(imgURL, function(data) {
+            // Get the SVG tag, ignore the rest
+            var $svg = $(data).find('svg');
+            // Add replaced image's ID to the new SVG
+            if(typeof imgID !== 'undefined') {
+                $svg = $svg.attr('id', imgID);
+            }
+            // Add replaced image's classes to the new SVG
+            if(typeof imgClass !== 'undefined') {
+                $svg = $svg.attr('class', imgClass+' replaced-svg');
+            }
+            // Remove any invalid XML tags as per http://validator.w3.org
+            $svg = $svg.removeAttr('xmlns:a');
+            // Replace image with new SVG
+            $img.replaceWith($svg);
+        }, 'xml');
+    });
+}
 
 /**
  * Determines the user's GEO location.
@@ -315,6 +344,10 @@ function deleteFromRules(rules, ruleToDelete) {
     }
 }
 
+/**
+ * Blocks the UI for the whole page, This will prevent the user from interacting with the page.
+ * @param message The message to show to the user.
+ */
 function blockUI(message) {
     if(message === null || message === undefined) {
         message = "Loading weather data...";
@@ -333,13 +366,20 @@ function blockUI(message) {
     });
 }
 
-function unblockUI() {
-    $.unblockUI();
-}
-
-function unblockWithError(message) {
-    message += "<br/>Click to close this message!";
+/**
+ * Blocks the UI with a given error message. The user can dismiss the error message by clicking anywhere on the page!
+ * @param message The message to show to the user.
+ */
+function blockUIWithDismissableError(message) {
+    message = "An error occurred: " + message + "<br/>Click to close this message!";
 
     $(".blockMsg").html(message);
-    $(".blockOverlay").click(unblockUI);
+    $(".body").click(unblockUI);
+}
+
+/**
+ * This unblocks the UI, allowing the user to interact with it again.
+ */
+function unblockUI() {
+    $.unblockUI();
 }
