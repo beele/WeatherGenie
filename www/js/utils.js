@@ -367,19 +367,19 @@ function blockUI(message) {
 }
 
 /**
+ * Blocks the UI with a given error message. The user can dismiss the error message by clicking anywhere on the page!
+ * @param message The message to show to the user.
+ */
+function blockUIWithDismissableError(message) {
+    message = "An error occurred: " + message + "<br/>Click to close this message!";
+
+    $(".blockMsg").html(message);
+    $(".body").click(unblockUI);
+}
+
+/**
  * This unblocks the UI, allowing the user to interact with it again.
  */
 function unblockUI() {
     $.unblockUI();
-}
-
-/**
- * Unblocks the UI, but only after the user has acknowledged the given error message.
- * @param message The message to show to the user.
- */
-function unblockWithError(message) {
-    message += "<br/>Click to close this message!";
-
-    $(".blockMsg").html(message);
-    $(".blockOverlay").click(unblockUI);
 }

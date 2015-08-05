@@ -61,7 +61,7 @@ app.controller('weatherController', function($scope, $http) {
                 //Check for errors from the backend (City not found,...).
                 if(data.error !== null) {
                     $scope.weatherData = null;
-                    unblockWithError(data.error);
+                    blockUIWithDismissableError(data.error);
                     return;
                 }
 
@@ -89,7 +89,7 @@ app.controller('weatherController', function($scope, $http) {
                 unblockUI();
             }).
             error(function(data, status, headers, config) {
-                unblockWithError(status);
+                blockUIWithDismissableError(status);
             });
     };
 
