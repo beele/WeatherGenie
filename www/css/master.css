@@ -2,7 +2,7 @@
 ***  CSS for page content   ***
 ******************************/
 html {
-    font-family: 'Lato', sans-serif!important;
+    font-family: 'Lato', sans-serif !important;
     color: #fffaeb;
 
     height: 100%;
@@ -22,7 +22,8 @@ body {
 
 h1, h2, h3, h4, h5 {
     color: #fffaeb;
-    margin: 0 0 0 0;!important;
+    margin: 0 0 0 0;
+!important;
 }
 
 .topSpacing {
@@ -37,7 +38,7 @@ article {
     height: 250px;
     padding: 15px;
 
-    background-color: rgba(20,20,20,0.4);
+    background-color: rgba(20, 20, 20, 0.4);
 }
 
 .animationDiv {
@@ -60,7 +61,7 @@ article {
 }
 
 .transparent {
-    opacity:0;
+    opacity: 0;
 }
 
 .hidden {
@@ -76,7 +77,7 @@ article {
 }
 
 #headerTitle h1 {
-    margin: 0!important;
+    margin: 0 !important;
 }
 
 #headerSearch {
@@ -84,14 +85,14 @@ article {
 }
 
 #headerWrapper {
-    background-color: rgba(20,20,20,0.8);
+    background-color: rgba(20, 20, 20, 0.8);
 
-    width:100%;
-    height:60px;
+    width: 100%;
+    height: 60px;
 
-    top:0;
-    left:0;
-    position:fixed;
+    top: 0;
+    left: 0;
+    position: fixed;
 
     z-index: 1000;
 }
@@ -101,29 +102,32 @@ article {
     padding-left: 15px;
     padding-right: 15px;
 
-    line-height:60px;
-    text-align:center;
-    margin:0 auto;
+    line-height: 60px;
+    text-align: center;
+    margin: 0 auto;
 }
 
-@media(max-width:767px){
-    #headerContent{
-        width:600px;
+@media (max-width: 767px) {
+    #headerContent {
+        width: 600px;
     }
 }
-@media(min-width:768px){
-    #headerContent{
-        width:767px;
+
+@media (min-width: 768px) {
+    #headerContent {
+        width: 767px;
     }
 }
-@media(min-width:992px){
-    #headerContent{
-        width:960px;
+
+@media (min-width: 992px) {
+    #headerContent {
+        width: 960px;
     }
 }
-@media(min-width:1200px){
-    #headerContent{
-        width:1200px;
+
+@media (min-width: 1200px) {
+    #headerContent {
+        width: 1200px;
     }
 }
 
@@ -142,34 +146,77 @@ article {
     top: 0;
     bottom: 0;
 
-    background-color: rgba(20,20,20,0.6);
+    background-color: rgba(20, 20, 20, 0.6);
+}
+
+@media (max-width: 375px) {
+    #initialSearchTitle {
+        width: 350px;
+        font-size: 400%;
+        text-align: center;
+    }
+
+    #initialImages {
+        margin: 50px auto;
+        width: 350px;
+    }
+
+    .svgFirst {
+        margin-right: 15px;
+    }
+
+    .svgInbetween {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+    .svgLast {
+        margin-left: 0;
+    }
+}
+
+@media (min-width: 550px) {
+    #initialSearchTitle {
+        width: 500px;
+        font-size: 520%;
+    }
+
+    #initialImages {
+        margin: 80px auto;
+        width: 500px;
+    }
+
+    .svgFirst {
+        margin-right: 40px;
+    }
+
+    .svgInbetween {
+        margin-left: 25px;
+        margin-right: 25px;
+    }
+
+    .svgLast {
+        margin-left: 40px;
+    }
 }
 
 #initialSearchTitle {
     margin: 0 auto;
-    width: 500px;
-
-    font-size: 520%;
-}
-
-#initialImages {
-    margin: 80px auto;
-    width: 500px;
 }
 
 /******************************
 ***   CSS for page footer   ***
 ******************************/
 #footer {
-    background-color: rgba(20,20,20,0.8);
+    background-color: rgba(20, 20, 20, 0.8);
 
-    width:100%;
-    margin:0 auto;
+    width: 100%;
+    margin: 0 auto;
     padding-left: 15px;
     padding-right: 15px;
 
-    line-height:30px;
-    text-align:center;
+    line-height: 30px;
+    text-align: center;
 }
 
 /******************************
@@ -191,8 +238,8 @@ article {
     width: auto;
     height: 100%;
 
-    left:0;
-    position:absolute;
+    left: 0;
+    position: absolute;
 
     transition: opacity 1s ease-in-out;
 }
@@ -226,17 +273,4 @@ article {
 .svgSquare100 {
     width: 100px;
     height: 100px;
-}
-
-.svgFirst {
-    margin-right: 40px;
-}
-
-.svgInbetween {
-    margin-left: 25px;
-    margin-right: 25px;
-}
-
-.svgLast {
-    margin-left: 40px;
 }
