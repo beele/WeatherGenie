@@ -149,7 +149,7 @@ article {
     background-color: rgba(20, 20, 20, 0.6);
 }
 
-@media (max-width: 375px) {
+@media (max-width: 550px) {
     #initialSearchTitle {
         width: 350px;
         font-size: 400%;

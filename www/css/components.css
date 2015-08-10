@@ -26,7 +26,7 @@ form.searchForm input.searchText {
     height: 28px;
 }
 
-@media (max-width: 375px) {
+@media (max-width: 550px) {
     .searchTextLarge {
         width: 273px;
         font-size: 165%;
