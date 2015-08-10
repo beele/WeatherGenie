@@ -9,7 +9,6 @@ var logger = require("../logging/logger").makeLogger("INTERV");
 function startWorker() {
     //Set up the blitzortung service.
     setupBlitzortung();
-
     //Init buienradar image data the first time.
     refreshBuienradarImages();
 
@@ -17,7 +16,9 @@ function startWorker() {
     setInterval(function() {
         logger.INFO("Refreshing data (8 minutes elapsed)");
 
-        logger.DEBUG("Retrieving and processing buienradar images");
+        //The blitzortung websocket has a tendency of closing a lot. We will attempt a reconnection every 8 minutes.
+        //If the connection is still open, nothing happens (the blitzortung service will also try to reconnect itself a few times)
+        setupBlitzortung();
         refreshBuienradarImages();
     }, 480000 );
 
