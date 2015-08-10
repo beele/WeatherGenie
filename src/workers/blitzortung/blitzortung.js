@@ -22,7 +22,10 @@ function setupLightningCache() {
 
 function setupBlitzortungWebSocket() {
     //Safety check.
-    if(retryCount > 5) {
+    if(retryCount === 0 && ws !== null) {
+        logger.ERROR("A connection to blitzortung is already open!");
+        return;
+    } else if(retryCount > 5) {
         logger.ERROR("Cannot (re)conntect to blitzortung websocket!");
         return;
     }
@@ -49,7 +52,7 @@ function setupBlitzortungWebSocket() {
             payload.target = "broker";
             payload.targetFunc = "addToCache";
             payload.cacheName = "lightning";
-            payload.value = {timestamp: data.time, lat: data.lat, lon: data.lon};
+            payload.value = {timestamp: new Date(Math.floor(data.time/1000000)), lat: data.lat, lon: data.lon};
             process.send(payload);
         }
     });
@@ -101,7 +104,7 @@ function lightningDataMessageHandler(msg) {
             var strike = msg.value[i];
             var dist = getDistanceBetweenTwoLatLonPoints(oLat, oLon, strike.lat, strike.lon);
             strikes.push({
-                timestamp: new Date(Math.floor(strike.timestamp/1000000)),
+                timestamp: strike.timestamp,
                 distance: dist
             });
         }
