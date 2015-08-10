@@ -2,20 +2,19 @@
 *** CSS for search box ***
 *************************/
 input {
-    outline: 0!important;
+    outline: 0 !important;
 }
 
 form.searchForm input.searchText {
     color: #8D8D8D;
     -webkit-font-smoothing: antialiased;
     font-family: sans-serif;
-    background-color: rgba(255,255,255,0.8);
-
+    background-color: rgba(255, 255, 255, 0.8);
     padding: 5px 15px;
     border: none;
     float: left;
-    line-height: normal;!important;
-
+    line-height: normal;
+!important;
     -webkit-appearance: none;
     display: block;
     border-radius: 0;
@@ -27,10 +26,36 @@ form.searchForm input.searchText {
     height: 28px;
 }
 
+@media (max-width: 375px) {
+    .searchTextLarge {
+        width: 273px;
+        font-size: 165%;
+    }
+
+    .searchFormLarge {
+        margin: 50px auto 0;
+        width: 325px;
+    }
+}
+
+@media (min-width: 550px) {
+    .searchTextLarge {
+        width: 448px;
+        font-size: 200%;
+    }
+
+    .searchFormLarge {
+        margin: 75px auto 0;
+        width: 500px;
+    }
+}
+
 .searchTextLarge {
-    font-size: 200%;
-    width: 448px;
     height: 48px;
+}
+
+.searchFormLarge {
+    height: 50px;
 }
 
 form.searchForm input.searchSubmit {
@@ -63,19 +88,13 @@ form.searchForm input.searchSubmit:hover {
 
 form.searchForm {
     padding: 0;
-    border: 1px solid rgba(255,255,255,0.8);
+    border: 1px solid rgba(255, 255, 255, 0.8);
 }
 
 .searchFormNormal {
     margin: 13px 0 10px 0;
     width: 260px;
     height: 30px;
-}
-
-.searchFormLarge {
-    margin: 75px auto 0;
-    width: 500px;
-    height: 50px;
 }
 
 form.searchForm input.searchText::-webkit-input-placeholder {
@@ -93,9 +112,17 @@ form.searchForm input.searchText:-ms-input-placeholder {
     transition: all 0.2s ease;
 }
 
-form.searchForm input.searchText:focus::-webkit-input-placeholder {color:transparent;}
-form.searchForm input.searchText:focus::-moz-placeholder {color:transparent;}
-form.searchForm input.searchText:focus:-ms-input-placeholder {color:transparent;}
+form.searchForm input.searchText:focus::-webkit-input-placeholder {
+    color: transparent;
+}
+
+form.searchForm input.searchText:focus::-moz-placeholder {
+    color: transparent;
+}
+
+form.searchForm input.searchText:focus:-ms-input-placeholder {
+    color: transparent;
+}
 
 /******************************************
 *** CSS for general weather information ***
@@ -112,28 +139,38 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {color:transparent;
 *** CSS for sun animation ***
 ****************************/
 @-webkit-keyframes sunAnimation {
-    from { -webkit-transform:rotate(270deg); }
-    to { -webkit-transform:rotate(271deg); }
+    from {
+        -webkit-transform: rotate(270deg);
+    }
+    to {
+        -webkit-transform: rotate(271deg);
+    }
 }
 
 @keyframes sunAnimation {
-    from { transform:rotate(270deg); }
-    to { transform:rotate(271deg); }
+    from {
+        transform: rotate(270deg);
+    }
+    to {
+        transform: rotate(271deg);
+    }
 }
 
 #sunContainer {
     overflow: hidden;
 }
-@media(max-width:767px){
-    #sunContainer{
+
+@media (max-width: 767px) {
+    #sunContainer {
         /*250 sun container width + 50 to prevent sun being cut of*/
         width: 300px;
         /*125 pixels height + 125 pixels for margin*/
         height: 250px;
     }
 }
-@media(min-width:767px){
-    #sunContainer{
+
+@media (min-width: 767px) {
+    #sunContainer {
         /*400 sun container width + 50 to prevent sun being cut of*/
         width: 450px;
         /*200 pixels height + 50 pixels for margin*/
@@ -147,21 +184,23 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {color:transparent;
     border: 3px dotted #CCC;
     border-radius: 50%;
 }
-@media(max-width:767px){
-    #sunPath{
+
+@media (max-width: 767px) {
+    #sunPath {
         margin-top: 125px;
         margin-left: 25px;
-        width:250px;
-        height:250px;
+        width: 250px;
+        height: 250px;
         /*clip: rect(0px, 250px, 125px, 0px);*/
     }
 }
-@media(min-width:767px){
-    #sunPath{
+
+@media (min-width: 767px) {
+    #sunPath {
         margin-top: 50px;
         margin-left: 20px;
-        width:400px;
-        height:400px;
+        width: 400px;
+        height: 400px;
         /*clip: rect(0px, 400px, 200px, 0px);*/
     }
 }
@@ -173,18 +212,20 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {color:transparent;
     float: left;
     visibility: hidden;
 }
-@media(max-width:767px){
-    #sunWrapper{
+
+@media (max-width: 767px) {
+    #sunWrapper {
         margin-left: -237px;
         /*12 for correction of sun 125 for margin*/
         margin-top: 137px;
 
-        width:225px;
-        height:225px;
+        width: 225px;
+        height: 225px;
     }
 }
-@media(min-width:767px){
-    #sunWrapper{
+
+@media (min-width: 767px) {
+    #sunWrapper {
         margin-left: -367px;
         /*30 for correction of sun 50 for margin*/
         margin-top: 80px;
@@ -195,16 +236,16 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {color:transparent;
 }
 
 #sun {
-    width:50px;
-    height:50px;
-    background:orange;
-    border-radius:50%;
+    width: 50px;
+    height: 50px;
+    background: orange;
+    border-radius: 50%;
 
     visibility: inherit;
 }
 
 .animateSun {
-    visibility: visible!important;
+    visibility: visible !important;
 
     -webkit-animation-duration: 3s;
     -webkit-animation-timing-function: ease-in-out;
@@ -232,13 +273,21 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {color:transparent;
 *** CSS for wind direction animation ***
 ***************************************/
 @-webkit-keyframes windDirAnimation {
-    from { -webkit-transform:rotate(0deg); }
-    to { -webkit-transform:rotate(0deg); }
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(0deg);
+    }
 }
 
 @keyframes windDirAnimation {
-    from { transform:rotate(0deg); }
-    to { transform:rotate(0deg); }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(0deg);
+    }
 }
 
 .animateWindDir {
@@ -280,13 +329,21 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {color:transparent;
 }
 
 @-webkit-keyframes windSpeedAnimation {
-    from { -webkit-transform:rotate(0deg); }
-    to { -webkit-transform:rotate(360deg); }
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+    }
 }
 
 @keyframes windSpeedAnimation {
-    from { transform:rotate(0deg); }
-    to { transform:rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 #windWrapper {
@@ -375,8 +432,6 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {color:transparent;
     animation-iteration-count: infinite;
     animation-name: windSpeedAnimation;
 }
-
-
 
 /*********************************
 *** CSS for weather conditions ***
