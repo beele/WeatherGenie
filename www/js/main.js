@@ -45,6 +45,8 @@ var weatherGenie = angular.module('weatherGenie', [])
         };
 
         $scope.search = function () {
+            hideSoftKeyboard();
+
             var clback = function onCityInformationRetrieved() {
                 $scope.retrieveRainInformation($scope.weatherData.latitude, $scope.weatherData.longitude);
                 $scope.retrieveLightningInformation($scope.weatherData.latitude, $scope.weatherData.longitude);
@@ -142,7 +144,7 @@ var weatherGenie = angular.module('weatherGenie', [])
         };
 
         $scope.retrieveLightningInformation = function (lat, lon) {
-            $http.get('weather/rain/' + lat + "&" + lon).then(
+            $http.get('weather/lightning/' + lat + "&" + lon).then(
                 function onResponse(response) {
                     var data = response.data;
 
