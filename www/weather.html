@@ -61,10 +61,18 @@
             </form>
 
             <div id="initialImages">
-                <img src="img/svg/sun.svg"          class="svg svgSquare75 svgFirst"/>
-                <img src="img/svg/rain.svg"         class="svg svgSquare75 svgInbetween"/>
-                <img src="img/svg/lightning.svg"    class="svg svgSquare75 svgInbetween"/>
-                <img src="img/svg/temp.svg"         class="svg svgSquare75 svgLast"/>
+                <svg class="svgFirst" height="75" width="75" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                    <image x="0" y="0" height="75" width="75" xlink:href="img/svg/sun.svg"></image>
+                </svg>
+                <svg class="svgInbetween" height="75" width="75" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                    <image x="0" y="0" height="75" width="75" xlink:href="img/svg/rain.svg"></image>
+                </svg>
+                <svg class="svgInbetween" height="75" width="75" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                    <image x="0" y="0" height="75" width="75" xlink:href="img/svg/lightning.svg"></image>
+                </svg>
+                <svg class="svgLast" height="75" width="75" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                    <image x="0" y="0" height="75" width="75" xlink:href="img/svg/temp.svg"></image>
+                </svg>
             </div>
         </div>
 
@@ -143,22 +151,28 @@
                             </div>
                         </div>
 
-                        <div id="sunUpContainer">
-                            <img src="img/svg/sunrise.svg" class="svg"/>
-                            <h4>{{ weatherData.sunriseString }}</h4>
+                        <div id="sunUpContainer" class="centeredText">
+                            <svg id="sunUpSVG" height="50" width="50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                                <image x="0" y="0" height="50" width="50" xlink:href="img/svg/sunrise.svg"></image>
+                            </svg>
+                            <h4 class="centeredText">{{ weatherData.sunriseString }}</h4>
                         </div>
-                        <div id="sunDownContainer">
-                            <img src="img/svg/sunset.svg" class="svg"/>
-                            <h4>{{ weatherData.sunsetString }}</h4>
+                        <div id="sunDownContainer" class="centeredText">
+                            <svg id="sunDownSVG" height="50" width="50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                                <image x="0" y="0" height="50" width="50" xlink:href="img/svg/sunset.svg"></image>
+                            </svg>
+                            <h4 class="centeredText">{{ weatherData.sunsetString }}</h4>
                         </div>
                     </div>
                 </article>
                 <article class="col-xs-12 col-md-6 bottomSpacing">
                     <div class="animationDiv">
 
-                        <div id="windDirectionContainer">
-                            <img id="windDirectionSVG" src="img/svg/compass.svg" class="svg"/>
-                            <h4>{{ weatherData.avgWindDirectionCardinal }}</h4>
+                        <div id="windDirectionContainer" class="centeredText">
+                            <svg id="windDirectionSVG" height="50" width="50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                                <image x="0" y="0" height="50" width="50" xlink:href="img/svg/compass.svg"></image>
+                            </svg>
+                            <h4 class="centeredText">{{ weatherData.avgWindDirectionCardinal }}</h4>
                         </div>
 
                         <div id="compassWrapper">
@@ -166,9 +180,11 @@
                             <div id="needle"></div>
                         </div>
 
-                        <div id="windSpeedContainer">
-                            <img id="windSpeedSVG" src="img/svg/windspeed.svg" class="svg"/>
-                            <h4>{{ (weatherData.avgWindSpeed * 3.6) | number:0 }} km/h</h4>
+                        <div id="windSpeedContainer" class="centeredText">
+                            <svg id="windSpeedSVG" height="50" width="50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                                <image x="0" y="0" height="50" width="50" xlink:href="img/svg/windspeed.svg"></image>
+                            </svg>
+                            <h4 class="centeredText">{{ (weatherData.avgWindSpeed * 3.6) | number:0 }} km/h</h4>
                         </div>
 
                         <div id="windWrapper">

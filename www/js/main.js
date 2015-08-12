@@ -18,8 +18,7 @@ var weatherGenie = angular.module('weatherGenie', [])
     .controller('weatherController', function ($scope, $http, $animate) {
 
         //TODO: Split up the code below into separate controllers!
-
-        convertIMGtoSVG();
+        
         //determineGeoLocation();
         //Loop through all the backgrounds. This will be stopped when a search has been done.
         $scope.bgInterval = setInterval(toggleBackground, 10000);

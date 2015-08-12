@@ -263,9 +263,10 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
 #compassWrapper {
     position: absolute;
     margin-top: 100px;
-    margin-left: 60px;
+    margin-left: 67px;
 
     transform: scale(0.8);
+    -webkit-transform: scale(0.8);
 }
 
 #compass {
@@ -312,6 +313,7 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
     margin-left: 280px;
 
     transform: scale(0.8);
+    -webkit-transform: scale(0.8);
 }
 
 #windPost {
@@ -342,18 +344,17 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
 }
 
 #windDirectionSVG {
-    transform: scale(1.25);
-    margin-bottom: 10px;
+    
 }
 
 #windSpeedContainer {
     position: absolute;
+    margin-top: 10px;
     margin-left: 326px;
 }
 
 #windSpeedSVG {
-    transform: scale(0.65);
-    margin-bottom: -10px;
+
 }
 
 .windSlow {
@@ -407,6 +408,7 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
 @media (max-width: 767px) {
     #sunContainer {
         transform: scale(0.7);
+        -webkit-transform: scale(0.7);
         margin-top: 37px;
         margin-left: -50px;
 
