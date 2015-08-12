@@ -22,12 +22,20 @@
         <link href='http://fonts.googleapis.com/css?family=Lato:400' rel='stylesheet' type='text/css' />
 
         <!-- Local stylesheets -->
-        <link href="css/lib/bootstrap.min.css"  rel="stylesheet" />
-        <link href="css/lib/lightbox.css"       rel="stylesheet" media="screen" />
+        <!-- TODO: CDN fallback to local files -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.1/css/lightbox.min.css" rel="stylesheet" />
+
+        <!--<link href="css/lib/bootstrap.min.css"  rel="stylesheet" />
+        <link href="css/lib/lightbox.css"       rel="stylesheet" media="screen" />-->
+
         <link href="css/master.css"             rel="stylesheet" media="screen" />
         <link href="css/components.css"         rel="stylesheet" media="screen" />
     </head>
 
+    <!--***************************************************************
+    ************************* App backgrounds *************************
+    ***************************************************************-->
     <body ng-controller="weatherController">
         <div id="backgroundWrapper">
             <div id="bgImage1" class="bgImage"              style="background-image: url(img/bgs/bg_ClearSky.jpg);">        </div>
@@ -41,26 +49,13 @@
             <div id="bgImage9" class="bgImage transparent"  style="background-image: url(img/bgs/bg_Mist.jpg);">            </div>
         </div>
 
-        <header id="headerWrapper" class="transparent hidden">
-            <div id="headerContent">
-                <a href="javascript:window.location.reload(true)">
-                    <div id="headerTitle">
-                        <h1>Weather Genie</h1>
-                    </div>
-                </a>
-                <div id="headerSearch">
-                    <form class="searchForm searchFormNormal" action="" ng-submit="search()">
-                        <input type="text" placeholder="Search for city" name="search" spellcheck="false" class="searchText searchTextNormal" ng-model="city"/>
-                        <input type="submit" class="searchSubmit searchButtonNormal" value=" "/><br style="clear:both;"/>
-                    </form>
-                </div>
-            </div>
-        </header>
-
+        <!--***************************************************************
+        ******************** Initial search screen ************************
+        ***************************************************************-->
         <div id="initialSearch">
             <h1 id="initialSearchTitle">Weather Genie</h1>
 
-            <form class="searchForm searchFormLarge" action="" ng-submit="initialSearch()">
+            <form class="searchForm searchFormLarge" ng-submit="initialSearch()">
                 <input type="text" placeholder="How is the weather in..." name="search" autocomplete="off" spellcheck="false" class="searchText searchTextLarge" ng-model="city"/>
                 <input type="submit" class="searchSubmit searchButtonLarge" value=" "/><br style="clear:both;"/>
             </form>
@@ -72,6 +67,25 @@
                 <img src="img/svg/temp.svg"         class="svg svgSquare75 svgLast"/>
             </div>
         </div>
+
+        <!--***************************************************************
+        ******************** Main WeatherGenie screen *********************
+        ***************************************************************-->
+        <header id="headerWrapper" class="transparent hidden">
+            <div id="headerContent">
+                <a href="javascript:window.location.reload(true)">
+                    <div id="headerTitle">
+                        <h1>Weather Genie</h1>
+                    </div>
+                </a>
+                <div id="headerSearch">
+                    <form class="searchForm searchFormNormal" ng-submit="search()">
+                        <input type="text" placeholder="Search for city" name="search" spellcheck="false" class="searchText searchTextNormal" ng-model="city"/>
+                        <input type="submit" class="searchSubmit searchButtonNormal" value=" "/><br style="clear:both;"/>
+                    </form>
+                </div>
+            </div>
+        </header>
 
         <div id="content" class="container topSpacing transparent hidden">
             <!-- Temp, humidity and pressure -->
@@ -129,18 +143,32 @@
                             </div>
                         </div>
 
-                        <h4 id="sunUpText">Sunrise at {{ weatherData.sunriseString }}</h4>
-                        <h4 id="sunDownText">Sunset at {{ weatherData.sunsetString }}</h4>
+                        <div id="sunUpContainer">
+                            <img src="img/svg/sunrise.svg" class="svg"/>
+                            <h4>{{ weatherData.sunriseString }}</h4>
+                        </div>
+                        <div id="sunDownContainer">
+                            <img src="img/svg/sunset.svg" class="svg"/>
+                            <h4>{{ weatherData.sunsetString }}</h4>
+                        </div>
                     </div>
                 </article>
                 <article class="col-xs-12 col-md-6 bottomSpacing">
                     <div class="animationDiv">
-                        <h4 id="windDirectionText">Wind direction: {{ weatherData.avgWindDirectionCardinal }}</h4>
-                        <h4 id="windSpeedText">Wind Speed: {{ (weatherData.avgWindSpeed * 3.6) | number:0 }} km/h</h4>
+
+                        <div id="windDirectionContainer">
+                            <img id="windDirectionSVG" src="img/svg/compass.svg" class="svg"/>
+                            <h4>{{ weatherData.avgWindDirectionCardinal }}</h4>
+                        </div>
 
                         <div id="compassWrapper">
                             <div id="compass"></div>
                             <div id="needle"></div>
+                        </div>
+
+                        <div id="windSpeedContainer">
+                            <img id="windSpeedSVG" src="img/svg/windspeed.svg" class="svg"/>
+                            <h4>{{ (weatherData.avgWindSpeed * 3.6) | number:0 }} km/h</h4>
                         </div>
 
                         <div id="windWrapper">
@@ -196,12 +224,22 @@
             Weather Genie uses Node.js and AngularJS! All resources used for educational purposes.
         </footer>
 
-        <script src="js/lib/jquery.js"></script>
+        <!-- Scripts -->
+        <!-- TODO: CDN fallback to local files -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.1/js/lightbox.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.66.0-2013.10.09/jquery.blockUI.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+
+        <!--<script src="js/lib/jquery.js"></script>
         <script src="js/lib/bootstrap.min.js"></script>
         <script src="js/lib/lightbox.min.js"></script>
         <script src="js/lib/blockui.js"></script>
         <script src="js/lib/angular.min.js"></script>
-        <script src="js/lib/chart.js"></script>
+        <script src="js/lib/chart.js"></script>-->
+
         <script src="js/utils.js"></script>
         <script src="js/main.js"></script>
     </body>
