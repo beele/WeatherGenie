@@ -157,11 +157,8 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
 }
 
 #sunContainer {
-    overflow: hidden;
-
-    /*400 sun container width + 50 to prevent sun being cut of*/
-    width: 450px;
-    /*200 pixels height + 50 pixels for margin*/
+    overflow: hidden;/*400 sun container width + 50 to prevent sun being cut of*/
+    width: 450px;/*200 pixels height + 50 pixels for margin*/
     height: 250px;
 }
 
@@ -411,7 +408,6 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
         -webkit-transform: scale(0.7);
         margin-top: 37px;
         margin-left: -50px;
-
     }
 
     #sunUpContainer {

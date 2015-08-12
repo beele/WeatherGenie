@@ -10,6 +10,14 @@ var lon = null;
 
 var styleSheetSelection = null;
 
+function hideSoftKeyboard() {
+    document.activeElement.blur();
+    var inputs = document.querySelectorAll('input');
+    for(var i=0; i < inputs.length; i++) {
+        inputs[i].blur();
+    }
+}
+
 /**
  * Determines the user's GEO location.
  */

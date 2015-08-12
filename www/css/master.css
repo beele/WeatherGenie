@@ -42,7 +42,7 @@ article {
 }
 
 .animationDiv {
-    width: 500px;
+    width: 450px;
     height: 100%;
     margin: -15px auto 0;
 }
@@ -112,12 +112,30 @@ article {
 }
 
 @media (max-width: 767px) {
-    #headerContent {
-        width: 600px;
+
+    #headerTitleText {
+        display: none;
+    }
+
+    #shortHeaderTitleText {
+        display: inline;
+    }
+
+    #headerSearch {
+        margin-top: 5px;
     }
 }
 
 @media (min-width: 768px) {
+
+    #headerTitleText {
+        display: inline;
+    }
+
+    #shortHeaderTitleText {
+        display: none;
+    }
+
     #headerContent {
         width: 767px;
     }
