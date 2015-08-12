@@ -5,6 +5,7 @@ var logger = require("./logging/logger").makeLogger("ROUTER");
 
 /**
  * Routes the given request according to the given parameters.
+ * Will try and serve a static file or execute a rest endpoint.
  *
  * @param handles An arrays of handles which handles the request for a given pathName.
  * @param pathName The requested URI (can be a rest-endpoint/folder/file).
@@ -29,10 +30,10 @@ function route(handles, pathName, request, response) {
 }
 
 /**
+ * Returns true if the resource is a file, false if not.
  *
- *
- * @param pathName
- * @returns {boolean}
+ * @param pathName The path to the file, including the file and extention.
+ * @returns {boolean} True if a file, false if not.
  */
 function isFile(pathName) {
     var path = pathName.replace("/","");
@@ -41,10 +42,14 @@ function isFile(pathName) {
 }
 
 /**
+ * Tries to serve the requested resource.
+ * Will check if the resource exists, if not a 404 will be generated.
+ * If the resource cannot be read or returned a 500 will be generated.
+ * Will set the Content-Type header to the correct value.
+ * Will set the Cache-Control header for images to the max age of one month.
  *
- *
- * @param response
- * @param fullPath
+ * @param response The response to write to.
+ * @param fullPath The full path of the requested resource.
  */
 function tryAndServeFile(response, fullPath) {
     //Read and present the file.
@@ -60,12 +65,18 @@ function tryAndServeFile(response, fullPath) {
 
                     displayError(response, 500, "Error while serving content!");
                 } else {
-                    logger.DEBUG("Serving: " + fullPath);
                     var cntType = mime.lookup(fullPath);
-                    logger.DEBUG("Of type: " + cntType);
+                    logger.DEBUG("Serving: " + fullPath + "\t (" + cntType + ")");
 
                     //Present the file.
                     response.setHeader("Content-Type", cntType);
+                    response.setHeader("Size", file.length);
+
+                    //Add caching for images!
+                    if(cntType.indexOf("image") > -1) {
+                        response.setHeader("Cache-Control", "max-age=2678400, must-revalidate");
+                    }
+
                     response.writeHead(200);
                     response.write(file, "binary");
                     response.end();
@@ -76,12 +87,13 @@ function tryAndServeFile(response, fullPath) {
 }
 
 /**
+ * Will try and handle a rest endpoint.
+ * Will generate a 404 when the requested rest endpoint cannot be found!
  *
- *
- * @param handles
- * @param pathName
- * @param request
- * @param response
+ * @param handles The handles array that contains all the mapped endpoints.
+ * @param pathName The endpoint path.
+ * @param request The request object.
+ * @param response The response to write to.
  */
 function tryAndHandleRestEndpoint(handles, pathName, request, response) {
     if(typeof handles[pathName] === 'function') {
@@ -95,7 +107,7 @@ function tryAndHandleRestEndpoint(handles, pathName, request, response) {
 
             handles[correctedEndpoint](request, response);
         } else {
-            displayError(response, 500, "Cannot find REST endpoint!", pathName);
+            displayError(response, 404, "Cannot find REST endpoint!", pathName);
         }
     }
 }

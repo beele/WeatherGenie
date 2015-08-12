@@ -56,8 +56,8 @@ function start(debug) {
 
 function forkInstances() {
     //Fork normal server worker instances.
-    //TODO: HORROR ON SINGLE AND DUAL CORES!
-    for (var i = 0; i < cores - 2; i++) {
+    var numberOfHttpServants = cores - 2 > 0 ? cores - 2 : 1;
+    for (var i = 0; i < numberOfHttpServants; i++) {
         logger.DEBUG("Starting new server worker...");
 
         var worker = cluster.fork({name: "http"});
