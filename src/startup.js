@@ -25,12 +25,24 @@ start();
  * Will start the core logic!
  */
 function start(debug) {
+    mapEndpoints();
+
+    //The master creates the forks (and does nothing else, except passing messages between workers).
+    //The workers will do their own init.
+    if (cluster.isMaster) {
+        forkInstances();
+    } else {
+        startWorkerInstance();
+    }
+}
+
+function mapEndpoints() {
     /*
-    * Set up any REST endpoints here!
-    * Add a new line for each endpoint you want to handle.
-    * To allow for params to be passed, end your endpoint with a /*
-    * TODO: Allow for multiple params to be passes to make it really restful!
-    */
+     * Set up any REST endpoints here!
+     * Add a new line for each endpoint you want to handle.
+     * To allow for params to be passed, end your endpoint with a /*
+     * TODO: Allow for multiple params to be passes to make it really restful!
+     */
     handles["/"]                    = requestHandlers.index;
     handles["/upload"]              = requestHandlers.upload;
 
@@ -44,14 +56,6 @@ function start(debug) {
     handles["/weather/lightning"]   = weather.showLightingCache;
     handles["/weather/lightning/*"] = weather.lightningData;
     //handles['/tweet']           = twitter.tweet;
-
-    //The master creates the forks (and does nothing else, except passing messages between workers).
-    //The workers will do their own init.
-    if (cluster.isMaster) {
-        forkInstances();
-    } else {
-        startWorkerInstance();
-    }
 }
 
 function forkInstances() {
@@ -99,7 +103,6 @@ function onServerWorkerMessageReceived(msg) {
     } else {
         intWorker.send(msg);
     }
-    //TODO: Extend routing!
 }
 
 function onIntervalWorkerMessageReceived(msg) {
@@ -108,16 +111,20 @@ function onIntervalWorkerMessageReceived(msg) {
     if(msg.target === "broker") {
         broker.send(msg);
     } else {
-        cluster.workers[msg.origin].send({data: msg.data});
+        cluster.workers[msg.workerId].send({data: msg.data});
     }
-    //TODO: Extend routing!
 }
 
 function onDataBrokerMessageReceived(msg) {
     logger.DEBUG("Message received from data broker: " + msg);
-    cluster.workers[msg.origin].send(msg);
+    cluster.workers[msg.workerId].send(msg);
 }
 
+/*-------------------------------------------------------------------------------------------------
+ * ------------------------------------------------------------------------------------------------
+ *                              Worker startup & message handling
+ * ------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------*/
 function startWorkerInstance() {
     //If the process environment contains a name/value pair of name and it equals interval, start a new interval worker.
     //Otherwise start a normal server instance.
@@ -132,42 +139,17 @@ function startWorkerInstance() {
         openweathermap.setupWeatherCache();
     } else {
         //Add a listener on the worker for messages.
-        //Each message has an originFunc, use this to direct to the correct service.
-        cluster.worker.on("message", function(msg) {
-
-            //TODO: Introduce something that can generically determine the function on the target object!
-            //TODO: This would eliminate the need to adapt this switch case for every new function!
-            //TODO: Use something like this: buienradar["geographicPredictionMessageHandler"](msg);
-            switch (msg.originFunc) {
-                case "geographicPrediction":
-                    buienradar.geographicPredictionMessageHandler(msg);
-                    break;
-                case "geographicPredictionForBlock":
-                    buienradar.geographicPredictionForBlockMessageHandler(msg);
-                    break;
-                case "showRainMaps":
-                    buienradar.showRainMapsMessageHandler(msg);
-                    break;
-                case "lightningData":
-                    blitzortung.lightningDataMessageHandler(msg);
-                    break;
-                case "showLightingCache":
-                    blitzortung.showLightingCacheMessageHandler(msg);
-                    break;
-                case "retrieveWeatherInfo":
-                    openweathermap.retrieveWeatherInfoMessageHandler(msg);
-                    break;
-                case "showWeatherCache":
-                    openweathermap.showWeatherCacheMessageHandler(msg);
-                    break;
-                default:
-                    logger.DEBUG("Default worker message handler! Please check this, switch case probably not implemented!");
-                    break;
-            }
-        });
-
+        cluster.worker.on("message", onMasterMessageReceived);
         startServerInstance(cluster.worker.id, handles);
     }
+}
+
+//Each message has an originFunc, use this to direct to the correct service.
+function onMasterMessageReceived(msg) {
+    logger.DEBUG("Received message from master: routing to: " + msg.handler + "." + msg.handlerFunction + "MessageHandler(\"\")");
+    eval(msg.handler)[msg.handlerFunction](msg);
+
+    //TODO: Error handling!
 }
 
 /**

@@ -1,10 +1,9 @@
-var cluster = require('cluster');
-
 var blitzortung = require("../workers/blitzortung/blitzortung");
 var gifProcessor = require("../workers/buienradar/gifProcessor");
 var buienradar = require("../workers/buienradar/buienradar");
 
 var logger = require("../logging/logger").makeLogger("INTERV");
+var messageFactory = require("../util/MessageFactory").getInstance();
 
 function startWorker() {
     //Set up the blitzortung service.
@@ -39,14 +38,8 @@ function refreshBuienradarImages() {
         var pre = buienradar.convertImageToRainMap(predictImageData);
         var result = {currentRainMap: now, predictRainMap: pre};
 
-        var payload = {};
-        payload.origin = cluster.worker.id;
-        payload.originFunc = "refreshBuienradarImages";
-        payload.target = "broker";
-        payload.targetFunc = "saveData";
-        payload.key = "rainMaps";
-        payload.value = result;
-        process.send(payload);
+        //Send message to the data broker to store the data.
+        messageFactory.sendSimpleMessage(messageFactory.TARGET_BROKER, "saveData", {key: "rainMaps", value: result});
 
         logger.INFO("Buienradar rain map updated!");
     });

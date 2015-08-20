@@ -1,7 +1,7 @@
 var http = require("http");
-var cluster = require('cluster');
 
 var logger = require("../../logging/logger").makeLogger("SERVIC");
+var messageFactory = require("../../util/MessageFactory").getInstance();
 
 //Variables.
 var currentRainMap = null;
@@ -20,36 +20,30 @@ function geographicPrediction(lat, lon, callback) {
     var id = new Date().getTime() + "--" + (Math.random() * 6);
     callbacks[id] = callback;
 
-    var payload = {};
-    payload.origin = cluster.worker.id;
-    payload.originFunc = "geographicPrediction";
-    payload.target = "broker";
-    payload.targetFunc = "retrieveData";
-    payload.key = "rainMaps";
-    payload.originalParams = {lat: lat, lon: lon, callbackId: id};
-    process.send(payload);
+    messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER, "retrieveData", {key: "rainMaps"},
+                                            "buienradar", "geographicPredictionMessageHandler", {lat: lat, lon: lon, callbackId: id});
 }
 
 function geographicPredictionMessageHandler(msg) {
     logger.DEBUG("buienradar rain maps received");
 
     //Null safety check!
-    if(msg.value === undefined || msg.value.currentRainMap === undefined || msg.value.predictRainMap === undefined) {
+    if(msg.returnData === undefined || msg.returnData.currentRainMap === undefined || msg.returnData.predictRainMap === undefined) {
         logger.DEBUG("No data available, returning error!");
-        callbacks[msg.originalParams.callbackId]({ERROR: "No rain maps available!"});
-        delete callbacks[msg.originalParams.callbackId];
+        callbacks[msg.handlerParams.callbackId]({ERROR: "No rain maps available!"});
+        delete callbacks[msg.handlerParams.callbackId];
     } else {
-        currentRainMap = msg.value.currentRainMap;
-        predictRainMap = msg.value.predictRainMap;
+        currentRainMap = msg.returnData.currentRainMap;
+        predictRainMap = msg.returnData.predictRainMap;
 
-        var coordinates = convertLatLonToXY(msg.originalParams.lat, msg.originalParams.lon);
+        var coordinates = convertLatLonToXY(msg.handlerParams.lat, msg.handlerParams.lon);
         var x = coordinates.x;
         var y = coordinates.y;
 
         var current = currentWeather(x,y);
         var predict = comingWeather(x,y);
-        callbacks[msg.originalParams.callbackId]({currentConditions: current, predictedConditions: predict});
-        delete callbacks[msg.originalParams.callbackId];
+        callbacks[msg.handlerParams.callbackId]({currentConditions: current, predictedConditions: predict});
+        delete callbacks[msg.handlerParams.callbackId];
     }
 }
 
@@ -58,32 +52,26 @@ function geographicPredictionForBlock(x, y, callback) {
     var id = new Date().getTime() + "--" + (Math.random() * 6);
     callbacks[id] = callback;
 
-    var payload = {};
-    payload.origin = cluster.worker.id;
-    payload.originFunc = "geographicPredictionForBlock";
-    payload.target = "broker";
-    payload.targetFunc = "retrieveData";
-    payload.key = "rainMaps";
-    payload.originalParams = {x: x, y: y, callbackId: id};
-    process.send(payload);
+    messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER, "retrieveData", {key: "rainMaps"},
+                                            "buienradar", "geographicPredictionForBlockMessageHandler", {x: x, y: y, callbackId: id});
 }
 
 function geographicPredictionForBlockMessageHandler(msg) {
     logger.DEBUG("buienradar rain maps received");
 
     //Null safety check!
-    if(msg.value === undefined || msg.value.currentRainMap === undefined || msg.value.predictRainMap === undefined) {
+    if(msg.returnData === undefined || msg.returnData.currentRainMap === undefined || msg.returnData.predictRainMap === undefined) {
         logger.DEBUG("No data available, returning error!");
-        callbacks[msg.originalParams.callbackId]({ERROR: "No rain maps available!"});
-        delete callbacks[msg.originalParams.callbackId];
+        callbacks[msg.handlerParams.callbackId]({ERROR: "No rain maps available!"});
+        delete callbacks[msg.handlerParams.callbackId];
     } else {
-        currentRainMap = msg.value.currentRainMap;
-        predictRainMap = msg.value.predictRainMap;
+        currentRainMap = msg.returnData.currentRainMap;
+        predictRainMap = msg.returnData.predictRainMap;
 
-        var current = currentWeather(msg.originalParams.x, msg.originalParams.y);
-        var predict = comingWeather(msg.originalParams.x, msg.originalParams.y);
-        callbacks[msg.originalParams.callbackId]({currentConditions: current, predictedConditions: predict});
-        delete callbacks[msg.originalParams.callbackId];
+        var current = currentWeather(msg.handlerParams.x, msg.handlerParams.y);
+        var predict = comingWeather(msg.handlerParams.x, msg.handlerParams.y);
+        callbacks[msg.handlerParams.callbackId]({currentConditions: current, predictedConditions: predict});
+        delete callbacks[msg.handlerParams.callbackId];
     }
 }
 
@@ -92,19 +80,13 @@ function showRainMaps(callback) {
     var id = new Date().getTime() + "--" + (Math.random() * 6);
     callbacks[id] = callback;
 
-    var payload = {};
-    payload.origin = cluster.worker.id;
-    payload.originFunc = "showRainMaps";
-    payload.target = "broker";
-    payload.targetFunc = "retrieveData";
-    payload.key = "rainMaps";
-    payload.originalParams = {callbackId: id};
-    process.send(payload);
+    messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER, "retrieveData", {key: "rainMaps"},
+                                            "buienradar", "showRainMapsMessageHandler", {callbackId: id});
 }
 
 function showRainMapsMessageHandler(msg) {
-    callbacks[msg.originalParams.callbackId](msg);
-    delete callbacks[msg.originalParams.callbackId];
+    callbacks[msg.handlerParams.callbackId](msg);
+    delete callbacks[msg.handlerParams.callbackId];
 }
 
 function geographicConditionForecast(city, callback) {

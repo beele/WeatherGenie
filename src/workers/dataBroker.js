@@ -1,85 +1,70 @@
 var logger = require("../logging/logger").makeLogger("BROKER");
 
+//Constants
+//TODO: Put constants in singleton wrapper.
+const FUNC_SAVE_DATA            = "saveData";
+const FUNC_UPDATE_DATA          = "updateData";
+const FUNC_RETRIEVE_DATA        = "retrieveData";
+const FUNC_DElETE_DATA          = "deleteData";
+
+const FUNC_CREATE_CACHE         = "createCache";
+const FUNC_ADD_TO_CACHE         = "addToCache";
+const FUNC_RETRIEVE_CACHE       = "retrieveCache";
+const FUNC_REMOVE_FROM_CACHE    = "removeFromCache";
+const FUNC_CLEAR_CACHE          = "clearCache";
+
 //Variables.
 var dataStore = {};
 
 function initialise() {
     process.on("message", function(msg) {
-        logger.DEBUG("Broker received message: " + msg);
-        //logger.DEBUG("Broker received message: " + JSON.stringify(msg));
-
-        switch (msg.targetFunc) {
-            case "saveData":
-                saveData(msg.key, msg.value);
-                logger.INFO("Data saved!");
-                break;
-            case "updateData":
-                updateData(msg.key, msg.value);
-                logger.INFO("Data updated!");
-                break;
-            case "retrieveData":
-                msg.value = retrieveData(msg.key);
-                process.send(msg);
-                logger.INFO("Data retrieved!");
-                break;
-            case "deleteData":
-                deleteData(msg.key);
-                logger.INFO("Data deleted!");
-                break;
-            case "createCache":
-                createCache(msg.cacheName, msg.maxSize);
-                logger.INFO("Cache created: " + msg.cacheName);
-                break;
-            case "addToCache":
-                addToCache(msg.cacheName, msg.value);
-                logger.INFO("Data added to cache: " + msg.cacheName);
-                break;
-            case "retrieveCache":
-                msg.value = retrieveCache(msg.cacheName);
-                process.send(msg);
-                logger.INFO("Cache retrieved: " + msg.cacheName);
-                break;
-            case "removeFromCache":
-                removeFromCache(msg.cacheName, msg.value);
-                logger.INFO("Entries removed from cache: " + msg.cacheName);
-                break;
-            case "clearCache":
-                clearCache(msg.cacheName);
-                logger.INFO("Cache cleared: " + msg.cacheName);
-                break;
-        }
+        logger.DEBUG("Broker received message from: " + msg.workerId);
+        eval(msg.targetFunc)(msg);
     });
     logger.INFO("Broker initialised!");
 }
 
-function saveData(key, value) {
-    dataStore[key] = value;
+function isMessageWithHandlers(msg) {
+    if(msg.handler === undefined || msg.handler === null || msg.handlerFunction === undefined || msg.handlerFunction === null) {
+        logger.ERROR("Cannot handle message!");
+        logger.ERROR("A simple message was sent when a message with handler definitions is required!");
+        logger.ERROR("Worker: " + msg.workerId + " requested: " + msg.targetFunc);
+        return false;
+    }
+    return true;
 }
 
-function updateData(key, value) {
-    dataStore[key] = value;
+function saveData(msg) {
+    dataStore[msg.data.key] = msg.data.value;
 }
 
-function retrieveData(key) {
-    return dataStore[key];
+function updateData(msg) {
+    dataStore[msg.data.key] = msg.data.value;
 }
 
-function deleteData(key) {
-    delete dataStore[key];
-}
-
-function createCache(cacheName, maxSize) {
-    if (dataStore[cacheName] === null || dataStore[cacheName] === undefined) {
-        dataStore[cacheName] = { data: [], maxSize: maxSize};
-        logger.INFO("Cache " + cacheName + " with max size of " + maxSize + " created!")
-    } else {
-        logger.ERROR("Cache with name: " + cacheName + " already exists!");
+function retrieveData(msg) {
+    if(isMessageWithHandlers(msg)) {
+        msg.returnData = dataStore[msg.data.key];
+        process.send(msg);
     }
 }
 
-function addToCache(cacheName, value) {
-    if(dataStore[cacheName].data !== null) {
-        var cache = dataStore[cacheName];
+function deleteData(msg) {
+    delete dataStore[msg.data.key];
+}
+
+function createCache(msg) {
+    if (dataStore[msg.data.cacheName] === null || dataStore[msg.data.cacheName] === undefined) {
+        dataStore[msg.data.cacheName] = { data: [], maxSize: msg.data.maxSize};
+        logger.INFO("Cache " + msg.data.cacheName + " with max size of " + msg.data.maxSize + " created!")
+    } else {
+        logger.ERROR("Cache with name: " + msg.data.cacheName + " already exists!");
+    }
+}
+
+function addToCache(msg) {
+    if(dataStore[msg.data.cacheName].data !== null) {
+        var cache = dataStore[msg.data.cacheName];
         //Check cache size and take the correct action!
         if(cache.data.length >= cache.maxSize) {
             //Remove first element!
@@ -87,22 +72,26 @@ function addToCache(cacheName, value) {
             logger.DEBUG("Data was popped from cache! (max size reached)");
         }
         //Add new value
-        cache.data.push(value);
+        cache.data.push(msg.data.value);
     }
 }
 
-function retrieveCache(cacheName) {
-    if(dataStore[cacheName] !== undefined) {
-        return dataStore[cacheName].data;
-    } else {
-        logger.ERROR("Cannot find cache: " + cacheName + " in dataStore");
-        return null;
+function retrieveCache(msg) {
+    if(isMessageWithHandlers(msg)) {
+        if(dataStore[msg.data.cacheName] !== undefined) {
+            msg.returnData = dataStore[msg.data.cacheName].data;
+        } else {
+            msg.returnData = null;
+            logger.ERROR("Cannot find cache: " + msg.data.cacheName + " in dataStore");
+        }
+        process.send(msg);
     }
 }
 
-function removeFromCache(cacheName, values) {
-    var cache = dataStore[cacheName];
+function removeFromCache(msg) {
+    var cache = dataStore[msg.data.cacheName];
 
+    var values = msg.data.values;
     if(values !== null || values !== undefined && values.length > 0) {
         for(var i = 0 ; i < values.length ; i++) {
             cache.data.splice(i,1);
@@ -110,8 +99,8 @@ function removeFromCache(cacheName, values) {
     }
 }
 
-function clearCache(cacheName) {
-    dataStore[cacheName].data = [];
+function clearCache(msg) {
+    dataStore[msg.data.cacheName].data = [];
 }
 
 exports.initialise = initialise;

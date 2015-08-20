@@ -1,7 +1,7 @@
-var cluster = require('cluster');
 var WebSocket = require('ws');
 
 var logger = require("../../logging/logger").makeLogger("SERVIC");
+var messageFactory = require("../../util/MessageFactory").getInstance();
 
 //Variables.
 var ws = null;
@@ -10,14 +10,7 @@ var callbacks = {};
 var retryCount = 0;
 
 function setupLightningCache() {
-    var payload = {};
-    payload.origin = cluster.worker.id;
-    payload.originFunc = "startupLightingSocket";
-    payload.target = "broker";
-    payload.targetFunc = "createCache";
-    payload.cacheName = "lightning";
-    payload.maxSize = 100;
-    process.send(payload);
+    messageFactory.sendSimpleMessage(messageFactory.TARGET_BROKER, "createCache", {cacheName: "lightning", maxSize: 250});
 }
 
 function setupBlitzortungWebSocket() {
@@ -46,14 +39,7 @@ function setupBlitzortungWebSocket() {
         //Check to see if the strike was in the radius (300km) of the geographic center of belgium.
         //Only send the strike when in range.
         if(getDistanceBetweenTwoLatLonPoints(50.6404438,4.66775, data.lat, data.lon) <= 300) {
-            var payload = {};
-            payload.origin = cluster.worker.id;
-            payload.originFunc = "lightningDataReceived";
-            payload.target = "broker";
-            payload.targetFunc = "addToCache";
-            payload.cacheName = "lightning";
-            payload.value = {timestamp: new Date(Math.floor(data.time/1000000)), lat: data.lat, lon: data.lon};
-            process.send(payload);
+            messageFactory.sendSimpleMessage(messageFactory.TARGET_BROKER, "addToCache", {cacheName: "lightning", value: {timestamp: new Date(Math.floor(data.time/1000000)), lat: data.lat, lon: data.lon}});
         }
     });
     //If the socket goes down restart it!
@@ -74,34 +60,25 @@ function lightningData(callback, lat, lon) {
     var id = new Date().getTime() + "--" + (Math.random() * 6);
     callbacks[id] = callback;
 
-    var payload = {};
-    payload.origin = cluster.worker.id;
-    payload.originFunc = "lightningData";
-    payload.target = "broker";
-    payload.targetFunc = "retrieveCache";
-    payload.cacheName = "lightning";
-    payload.originalParams = {lat: lat, lon: lon, callbackId: id};
-    process.send(payload);
+    messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER, "retrieveCache", {cacheName: "lightning"},
+                                            "blitzortung", "lightningDataMessageHandler", {lat: lat, lon: lon, callbackId: id});
 }
 
 function lightningDataMessageHandler(msg) {
     logger.DEBUG("blitzortung data received");
 
-    var oLat = null;
-    var oLon = null;
-
-    if(msg.value === undefined || msg.value.length === 0) {
+    if(msg.returnData === undefined || msg.returnData.length === 0) {
         logger.DEBUG("No data available, returning error!");
 
-        callbacks[msg.originalParams.callbackId]({ERROR: "No lightning data available!"});
-        delete callbacks[msg.originalParams.callbackId];
+        callbacks[msg.handlerParams.callbackId]({ERROR: "No lightning data available!"});
+        delete callbacks[msg.handlerParams.callbackId];
     } else {
-        var oLat = msg.originalParams.lat;
-        var oLon = msg.originalParams.lon;
+        var oLat = msg.handlerParams.lat;
+        var oLon = msg.handlerParams.lon;
 
         var strikes = [];
-        for(var i = 0 ; i < msg.value.length ; i++) {
-            var strike = msg.value[i];
+        for(var i = 0 ; i < msg.returnData.length ; i++) {
+            var strike = msg.returnData[i];
             var dist = getDistanceBetweenTwoLatLonPoints(oLat, oLon, strike.lat, strike.lon);
             strikes.push({
                 timestamp: strike.timestamp,
@@ -109,8 +86,8 @@ function lightningDataMessageHandler(msg) {
             });
         }
 
-        callbacks[msg.originalParams.callbackId]({lat: oLat, lon: oLon, data: strikes});
-        delete callbacks[msg.originalParams.callbackId];
+        callbacks[msg.handlerParams.callbackId]({lat: oLat, lon: oLon, data: strikes});
+        delete callbacks[msg.handlerParams.callbackId];
     }
 }
 
@@ -119,21 +96,15 @@ function showLightingCache(callback) {
     var id = new Date().getTime() + "--" + (Math.random() * 6);
     callbacks[id] = callback;
 
-    var payload = {};
-    payload.origin = cluster.worker.id;
-    payload.originFunc = "showLightingCache";
-    payload.target = "broker";
-    payload.targetFunc = "retrieveCache";
-    payload.cacheName = "lightning";
-    payload.originalParams = {callbackId: id};
-    process.send(payload);
+    messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER, "retrieveCache", {cacheName: "lightning"},
+                                            "blitzortung", "showLightingCacheMessageHandler", {callbackId: id});
 }
 
 function showLightingCacheMessageHandler(msg) {
-    logger.DEBUG("blitzortung data received: " + msg.value);
+    logger.DEBUG("blitzortung data received: " + msg.returnData);
 
-    callbacks[msg.originalParams.callbackId](msg.value);
-    delete callbacks[msg.originalParams.callbackId];
+    callbacks[msg.handlerParams.callbackId](msg.returnData);
+    delete callbacks[msg.handlerParams.callbackId];
 }
 
 /*-------------------------------------------------------------------------------------------------
