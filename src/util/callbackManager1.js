@@ -1,6 +1,5 @@
-var logger = require("../logging/logger").makeLogger("CALLBACKMANAGER");
-
 var CallbackManager = (function() {
+    var logger = require("../logging/logger").makeLogger("CALLBACKMANAGER");
     var instance;
 
     /**

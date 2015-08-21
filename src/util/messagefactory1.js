@@ -1,7 +1,6 @@
-var cluster = require('cluster');
-var logger = require("../logging/logger").makeLogger("MESSAGEFACTORY");
-
 var MessageFactory = (function() {
+    var cluster = require('cluster');
+    var logger = require("../logging/logger").makeLogger("MESSAGEFACTORY");
     var instance;
 
     /**

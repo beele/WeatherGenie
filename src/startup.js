@@ -5,7 +5,8 @@ var server = require("./server");
 var requestHandlers = require("./services/requestHandlers");
 var weather = require('./services/weather');
 var intervalWorker  = require('./workers/intervalWorker');
-var dataBroker = require('./workers/dataBroker');
+
+var DataBroker = require('./workers/dataBroker');
 
 var buienradar = require("./workers/buienradar/buienradar");
 var blitzortung = require("./workers/blitzortung/blitzortung");
@@ -132,20 +133,20 @@ function startWorkerInstance() {
         intervalWorker.startWorker();
 
     } else if(process.env['name'] === "broker") {
-        dataBroker.initialise();
+        var brokerInstance = new DataBroker();
 
         //Create caches:
         blitzortung.setupLightningCache();
         openweathermap.setupWeatherCache();
     } else {
         //Add a listener on the worker for messages.
-        cluster.worker.on("message", onMasterMessageReceived);
+        cluster.worker.on("message", onMessageFromMasterReceived);
         startServerInstance(cluster.worker.id, handles);
     }
 }
 
 //Each message has an originFunc, use this to direct to the correct service.
-function onMasterMessageReceived(msg) {
+function onMessageFromMasterReceived(msg) {
     logger.DEBUG("Received message from master: routing to: " + msg.handler + "." + msg.handlerFunction + "MessageHandler(\"\")");
     eval(msg.handler)[msg.handlerFunction](msg);
 

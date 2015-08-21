@@ -1,7 +1,7 @@
 var WebSocket = require('ws');
 
 var logger = require("../../logging/logger").makeLogger("SERVIC");
-var messageFactory = require("../../util/MessageFactory").getInstance();
+var messageFactory = require("../../util/messagefactory1").getInstance();
 
 //Variables.
 var ws = null;

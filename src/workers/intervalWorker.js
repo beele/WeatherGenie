@@ -3,7 +3,7 @@ var gifProcessor = require("../workers/buienradar/gifProcessor");
 var buienradar = require("../workers/buienradar/buienradar");
 
 var logger = require("../logging/logger").makeLogger("INTERV");
-var messageFactory = require("../util/MessageFactory").getInstance();
+var messageFactory = require("../util/messagefactory1").getInstance();
 
 function startWorker() {
     //Set up the blitzortung service.
