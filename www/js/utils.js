@@ -374,7 +374,7 @@ function blockUIWithDismissableError(message) {
     message = "An error occurred: " + message + "<br/>Click to close this message!";
 
     $(".blockMsg").html(message);
-    $(".body").click(unblockUI);
+    $(".blockUI").click(unblockUI);
 }
 
 /**
