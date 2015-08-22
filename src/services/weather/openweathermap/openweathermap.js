@@ -1,7 +1,7 @@
 var http = require("http");
 
-var logger = require("../../logging/logger").makeLogger("SERVIC");
-var messageFactory = require("../../util/messagefactory").getInstance();
+var logger = require("../../../logging/logger").makeLogger("IMPL-OPENWTHRMP");
+var messageFactory = require("../../../util/messagefactory").getInstance();
 
 //Variables.
 var callbacks = {};

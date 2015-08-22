@@ -1,8 +1,8 @@
-var logger = require("../logging/logger").makeLogger("SERVIC");
+var logger = require("../../logging/logger").makeLogger("SERV-WEATHER---");
 
-var buienradar = require("../workers/buienradar/buienradar");
-var blitzortung = require("../workers/blitzortung/blitzortung");
-var openweathermap = require("../workers/openweathermap/openweathermap");
+var buienradar = require("./buienradar/buienradar");
+var blitzortung = require("./blitzortung/blitzortung");
+var openweathermap = require("./openweathermap/openweathermap");
 
 function geographicPrediction(request, response) {
     logger.INFO("geographicPrediction method was called!");

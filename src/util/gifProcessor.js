@@ -1,7 +1,7 @@
 var pixels = require("get-pixels");
 var async = require("async");
 
-var logger = require("../../logging/logger").makeLogger("SERVIC");
+var logger = require("../logging/logger").makeLogger("UTIL-GIFPROC---");
 
 //Variables.
 var currentImageData = null;

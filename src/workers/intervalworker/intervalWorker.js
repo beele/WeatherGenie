@@ -1,10 +1,14 @@
-var blitzortung = require("../workers/blitzortung/blitzortung");
-var gifProcessor = require("../workers/buienradar/gifProcessor");
-var buienradar = require("../workers/buienradar/buienradar");
+var logger          = require("../../logging/logger").makeLogger("INTERVALWORKER-");
 
-var logger = require("../logging/logger").makeLogger("INTERV");
-var messageFactory = require("../util/messagefactory").getInstance();
+var messageFactory  = require("../../util/messagefactory").getInstance();
 
+var blitzortung     = require("../../services/weather/blitzortung/blitzortung");
+var gifProcessor    = require("../../util/gifProcessor");
+var buienradar      = require("../../services/weather/buienradar/buienradar");
+
+/**
+ *
+ */
 function startWorker() {
     //Set up the blitzortung service.
     setupBlitzortung();
@@ -24,14 +28,19 @@ function startWorker() {
     logger.INFO("Interval worker started!");
 }
 
+/**
+ *
+ */
 function setupBlitzortung() {
-    logger.DEBUG("Attempting to setup websocket connect to blitzortung...");
-
+    logger.INFO("Attempting to setup websocket connect to blitzortung...");
     blitzortung.setupBlitzortungWebSocket();
 }
 
+/**
+ *
+ */
 function refreshBuienradarImages() {
-    logger.DEBUG("Attempting to update buienradar rain map...");
+    logger.INFO("Attempting to update buienradar rain map...");
 
     gifProcessor.retrieveAndCorrectImages(function onImagesLoaded(currentImageData, predictImageData) {
         var now = buienradar.convertImageToRainMap(currentImageData);

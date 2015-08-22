@@ -1,5 +1,5 @@
 var CallbackManager = (function() {
-    var logger = require("../logging/logger").makeLogger("CALLBACKMANAGER");
+    var logger = require("../logging/logger").makeLogger("UTIL-CLBCKMNGR-");
     var instance;
 
     /**
@@ -8,42 +8,55 @@ var CallbackManager = (function() {
      * @returns {{generateIdForCallback: Function, returnCallbackForId: Function, returnAndRemoveCallbackForId: Function}}
      */
     function init() {
-        //Private vars & functions.
+        /*-------------------------------------------------------------------------------------------------
+         * ------------------------------------------------------------------------------------------------
+         *                                   Private vars/functions
+         * ------------------------------------------------------------------------------------------------
+         ------------------------------------------------------------------------------------------------*/
         var callbacks = {};
 
         /**
          * Private function that can print out the stored callbacks.
          */
         function listCallbacks(){
-            logger.DEBUG(JSON.stringify(callbacks, 0, 4));
+            logger.DEBUG(JSON.stringify(callbacks));
         }
 
-        //Public vars & functions.
+        /*-------------------------------------------------------------------------------------------------
+         * ------------------------------------------------------------------------------------------------
+         *                                     Public vars/functions
+         * ------------------------------------------------------------------------------------------------
+         ------------------------------------------------------------------------------------------------*/
         return {
             /**
+             * Generates a new callback id for the given callback.
+             * Actually all this does is make a new id by taking the current time in millis and adding a random salt.
              *
-             * @param callback
+             * @param callback The callback to assign an id to.
              */
             generateIdForCallback : function(callback) {
                 var id = new Date().getTime() + "--" + (Math.random() * 6);
                 callbacks[id] = callback;
             },
             /**
+             * Returns the callback function for the given id.
              *
-             * @param id
-             * @returns {*}
+             * @param id The id for which to return the callback.
+             * @returns The callback function.
              */
             returnCallbackForId : function(id) {
-                return callbacks[msg.originalParams.callbackId](msg.value);
+                return callbacks[id];
             },
             /**
+             * Returns the callback function for the given id.
+             * It will also delete the callback from the local cache.
              *
-             * @param id
-             * @returns {*}
+             * @param id The id for which to return the callback.
+             * @returns The callback function.
              */
             returnAndRemoveCallbackForId: function(id) {
-                var clbk = callbacks[msg.originalParams.callbackId](msg.value);
-                delete callbacks[msg.originalParams.callbackId];
+                var clbk = callbacks[id];
+                delete callbacks[id];
                 return clbk;
             }
         };

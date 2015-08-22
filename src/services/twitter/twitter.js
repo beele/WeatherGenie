@@ -1,6 +1,6 @@
 var twitter = require('twitter');
 
-var logger = require("../logging/logger").makeLogger("SERV");
+var logger = require("../../logging/logger").makeLogger("SERV-TWITTER---");
 
 //TODO: Load twitter credentials.
 var client = new twitter({

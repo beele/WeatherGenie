@@ -1,164 +1,157 @@
-var cluster = require('cluster');
-var cores = require('os').cpus().length;
+var WeatherGenie = function(runInDebug) {
+    var logger          = require("./logging/logger").makeLogger("STARTUP--------");
+    var cluster         = require("cluster");
+    var Worker          = require("./workers/worker");
 
-var server = require("./server");
-var requestHandlers = require("./services/requestHandlers");
-var weather = require('./services/weather');
-var intervalWorker  = require('./workers/intervalWorker');
+    //Variables.
+    var debug           = runInDebug === undefined ? false : runInDebug;
+    var broker          = null;
+    var intWorker       = null;
+    var messageHandlers = null;
 
-var DataBroker = require('./workers/dataBroker');
+    init();
 
-var buienradar = require("./workers/buienradar/buienradar");
-var blitzortung = require("./workers/blitzortung/blitzortung");
-var openweathermap = require("./workers/openweathermap/openweathermap");
-
-var logger = require("./logging/logger").makeLogger("INIT");
-
-//Variables.
-var handles = {};
-var intWorker = null;
-var broker = null;
-
-//Kickstart everything!
-start();
-
-/**
- * Will start the core logic!
- */
-function start(debug) {
-    mapEndpoints();
-
-    //The master creates the forks (and does nothing else, except passing messages between workers).
-    //The workers will do their own init.
-    if (cluster.isMaster) {
-        forkInstances();
-    } else {
-        startWorkerInstance();
-    }
-}
-
-function mapEndpoints() {
-    /*
-     * Set up any REST endpoints here!
-     * Add a new line for each endpoint you want to handle.
-     * To allow for params to be passed, end your endpoint with a /*
-     * TODO: Allow for multiple params to be passes to make it really restful!
+    /**
+     * Init simple purpose.
+     * If the current node instance is the master, it proceeds to create the other node instances (forks/workers).
+     * If the current node instance is a worker, it will create a new Worker and continue from there.
+     *
+     * The master node instance only creates, revives forks and passes messages between the workers.
      */
-    handles["/"]                    = requestHandlers.index;
-    handles["/upload"]              = requestHandlers.upload;
-
-    //Custom services
-    handles["/weather"]             = weather.showWeatherCache;
-    handles["/weather/*"]           = weather.retrieveWeather;
-    handles["/weather/rain"]        = weather.showRainMaps;
-    handles["/weather/rain/*"]      = weather.geographicPrediction;
-    handles["/weather/rain/xy/*"]   = weather.geographicPredictionForBlock;
-
-    handles["/weather/lightning"]   = weather.showLightingCache;
-    handles["/weather/lightning/*"] = weather.lightningData;
-    //handles['/tweet']           = twitter.tweet;
-}
-
-function forkInstances() {
-    //Fork normal server worker instances.
-    var numberOfHttpServants = cores - 2 > 0 ? cores - 2 : 1;
-    for (var i = 0; i < numberOfHttpServants; i++) {
-        logger.DEBUG("Starting new server worker...");
-
-        var worker = cluster.fork({name: "http"});
-        worker.on("message", onServerWorkerMessageReceived);
+    function init() {
+        //The master creates and revives the workers and passes messages between them.
+        if (cluster.isMaster) {
+            messageHandlers = createMessageHandlers();
+            forkInstances();
+        } else {
+            new Worker();
+        }
     }
 
-    //Fork interval worker.
-    logger.DEBUG("Starting new interval worker...");
-    intWorker = cluster.fork({name: "interval"});
-    intWorker.on("message", onIntervalWorkerMessageReceived);
+    /**
+     * Forks all the worker instances.
+     * We need one data broker and one interval worker. All the other instances will be HTTP workers.
+     * If enough cpu cores (also counts for HyperThreaded ones) are available, the number of HTTP workers will be:
+     * NumberOfCores - 2
+     * If not enough cpu cores are at hand, we will always spawn one data broker, one interval worker and one HTTP worker.
+     * These node instances will than run on the same cpu core but the os scheduling will keep things a bit more vivid.
+     */
+    function forkInstances() {
+        //Fork data broker.
+        logger.DEBUG("Starting new data broker...");
+        broker = cluster.fork({name: "broker"});
+        broker.on("message", messageHandlers.onDataBrokerMessageReceived);
 
-    //Fork data broker.
-    logger.DEBUG("Starting new data broker...");
-    broker = cluster.fork({name: "broker"});
-    broker.on("message", onDataBrokerMessageReceived);
+        //Fork interval worker.
+        logger.DEBUG("Starting new interval worker...");
+        intWorker = cluster.fork({name: "interval"});
+        intWorker.on("message", messageHandlers.onIntervalWorkerMessageReceived);
 
-    //Revive workers if they die!
-    cluster.on('exit', function(worker, code, signal) {
-        logger.DEBUG('worker ' + worker.id + ' died!');
+        //Fork normal server worker instances. These will handle all HTTP requests.
+        var cores = require("os").cpus().length;
+        var numberOfHttpServants = cores - 2 > 0 ? cores - 2 : 1;
+        for (var i = 0; i < numberOfHttpServants; i++) {
+            logger.DEBUG("Starting new server worker...");
+
+            var worker = cluster.fork({name: "http"});
+            worker.on("message", messageHandlers.onServerWorkerMessageReceived);
+        }
+
+        //Revive workers if they die!
+        if(!debug) {
+            cluster.on("exit", reviveDeadWorker);
+        }
+    }
+
+    /**
+     * If a worker dies due to some unforeseen event or bug in the code we will try to revive it to keep our application up and running.
+     * On the main node instance we keep a reference to the data broker and interval worker instances. We detect which one has died and
+     * restart the proper one.
+     *
+     * If for some reason the app starts reviving workers at high speed, there should be a critical bug. You should then start the app with
+     * the "runInDebug" flag set to true, this will disable the worker reviving system.
+     *
+     * @param worker The instance of the worker that died. Mainly used to get the id.
+     * @param code The exit code.
+     * @param signal The exit signal.
+     */
+    function reviveDeadWorker(worker, code, signal) {
+        logger.DEBUG("worker " + worker.id + " died! (details => code: " + code + " signal: " + signal);
 
         //CLEAR!
-        if(worker.id === intWorker.id) {
-            intWorker = cluster.fork({name: "interval"});
-            intWorker.on("message", onIntervalWorkerMessageReceived);
-        } else if(worker.id === broker.id) {
-            broker = cluster.fork({name: "broker"});
-            broker.on("message", onDataBrokerMessageReceived);
-        } else {
-            cluster.fork({name: "http"}).on("message", onServerWorkerMessageReceived)
+        switch (worker.id) {
+            case broker.id:
+                broker = cluster.fork({name: "broker"});
+                broker.on("message", messageHandlers.onDataBrokerMessageReceived);
+                break;
+            case intWorker.id:
+                intWorker = cluster.fork({name: "interval"});
+                intWorker.on("message", messageHandlers.onIntervalWorkerMessageReceived);
+                break;
+            default:
+                cluster.fork({name: "http"}).on("message", messageHandlers.onServerWorkerMessageReceived);
         }
-    });
-}
-
-function onServerWorkerMessageReceived(msg) {
-    logger.DEBUG("Message received from server worker: " + msg);
-
-    if(msg.target === "broker") {
-        broker.send(msg);
-    } else {
-        intWorker.send(msg);
     }
-}
 
-function onIntervalWorkerMessageReceived(msg) {
-    logger.DEBUG("Message received from interval worker: " + msg);
+    /*-------------------------------------------------------------------------------------------------
+     * ------------------------------------------------------------------------------------------------
+     *                                       Message handling
+     * ------------------------------------------------------------------------------------------------
+     ------------------------------------------------------------------------------------------------*/
+    /**
+     * Returns a closure with custom logger and the message handler functions.
+     *
+     * @returns {{onServerWorkerMessageReceived: Function, onIntervalWorkerMessageReceived: Function, onDataBrokerMessageReceived: Function}}
+     */
+    function createMessageHandlers() {
+        var logger = require("./logging/logger").makeLogger("MESSAGEHANDLER-");
 
-    if(msg.target === "broker") {
-        broker.send(msg);
-    } else {
-        cluster.workers[msg.workerId].send({data: msg.data});
+        return {
+            /**
+             * Handler for messages received from the HTTP worker(s).
+             * The message will be forwarded to the target. (for now almost always the data broker)
+             * TODO: Implement further.
+             *
+             * @param msg
+             */
+            onServerWorkerMessageReceived : function(msg) {
+                logger.DEBUG("Message received from server worker: " + msg);
+
+                if(msg.target === "broker") {
+                    broker.send(msg);
+                } else {
+                    intWorker.send(msg);
+                }
+            },
+            /**
+             * Handler for messages received from the interval worker.
+             * The message will be forwarded to the target. (for now almost always the data broker)
+             * TODO: Implement further.
+             *
+             * @param msg The message sent by the interval worker that needs to be forwarded to the correct target.
+             */
+            onIntervalWorkerMessageReceived : function(msg) {
+                logger.DEBUG("Message received from interval worker: " + msg);
+
+                if(msg.target === "broker") {
+                    broker.send(msg);
+                } else {
+                    cluster.workers[msg.workerId].send({data: msg.data});
+                }
+            },
+            /**
+             * Handler for messages received from the data broker.
+             * The message will be forwarded to the worker which sent the message to the data broker.
+             *
+             * @param msg The message originally sent by the worker which was sent and handled by the data broker and now sent back again.
+             */
+            onDataBrokerMessageReceived : function(msg) {
+                logger.DEBUG("Message received from data broker: " + msg);
+                cluster.workers[msg.workerId].send(msg);
+            }
+        }
     }
-}
+};
 
-function onDataBrokerMessageReceived(msg) {
-    logger.DEBUG("Message received from data broker: " + msg);
-    cluster.workers[msg.workerId].send(msg);
-}
-
-/*-------------------------------------------------------------------------------------------------
- * ------------------------------------------------------------------------------------------------
- *                              Worker startup & message handling
- * ------------------------------------------------------------------------------------------------
- ------------------------------------------------------------------------------------------------*/
-function startWorkerInstance() {
-    //If the process environment contains a name/value pair of name and it equals interval, start a new interval worker.
-    //Otherwise start a normal server instance.
-    if(process.env['name'] === "interval") {
-        intervalWorker.startWorker();
-
-    } else if(process.env['name'] === "broker") {
-        var brokerInstance = new DataBroker();
-
-        //Create caches:
-        blitzortung.setupLightningCache();
-        openweathermap.setupWeatherCache();
-    } else {
-        //Add a listener on the worker for messages.
-        cluster.worker.on("message", onMessageFromMasterReceived);
-        startServerInstance(cluster.worker.id, handles);
-    }
-}
-
-//Each message has an originFunc, use this to direct to the correct service.
-function onMessageFromMasterReceived(msg) {
-    logger.DEBUG("Received message from master: routing to: " + msg.handler + "." + msg.handlerFunction + "MessageHandler(\"\")");
-    eval(msg.handler)[msg.handlerFunction](msg);
-
-    //TODO: Error handling!
-}
-
-/**
- * Will start a new server instance.
- *
- * @param handles The array containing the endpoints for the server instance that will be started.
- */
-function startServerInstance(id, handles) {
-    //Start the server.
-    server.start(id, handles);
-}
+//Start the application.
+var wg = new WeatherGenie(true);

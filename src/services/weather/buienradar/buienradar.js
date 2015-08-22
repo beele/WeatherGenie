@@ -1,7 +1,7 @@
 var http = require("http");
 
-var logger = require("../../logging/logger").makeLogger("SERVIC");
-var messageFactory = require("../../util/messagefactory").getInstance();
+var logger = require("../../../logging/logger").makeLogger("IMPL-BUIENRDR--");
+var messageFactory = require("../../../util/messagefactory").getInstance();
 
 //Variables.
 var currentRainMap = null;
@@ -129,7 +129,7 @@ function retrieveLocationIdForCity(city, callback) {
                 logger.ERROR("Cannot find location id for: " + city);
                 callback(null);
             } else {
-                logger.DEBUG(data);
+                //logger.DEBUG(data);
                 data = JSON.parse(data);
 
                 if(data.length !== undefined && data.length > 0) {
@@ -171,7 +171,7 @@ function retrieveDailyForecast(locationId, callback) {
                 logger.ERROR("No daily forecast found for city with id: " + locationId);
                 callback(null);
             } else {
-                logger.DEBUG(data);
+                //logger.DEBUG(data);
                 data = JSON.parse(data);
 
                 if(data.days !== undefined && data.days.length > 0) {

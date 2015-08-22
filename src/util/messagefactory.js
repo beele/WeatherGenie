@@ -1,6 +1,6 @@
 var MessageFactory = (function() {
-    var cluster = require('cluster');
-    var logger = require("../logging/logger").makeLogger("MESSAGEFACTORY");
+    var cluster = require("cluster");
+    var logger = require("../logging/logger").makeLogger("UTIL-MSGFACTORY");
     var instance;
 
     /**
@@ -9,9 +9,14 @@ var MessageFactory = (function() {
      * @returns {{TARGET_BROKER: string, TARGET_INTERVAL_WORKER: string, sendSimpleMessage: Function, sendMessageWithHandler: Function}}
      */
     function init() {
+        /*-------------------------------------------------------------------------------------------------
+         * ------------------------------------------------------------------------------------------------
+         *                                     Public vars/functions
+         * ------------------------------------------------------------------------------------------------
+         ------------------------------------------------------------------------------------------------*/
         return {
-            TARGET_BROKER : "broker",
-            TARGET_INTERVAL_WORKER : "intworker",
+            TARGET_BROKER           : "broker",
+            TARGET_INTERVAL_WORKER  : "intworker",
 
             /**
              * Sends a simple message to the master instance.

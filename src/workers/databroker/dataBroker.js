@@ -1,16 +1,29 @@
 var DataBroker = function () {
-
-    var logger = require("../logging/logger").makeLogger("BROKER");
+    var logger = require("../../logging/logger").makeLogger("DATABROKER-----");
     var dataStore = {};
 
     process.on("message", messageReceived);
     logger.INFO("Broker initialised!");
 
+    /*-------------------------------------------------------------------------------------------------
+     * ------------------------------------------------------------------------------------------------
+     *                                        Private functions
+     * ------------------------------------------------------------------------------------------------
+     ------------------------------------------------------------------------------------------------*/
+    /**
+     *
+     * @param msg
+     */
     function messageReceived(msg) {
         logger.DEBUG("Broker received message from: " + msg.workerId);
         eval(msg.targetFunc)(msg);
     }
 
+    /**
+     *
+     * @param msg
+     * @returns {boolean}
+     */
     function isMessageWithHandlers(msg) {
         if(msg.handler === undefined || msg.handler === null || msg.handlerFunction === undefined || msg.handlerFunction === null) {
             logger.ERROR("Cannot handle message!");
@@ -26,14 +39,26 @@ var DataBroker = function () {
      *                                  Data broker data handling
      * ------------------------------------------------------------------------------------------------
      ------------------------------------------------------------------------------------------------*/
+    /**
+     *
+     * @param msg
+     */
     function saveData(msg) {
         dataStore[msg.data.key] = msg.data.value;
     }
 
+    /**
+     *
+     * @param msg
+     */
     function updateData(msg) {
         dataStore[msg.data.key] = msg.data.value;
     }
 
+    /**
+     *
+     * @param msg
+     */
     function retrieveData(msg) {
         if(isMessageWithHandlers(msg)) {
             msg.returnData = dataStore[msg.data.key];
@@ -41,10 +66,18 @@ var DataBroker = function () {
         }
     }
 
+    /**
+     *
+     * @param msg
+     */
     function deleteData(msg) {
         delete dataStore[msg.data.key];
     }
 
+    /**
+     *
+     * @param msg
+     */
     function createCache(msg) {
         if (dataStore[msg.data.cacheName] === null || dataStore[msg.data.cacheName] === undefined) {
             dataStore[msg.data.cacheName] = { data: [], maxSize: msg.data.maxSize};
@@ -54,6 +87,10 @@ var DataBroker = function () {
         }
     }
 
+    /**
+     *
+     * @param msg
+     */
     function addToCache(msg) {
         if(dataStore[msg.data.cacheName].data !== null) {
             var cache = dataStore[msg.data.cacheName];
@@ -68,6 +105,10 @@ var DataBroker = function () {
         }
     }
 
+    /**
+     *
+     * @param msg
+     */
     function retrieveCache(msg) {
         if(isMessageWithHandlers(msg)) {
             if(dataStore[msg.data.cacheName] !== undefined) {
@@ -80,6 +121,10 @@ var DataBroker = function () {
         }
     }
 
+    /**
+     *
+     * @param msg
+     */
     function removeFromCache(msg) {
         var cache = dataStore[msg.data.cacheName];
 
@@ -91,22 +136,13 @@ var DataBroker = function () {
         }
     }
 
+    /**
+     *
+     * @param msg
+     */
     function clearCache(msg) {
         dataStore[msg.data.cacheName].data = [];
     }
 };
-
-//Constants
-//TODO: Put constants in singleton wrapper.
-const FUNC_SAVE_DATA            = "saveData";
-const FUNC_UPDATE_DATA          = "updateData";
-const FUNC_RETRIEVE_DATA        = "retrieveData";
-const FUNC_DElETE_DATA          = "deleteData";
-
-const FUNC_CREATE_CACHE         = "createCache";
-const FUNC_ADD_TO_CACHE         = "addToCache";
-const FUNC_RETRIEVE_CACHE       = "retrieveCache";
-const FUNC_REMOVE_FROM_CACHE    = "removeFromCache";
-const FUNC_CLEAR_CACHE          = "clearCache";
 
 module.exports = DataBroker;
