@@ -20,7 +20,7 @@ function makeLogger(applicationPart) {
     function log(type, message) {
         var debug = process.env["debug"];
 
-        if(debug === "true" || (debug === undefined && type !== "DEBUG")) {
+        if(debug === "true" || ((debug === undefined || debug === "false") && type !== "DEBUG")) {
             var time = new Date().toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
             console.log("[" + time + "]\t" + applicationPart + " \t [" + type + "] \t==> " + message);
         }
