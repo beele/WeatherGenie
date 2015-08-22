@@ -2,7 +2,7 @@ var Blitzortung = function() {
     var logger          = require("../../../logging/logger").makeLogger("IMPL-BLTZRTNG--");
     var WebSocket       = require('ws');
     var messageFactory  = require("../../../util/messagefactory").getInstance();
-    var callbackManager = require("../../../util/callbackManager").getInstance();
+    var callbackManager = require("../../../util/callbackmanager").getInstance();
 
     //Private variables.
     var webSocket       = null;

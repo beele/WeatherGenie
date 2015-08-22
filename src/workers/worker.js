@@ -15,8 +15,8 @@ var Worker = function() {
      */
     function createWorker() {
         //Imports.
-        var Server          = require("../workers/httpworker/server.js");
-        var DataBroker      = require("../workers/databroker/dataBroker");
+        var Server          = require("../workers/httpworker/server");
+        var DataBroker      = require("../workers/databroker/databroker");
         var IntervalWorker  = require("../workers/intervalworker/intervalworker");
 
         //If the process environment contains a name/value pair of name and it equals interval, start a new interval worker.

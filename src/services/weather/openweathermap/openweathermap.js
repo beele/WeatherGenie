@@ -2,7 +2,7 @@ var OpenWeatherMap = function() {
     var logger          = require("../../../logging/logger").makeLogger("IMPL-OPENWTHRMP");
     var http            = require("http");
     var messageFactory  = require("../../../util/messagefactory").getInstance();
-    var callbackManager = require("../../../util/callbackManager").getInstance();
+    var callbackManager = require("../../../util/callbackmanager").getInstance();
 
     //Private variables.
     var threshold       = 120 * 60 * 1000;

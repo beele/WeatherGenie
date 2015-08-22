@@ -4,7 +4,7 @@ var IntervalWorker = function() {
 
     //Required private imports for functionality.
     var BuienRadar      = require("../../services/weather/buienradar/buienradar");
-    var GifProcessor    = require("../../util/gifProcessor");
+    var GifProcessor    = require("../../util/gifprocessor");
     var Blitzortung     = require("../../services/weather/blitzortung/blitzortung");
 
     var buienradar      = null;

@@ -2,7 +2,7 @@ var BuienRadar = function() {
     var logger              = require("../../../logging/logger").makeLogger("IMPL-BUIENRDR--");
     var http                = require("http");
     var messageFactory      = require("../../../util/messagefactory").getInstance();
-    var callbackManager     = require("../../../util/callbackManager").getInstance();
+    var callbackManager     = require("../../../util/callbackmanager").getInstance();
 
     //Private variables.
     var currentRainMap      = null;
