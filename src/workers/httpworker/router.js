@@ -3,7 +3,7 @@ var Router = function(mappedEndpoints) {
     var fs      = require("fs");
     var mime    = require("mime");
 
-    //Variables.
+    //Private variables.
     var handles = mappedEndpoints;
 
     /*-------------------------------------------------------------------------------------------------

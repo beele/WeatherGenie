@@ -33,10 +33,12 @@ var CallbackManager = (function() {
              * Actually all this does is make a new id by taking the current time in millis and adding a random salt.
              *
              * @param callback The callback to assign an id to.
+             * @returns {string} The generated id.
              */
             generateIdForCallback : function(callback) {
                 var id = new Date().getTime() + "--" + (Math.random() * 6);
                 callbacks[id] = callback;
+                return id;
             },
             /**
              * Returns the callback function for the given id.

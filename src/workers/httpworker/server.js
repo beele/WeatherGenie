@@ -4,11 +4,11 @@ var Server = function() {
     var cluster = require("cluster");
     var Router  = require("./router");
 
-    //Variables.
+    //Private variables.
     var id      = null;
     var router  = null;
 
-    startServer();
+    init();
 
     /*-------------------------------------------------------------------------------------------------
      * ------------------------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ var Server = function() {
      *
      * The server will then be set to listen on the given port and each request will be handled by the router.
      */
-    function startServer() {
+    function init() {
         id = cluster.worker.id;
 
         //Create a new router instance and pass it the mapped endpoints.
@@ -41,30 +41,33 @@ var Server = function() {
      */
     function mapRestEndpoints() {
         var GenericEndpoints    = require("./../../services/genericendpoints");
-        var weather             = require("./../../services/weather/weather");
+        var WeatherService      = require("./../../services/weather/weather");
 
         var genericEndpoints    = new GenericEndpoints();
+        var weatherService      = new WeatherService();
 
         return {
             "/"                         : genericEndpoints.index,
             "/upload"                   : genericEndpoints.upload,
 
-            "/weather"                  : weather.showWeatherCache,
-            "/weather/*"                : weather.retrieveWeather,
+            "/weather"                  : weatherService.showWeatherCache,
+            "/weather/*"                : weatherService.retrieveWeather,
 
-            "/weather/rain"             : weather.showRainMaps,
-            "/weather/rain/*"           : weather.geographicPrediction,
-            "/weather/rain/xy/*"        : weather.geographicPredictionForBlock,
+            "/weather/rain"             : weatherService.showRainMaps,
+            "/weather/rain/*"           : weatherService.geographicPrediction,
+            "/weather/rain/xy/*"        : weatherService.geographicPredictionForBlock,
 
-            "/weather/lightning"        : weather.showLightingCache,
-            "/weather/lightning/*"      : weather.lightningData
+            "/weather/lightning"        : weatherService.showLightingCache,
+            "/weather/lightning/*"      : weatherService.lightningData
         };
     }
 
     /**
+     * Handles any incoming requests.
+     * Any request recieved will be passed on to the router.
      *
-     * @param request
-     * @param response
+     * @param request The request that was received.
+     * @param response The response to send back.
      */
     function onRequest(request, response) {
         var url = require("url");

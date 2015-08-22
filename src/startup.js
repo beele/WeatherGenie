@@ -3,7 +3,7 @@ var WeatherGenie = function(runInDebug) {
     var cluster         = require("cluster");
     var Worker          = require("./workers/worker");
 
-    //Variables.
+    //Private variables.
     var debug           = runInDebug === undefined ? false : runInDebug;
     var broker          = null;
     var intWorker       = null;
@@ -11,6 +11,11 @@ var WeatherGenie = function(runInDebug) {
 
     init();
 
+    /*-------------------------------------------------------------------------------------------------
+     * ------------------------------------------------------------------------------------------------
+     *                                        Private functions
+     * ------------------------------------------------------------------------------------------------
+     ------------------------------------------------------------------------------------------------*/
     /**
      * Init simple purpose.
      * If the current node instance is the master, it proceeds to create the other node instances (forks/workers).
@@ -21,6 +26,12 @@ var WeatherGenie = function(runInDebug) {
     function init() {
         //The master creates and revives the workers and passes messages between them.
         if (cluster.isMaster) {
+            logger.INIT("--------------------------------------------------------------------------");
+            logger.INIT("--------------------------------------------------------------------------");
+            logger.INIT("                       WELCOME TO WEATHERGENIE RC1                        ");
+            logger.INIT("--------------------------------------------------------------------------");
+            logger.INIT("--------------------------------------------------------------------------");
+
             messageHandlers = createMessageHandlers();
             forkInstances();
         } else {
@@ -38,22 +49,22 @@ var WeatherGenie = function(runInDebug) {
      */
     function forkInstances() {
         //Fork data broker.
-        logger.DEBUG("Starting new data broker...");
-        broker = cluster.fork({name: "broker"});
+        logger.INIT("Starting new data broker...");
+        broker = cluster.fork({name: "broker", debug: debug});
         broker.on("message", messageHandlers.onDataBrokerMessageReceived);
 
         //Fork interval worker.
-        logger.DEBUG("Starting new interval worker...");
-        intWorker = cluster.fork({name: "interval"});
+        logger.INIT("Starting new interval worker...");
+        intWorker = cluster.fork({name: "interval", debug: debug});
         intWorker.on("message", messageHandlers.onIntervalWorkerMessageReceived);
 
         //Fork normal server worker instances. These will handle all HTTP requests.
         var cores = require("os").cpus().length;
         var numberOfHttpServants = cores - 2 > 0 ? cores - 2 : 1;
         for (var i = 0; i < numberOfHttpServants; i++) {
-            logger.DEBUG("Starting new server worker...");
+            logger.INIT("Starting new server worker...");
 
-            var worker = cluster.fork({name: "http"});
+            var worker = cluster.fork({name: "http", debug: debug});
             worker.on("message", messageHandlers.onServerWorkerMessageReceived);
         }
 
@@ -81,22 +92,20 @@ var WeatherGenie = function(runInDebug) {
         //CLEAR!
         switch (worker.id) {
             case broker.id:
-                broker = cluster.fork({name: "broker"});
+                broker = cluster.fork({name: "broker", debug: debug});
                 broker.on("message", messageHandlers.onDataBrokerMessageReceived);
                 break;
             case intWorker.id:
-                intWorker = cluster.fork({name: "interval"});
+                intWorker = cluster.fork({name: "interval", debug: debug});
                 intWorker.on("message", messageHandlers.onIntervalWorkerMessageReceived);
                 break;
             default:
-                cluster.fork({name: "http"}).on("message", messageHandlers.onServerWorkerMessageReceived);
+                cluster.fork({name: "http", debug: debug}).on("message", messageHandlers.onServerWorkerMessageReceived);
         }
     }
 
     /*-------------------------------------------------------------------------------------------------
-     * ------------------------------------------------------------------------------------------------
      *                                       Message handling
-     * ------------------------------------------------------------------------------------------------
      ------------------------------------------------------------------------------------------------*/
     /**
      * Returns a closure with custom logger and the message handler functions.
@@ -154,4 +163,4 @@ var WeatherGenie = function(runInDebug) {
 };
 
 //Start the application.
-var wg = new WeatherGenie(true);
+var wg = new WeatherGenie();

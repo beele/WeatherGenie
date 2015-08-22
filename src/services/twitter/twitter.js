@@ -1,45 +1,62 @@
-var twitter = require('twitter');
+var TwitterService = function() {
+    var logger  = require("../../logging/logger").makeLogger("SERV-TWITTER---");
+    var Twitter = require('twitter');
 
-var logger = require("../../logging/logger").makeLogger("SERV-TWITTER---");
+    //Private variables.
+    var client  = null;
 
-//TODO: Load twitter credentials.
-var client = new twitter({
-    consumer_key: '',
-    consumer_secret: '',
-    access_token_key: '',
-    access_token_secret: ''
-});
+    init();
 
-var lastRepliedId = null;
-function startInterval() {
-    setInterval(function() {
-        logger.DEBUG("Testing interval 61s");
+    /*-------------------------------------------------------------------------------------------------
+     * ------------------------------------------------------------------------------------------------
+     *                                        Public functions
+     * ------------------------------------------------------------------------------------------------
+     ------------------------------------------------------------------------------------------------*/
+    //TODO: Decent implementation
+    this.tweet = function(request, response) {
+        logger.INFO("Tweet method was called!");
 
-        client.get('statuses/mentions_timeline', function(error, tweets, response){
+        client.post('statuses/update', {status: 'The genie is out of the lamp!'},  function(error, tweet, response){
             if(error) throw error;
-            logger.DEBUG(tweets);
+            logger.DEBUG(tweet);
             logger.DEBUG(response);
-
-            //TODO: Check for new mentions and reply to them!
         });
 
-    }, 61000 );
-}
+        response.writeHead(200, {});
+        response.write(JSON.stringify({result: "ok"}, 0, 4));
+        response.end();
+    };
 
-//TODO: Decent implementation
-function tweet(request, response) {
-    logger.INFO("Tweet method was called!");
+    /*-------------------------------------------------------------------------------------------------
+     * ------------------------------------------------------------------------------------------------
+     *                                        Private functions
+     * ------------------------------------------------------------------------------------------------
+     ------------------------------------------------------------------------------------------------*/
+    function init() {
+        client = new Twitter({
+            //TODO: Load twitter credentials.
+            consumer_key: '',
+            consumer_secret: '',
+            access_token_key: '',
+            access_token_secret: ''
+        });
+    }
 
-    client.post('statuses/update', {status: 'The genie is out of the lamp!'},  function(error, tweet, response){
-        if(error) throw error;
-        logger.DEBUG(tweet);
-        logger.DEBUG(response);
-    });
+    //TODO: Implement!
+    /*function startInterval() {
+        setInterval(function() {
+            logger.DEBUG("Testing interval 61s");
 
-    response.writeHead(200, {});
-    response.write(JSON.stringify({result: "ok"}, 0, 4));
-    response.end();
-}
+            client.get('statuses/mentions_timeline', function(error, tweets, response){
+                if(error) throw error;
+                logger.DEBUG(tweets);
+                logger.DEBUG(response);
 
-exports.tweet = tweet;
-exports.startInterval = startInterval;
+                //TODO: Check for new mentions and reply to them!
+            });
+
+        }, 61000 );
+    }*/
+};
+
+module.exports = TwitterService;
