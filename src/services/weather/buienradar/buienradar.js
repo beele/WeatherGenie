@@ -36,7 +36,8 @@ var BuienRadar = function() {
      */
     this.geographicPredictionMessageHandler = function(msg) {
         logger.INFO("executing: geographicPredictionMessageHandler(msg)");
-        logger.DEBUG(JSON.stringify(msg));
+        //Data is too much to log, even for debug! Only use when required!
+        //logger.DEBUG(JSON.stringify(msg));
 
         //Null safety check!
         if(msg.returnData === undefined || msg.returnData.currentRainMap === undefined || msg.returnData.predictRainMap === undefined) {

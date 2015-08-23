@@ -47,6 +47,7 @@ var Blitzortung = function() {
             //Check to see if the strike was in the radius (300km) of the geographic center of belgium.
             //Only send the strike when in range.
             if(getDistanceBetweenTwoLatLonPoints(50.6404438,4.66775, data.lat, data.lon) <= 300) {
+                logger.DEBUG("Lightning in range received!");
                 messageFactory.sendSimpleMessage(messageFactory.TARGET_BROKER, "addToCache", {cacheName: "lightning", value: {timestamp: new Date(Math.floor(data.time/1000000)), lat: data.lat, lon: data.lon}});
             }
         });
