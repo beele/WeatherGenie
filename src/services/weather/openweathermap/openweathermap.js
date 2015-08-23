@@ -20,7 +20,7 @@ var OpenWeatherMap = function() {
      * @param callback The callback function to execute when done.
      */
     this.retrieveWeatherInfo = function(placeName, callback) {
-        logger.INFO("retrieveWeatherInfo method was called!");
+        logger.INFO("executing retrieveWeatherInfo(" + placeName + "," + callback + ")");
 
         var id = callbackManager.generateIdForCallback(callback);
         messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER, "retrieveCache", {cacheName: "weather"},
@@ -36,7 +36,8 @@ var OpenWeatherMap = function() {
      * @param msg The original message with the requested data (or error) added.
      */
     this.retrieveWeatherInfoMessageHandler = function(msg) {
-        logger.DEBUG("weather cache data received");
+        logger.INFO("executing retrieveWeatherInfoMessageHandler");
+        logger.DEBUG(JSON.stringify(msg));
 
         var placeName = msg.handlerParams.placeName;
         var result = null;
@@ -80,7 +81,7 @@ var OpenWeatherMap = function() {
      * @param callback The callback function to execute when done.
      */
     this.showWeatherCache = function(callback) {
-        logger.INFO("showWeatherCache method was called!");
+        logger.INFO("executing: showWeatherCache(" + callback + ")");
 
         var id = callbackManager.generateIdForCallback(callback);
         messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER, "retrieveCache", {cacheName: "weather"},
@@ -93,7 +94,8 @@ var OpenWeatherMap = function() {
      * @param msg The original message with the requested data (or error) added.
      */
     this.showWeatherCacheMessageHandler = function(msg) {
-        logger.DEBUG("weather cache data received");
+        logger.INFO("executing: showWeatherCacheMessageHandler");
+        logger.DEBUG(JSON.stringify(msg));
 
         callbackManager.returnAndRemoveCallbackForId(msg.handlerParams.callbackId)(msg.returnData);
     };

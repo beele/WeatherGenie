@@ -38,6 +38,8 @@ var CallbackManager = (function() {
             generateIdForCallback : function(callback) {
                 var id = new Date().getTime() + "--" + (Math.random() * 6);
                 callbacks[id] = callback;
+
+                logger.DEBUG("Id generated for callback: " + id);
                 return id;
             },
             /**
@@ -47,6 +49,8 @@ var CallbackManager = (function() {
              * @returns The callback function.
              */
             returnCallbackForId : function(id) {
+                logger.DEBUG("Returning callback for id: " + id);
+
                 return callbacks[id];
             },
             /**
@@ -57,6 +61,8 @@ var CallbackManager = (function() {
              * @returns The callback function.
              */
             returnAndRemoveCallbackForId: function(id) {
+                logger.DEBUG("Returning and deleting callback for id: " + id);
+
                 var clbk = callbacks[id];
                 delete callbacks[id];
                 return clbk;

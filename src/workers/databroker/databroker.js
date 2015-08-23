@@ -178,7 +178,7 @@ var DataBroker = function () {
     function removeFromCache(msg) {
         var cache = dataStore[msg.data.cacheName];
 
-        var values = msg.data.values;
+        var values = msg.data.value;
         if(values !== null || values !== undefined && values.length > 0) {
             for(var i = 0 ; i < values.length ; i++) {
                 cache.data.splice(i,1);
