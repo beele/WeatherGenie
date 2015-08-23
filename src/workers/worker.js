@@ -38,7 +38,7 @@ var Worker = function() {
                 return;
         }
 
-        logger.INFO("Worker ( + " + process.env["name"] + ") with id: " + cluster.worker.id + " created.");
+        logger.INFO("Worker (" + process.env["name"] + ") with id: " + cluster.worker.id + " created.");
     }
 
     /**
