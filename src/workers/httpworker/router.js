@@ -20,7 +20,7 @@ var Router = function(mappedEndpoints) {
      * @param response The response to write to.
      */
     this.route = function(pathName, request, response) {
-        if(this.isFile(pathName)) {
+        if(isFile(pathName)) {
             //All files on the static file server should be located in the www folder!
             var fullPath = "www" + pathName;
             tryAndServeFile(response, fullPath);
@@ -36,23 +36,23 @@ var Router = function(mappedEndpoints) {
         }
     };
 
+    /*-------------------------------------------------------------------------------------------------
+     * ------------------------------------------------------------------------------------------------
+     *                                        Private functions
+     * ------------------------------------------------------------------------------------------------
+     ------------------------------------------------------------------------------------------------*/
     /**
      * Returns true if the resource is a file, false if not.
      *
      * @param pathName The path to the file, including the file and extention.
      * @returns {boolean} True if a file, false if not.
      */
-    this.isFile = function (pathName) {
+    function isFile (pathName) {
         var path = pathName.replace("/","");
         var isFile = path.indexOf(".") > -1;
         return isFile && path.search(".") == 0;
-    };
+    }
 
-    /*-------------------------------------------------------------------------------------------------
-     * ------------------------------------------------------------------------------------------------
-     *                                        Private functions
-     * ------------------------------------------------------------------------------------------------
-     ------------------------------------------------------------------------------------------------*/
     /**
      * Tries to serve the requested resource.
      * Will check if the resource exists, if not a 404 will be generated.
@@ -101,6 +101,7 @@ var Router = function(mappedEndpoints) {
     /**
      * Will try and handle a rest endpoint.
      * Will generate a 404 when the requested rest endpoint cannot be found!
+     * Will generate a 400 if the number of parameters does not match with the required number.
      *
      * @param handles The handles array that contains all the mapped endpoints.
      * @param pathName The endpoint path.
@@ -108,19 +109,25 @@ var Router = function(mappedEndpoints) {
      * @param response The response to write to.
      */
     function tryAndHandleRestEndpoint(handles, pathName, request, response) {
-
-        //TODO: Implement endpoints with multiple unknown parts (*) in their path.
-
-        if(typeof handles[pathName] === 'function') {
+        //Find one-on-one mappings without params.
+        if(typeof handles[pathName] === 'object') {
             logger.INFO("Handling REST request: " + pathName);
 
-            handles[pathName](request, response);
+            handles[pathName].execute(request, response);
         } else {
+            //Handle REST endpoints that take in parameters.
             var correctedEndpoint = pathName.substring(0, pathName.lastIndexOf("/")) + "/*";
-            if(typeof handles[pathName.substring(0, pathName.lastIndexOf("/")) + "/*"] === 'function') {
+            if(typeof handles[correctedEndpoint] === "object") {
                 logger.INFO("Handling REST request: " + pathName);
 
-                handles[correctedEndpoint](request, response);
+                var endpoint = handles[correctedEndpoint];
+                var receivedParamCount = pathName.substring(pathName.lastIndexOf("/"), pathName.length).split("&").length;
+
+                if(endpoint.params.length === receivedParamCount) {
+                    endpoint.execute(request, response);
+                } else {
+                    displayError(response, 400, "Parameters incorrect => Required: " + JSON.stringify(endpoint.params), pathName);
+                }
             } else {
                 displayError(response, 404, "Cannot find REST endpoint!", pathName);
             }
