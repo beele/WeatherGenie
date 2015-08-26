@@ -4,18 +4,11 @@
 html {
     font-family: 'Lato', sans-serif !important;
     color: #fffaeb;
-
-    height: 100%;
-    overflow: hidden;
 }
 
 body {
     margin: 0;
     padding: 0;
-
-    height: 100%;
-    overflow-y: scroll;
-    overflow-x: hidden;
 
     color: #fffaeb;
 }
@@ -23,7 +16,6 @@ body {
 h1, h2, h3, h4, h5 {
     color: #fffaeb;
     margin: 0 0 0 0;
-!important;
 }
 
 .topSpacing {
@@ -256,16 +248,6 @@ article {
     position: fixed;
 }
 
-#backgroundWrapper img {
-    width: auto;
-    height: 100%;
-
-    left: 0;
-    position: absolute;
-
-    transition: opacity 1s ease-in-out;
-}
-
 .bgImage {
     background-size: cover;
     width: 100%;
@@ -273,4 +255,40 @@ article {
     position: absolute;
 
     transition: opacity 1s ease-in-out;
+}
+
+#bgImage1 {
+    background-image: url(../img/bgs/bg_ClearSky.jpg);
+}
+
+#bgImage2 {
+    background-image: url(../img/bgs/bg_FewClouds.jpg);
+}
+
+#bgImage3 {
+    background-image: url(../img/bgs/bg_FewClouds2.jpg);
+}
+
+#bgImage4 {
+    background-image: url(../img/bgs/bg_BrokenClouds.jpg);
+}
+
+#bgImage5 {
+    background-image: url(../img/bgs/bg_ShowerRain.jpg);
+}
+
+#bgImage6 {
+    background-image: url(../img/bgs/bg_Rain.jpg);
+}
+
+#bgImage7 {
+    background-image: url(../img/bgs/bg_Thunderstorm.jpg);
+}
+
+#bgImage8 {
+    background-image: url(../img/bgs/bg_Snow.jpg);
+}
+
+#bgImage9 {
+    background-image: url(../img/bgs/bg_Mist.jpg);
 }

@@ -38,15 +38,15 @@
     ***************************************************************-->
     <body ng-controller="weatherController">
         <div id="backgroundWrapper">
-            <div id="bgImage1" class="bgImage"              style="background-image: url(img/bgs/bg_ClearSky.jpg);">        </div>
-            <div id="bgImage2" class="bgImage transparent"  style="background-image: url(img/bgs/bg_FewClouds.jpg);">       </div>
-            <div id="bgImage3" class="bgImage transparent"  style="background-image: url(img/bgs/bg_FewClouds2.jpg);">      </div>
-            <div id="bgImage4" class="bgImage transparent"  style="background-image: url(img/bgs/bg_BrokenClouds.jpg);">    </div>
-            <div id="bgImage5" class="bgImage transparent"  style="background-image: url(img/bgs/bg_ShowerRain.jpg);">      </div>
-            <div id="bgImage6" class="bgImage transparent"  style="background-image: url(img/bgs/bg_Rain.jpg);">            </div>
-            <div id="bgImage7" class="bgImage transparent"  style="background-image: url(img/bgs/bg_Thunderstorm.jpg);">    </div>
-            <div id="bgImage8" class="bgImage transparent"  style="background-image: url(img/bgs/bg_Snow.jpg);">            </div>
-            <div id="bgImage9" class="bgImage transparent"  style="background-image: url(img/bgs/bg_Mist.jpg);">            </div>
+            <div id="bgImage1" class="bgImage"></div>
+            <div id="bgImage2" class="bgImage transparent"></div>
+            <div id="bgImage3" class="bgImage transparent"></div>
+            <div id="bgImage4" class="bgImage transparent"></div>
+            <div id="bgImage5" class="bgImage transparent"></div>
+            <div id="bgImage6" class="bgImage transparent"></div>
+            <div id="bgImage7" class="bgImage transparent"></div>
+            <div id="bgImage8" class="bgImage transparent"></div>
+            <div id="bgImage9" class="bgImage transparent"></div>
         </div>
 
         <!--***************************************************************
@@ -57,7 +57,7 @@
 
             <form class="searchForm searchFormLarge" ng-submit="initialSearch()">
                 <input type="text" placeholder="How is the weather in..." name="search" autocomplete="off" spellcheck="false" class="searchText searchTextLarge" ng-model="city"/>
-                <input type="submit" class="searchSubmit searchButtonLarge" value=" "/><br style="clear:both;"/>
+                <input type="submit" class="searchSubmit searchButtonLarge" value=" "/><br/>
             </form>
 
             <div id="initialImages">
@@ -90,7 +90,7 @@
                 <div id="headerSearch">
                     <form class="searchForm searchFormNormal" ng-submit="search()">
                         <input type="text" placeholder="Search for city" name="search" spellcheck="false" class="searchText searchTextNormal" ng-model="city"/>
-                        <input type="submit" class="searchSubmit searchButtonNormal" value=" "/><br style="clear:both;"/>
+                        <input type="submit" class="searchSubmit searchButtonNormal" value=" "/><br/>
                     </form>
                 </div>
             </div>
