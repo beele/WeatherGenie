@@ -37,7 +37,8 @@ var Server = function() {
     /**
      * Set up any REST endpoints here!
      * Add a new line for each endpoint you want to handle.
-     * To allow for params to be passed, end your endpoint with a /*
+     * To allow for params to be passed, end your endpoint with "*".
+     * Pass the parameter names via the params variable.
      */
     function mapRestEndpoints() {
         var GenericEndpoints    = require("./../../services/genericendpoints");
@@ -47,18 +48,18 @@ var Server = function() {
         var weatherService      = new WeatherService();
 
         return {
-            "/"                         : genericEndpoints.index,
-            "/upload"                   : genericEndpoints.upload,
+            "/"                             : {execute : genericEndpoints.index,                       params: null},
+            "/upload"                       : {execute : genericEndpoints.upload,                      params: null},
 
-            "/weather"                  : weatherService.showWeatherCache,
-            "/weather/*"                : weatherService.retrieveWeather,
+            "/weather"                      : {execute : weatherService.showWeatherCache,              params: null},
+            "/weather/*"                    : {execute : weatherService.retrieveWeather,               params: ["city"]},
 
-            "/weather/rain"             : weatherService.showRainMaps,
-            "/weather/rain/*"           : weatherService.geographicPrediction,
-            "/weather/rain/xy/*"        : weatherService.geographicPredictionForBlock,
+            "/weather/rain"                 : {execute : weatherService.showRainMaps,                  params: null},
+            "/weather/rain/*"               : {execute : weatherService.geographicPrediction,          params: ["latitude", "longitude"]},
+            "/weather/rain/xy/*"            : {execute : weatherService.geographicPredictionForBlock,  params: ["x", "y"]},
 
-            "/weather/lightning"        : weatherService.showLightingCache,
-            "/weather/lightning/*"      : weatherService.lightningData
+            "/weather/lightning"            : {execute : weatherService.showLightingCache,             params: null},
+            "/weather/lightning/*"          : {execute : weatherService.lightningData,                 params: ["latitude", "longitude"]}
         };
     }
 

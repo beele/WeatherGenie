@@ -22,7 +22,7 @@ var BuienRadar = function() {
      * @param callback The callback function to execute when done.
      */
     this.geographicPrediction = function(lat, lon, callback) {
-        logger.INFO("buienradar service geographicPrediction method was called!");
+        logger.INFO("executing: geographicPrediction(" + lat + "," + lon + "," + callback + ")");
 
         var id = callbackManager.generateIdForCallback(callback);
         messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER, "retrieveData", {key: "rainMaps"},
@@ -35,7 +35,9 @@ var BuienRadar = function() {
      * @param msg The original message with the requested data (or error) added.
      */
     this.geographicPredictionMessageHandler = function(msg) {
-        logger.DEBUG("buienradar rain maps received");
+        logger.INFO("executing: geographicPredictionMessageHandler(msg)");
+        //Data is too much to log, even for debug! Only use when required!
+        //logger.DEBUG(JSON.stringify(msg));
 
         //Null safety check!
         if(msg.returnData === undefined || msg.returnData.currentRainMap === undefined || msg.returnData.predictRainMap === undefined) {
@@ -65,7 +67,7 @@ var BuienRadar = function() {
      * @param callback The callback function to execute when done.
      */
     this.geographicPredictionForBlock = function(x, y, callback) {
-        logger.INFO("buienradar service geographicPredictionForBlock method was called!");
+        logger.INFO("executing: geographicPredictionForBlock(" + x + "," + y + ")");
 
         var id = callbackManager.generateIdForCallback(callback);
         messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER, "retrieveData", {key: "rainMaps"},
@@ -78,7 +80,8 @@ var BuienRadar = function() {
      * @param msg The original message with the requested data (or error) added.
      */
     this.geographicPredictionForBlockMessageHandler = function(msg) {
-        logger.DEBUG("buienradar rain maps received");
+        logger.INFO("executing: geographicPredictionForBlockMessageHandler(msg)");
+        logger.DEBUG(JSON.stringify(msg));
 
         //Null safety check!
         if(msg.returnData === undefined || msg.returnData.currentRainMap === undefined || msg.returnData.predictRainMap === undefined) {
@@ -102,7 +105,7 @@ var BuienRadar = function() {
      * @param callback The callback function to execute when done.
      */
     this.showRainMaps = function(callback) {
-        logger.INFO("buienradar service showRainMaps method was called!");
+        logger.INFO("executing showRainMaps()");
 
         var id = callbackManager.generateIdForCallback(callback);
         messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER, "retrieveData", {key: "rainMaps"},
@@ -115,7 +118,8 @@ var BuienRadar = function() {
      * @param msg The original message with the requested data (or error) added.
      */
     this.showRainMapsMessageHandler = function(msg) {
-        logger.DEBUG("buienradar rain maps received");
+        logger.INFO("executing: showRainMapsMessageHandler(msg)");
+        logger.DEBUG(JSON.stringify(msg));
 
         callbackManager.returnAndRemoveCallbackForId(msg.handlerParams.callbackId)(msg.returnData);
     };
@@ -128,6 +132,8 @@ var BuienRadar = function() {
      * @param callback The callback function to execute when done.
      */
     this.geographicConditionForecast = function(city, callback) {
+        logger.INFO("executing: geographicConditionForecast(" + city + "," + callback + ")");
+
         var clbck = function(data) {
             retrieveDailyForecast(data, callback)
         };

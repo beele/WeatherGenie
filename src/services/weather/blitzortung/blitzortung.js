@@ -1,10 +1,11 @@
 var Blitzortung = function() {
     var logger          = require("../../../logging/logger").makeLogger("IMPL-BLTZRTNG--");
-    var WebSocket       = require('ws');
+    var WebSocket       = require("ws");
     var messageFactory  = require("../../../util/messagefactory").getInstance();
     var callbackManager = require("../../../util/callbackmanager").getInstance();
 
     //Private variables.
+    var self            = this;
     var webSocket       = null;
     var retryCount      = 0;
 
@@ -32,7 +33,7 @@ var Blitzortung = function() {
 
         //Connect to websocket from blitzortung.org
         webSocket = new WebSocket("ws://ws.blitzortung.org:808" + retryCount, "", {headers: {origin: "http://www.blitzortung.org"}});
-        webSocket.on('open', function startupLightingSocket() {
+        webSocket.on("open", function startupLightingSocket() {
             retryCount = 0;
 
             //North america.
@@ -40,18 +41,19 @@ var Blitzortung = function() {
             //Western europe.
             webSocket.send('{"west":-12,"east":20,"north":56,"south":33.6}');
         });
-        webSocket.on('message', function lightningDataReceived(data) {
+        webSocket.on("message", function lightningDataReceived(data) {
             var data = JSON.parse(data);
 
             //Check to see if the strike was in the radius (300km) of the geographic center of belgium.
             //Only send the strike when in range.
             if(getDistanceBetweenTwoLatLonPoints(50.6404438,4.66775, data.lat, data.lon) <= 300) {
+                logger.DEBUG("Lightning in range received!");
                 messageFactory.sendSimpleMessage(messageFactory.TARGET_BROKER, "addToCache", {cacheName: "lightning", value: {timestamp: new Date(Math.floor(data.time/1000000)), lat: data.lat, lon: data.lon}});
             }
         });
         //If the socket goes down restart it!
-        webSocket.on('close', onWebsocketFailure);
-        webSocket.on('error', onWebsocketFailure);
+        webSocket.on("close", onWebsocketFailure);
+        webSocket.on("error", onWebsocketFailure);
     };
 
     /**
@@ -148,7 +150,7 @@ var Blitzortung = function() {
 
         //The retryCount acts as the count for retries and as the port number.
         retryCount++;
-        this.setupBlitzortungWebSocket();
+        self.setupBlitzortungWebSocket();
     }
 
     /*-------------------------------------------------------------------------------------------------

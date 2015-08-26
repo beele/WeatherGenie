@@ -34,11 +34,11 @@ var Worker = function() {
                 new Server();
                 break;
             default:
-                logger.ERROR("Unkown worker type, cannot create a worker of type: " + process.env['name']);
+                logger.ERROR("Unknown worker type, cannot create a worker of type: " + process.env['name']);
                 return;
         }
 
-        logger.INFO("Worker with id: " + cluster.worker.id + " created.");
+        logger.INFO("Worker (" + process.env["name"] + ") with id: " + cluster.worker.id + " created.");
     }
 
     /**
