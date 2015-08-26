@@ -14,7 +14,6 @@ form.searchForm input.searchText {
     border: none;
     float: left;
     line-height: normal;
-!important;
     -webkit-appearance: none;
     display: block;
     border-radius: 0;
