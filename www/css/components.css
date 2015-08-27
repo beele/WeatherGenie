@@ -10,6 +10,7 @@
 *************************/
 #initialSearch {
     overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 input {

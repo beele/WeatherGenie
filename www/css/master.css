@@ -194,7 +194,7 @@ article {
     }
 
     #initialImages {
-        margin: 50px 0 auto;
+        margin: 50px auto 0 auto;
         width: 350px;
     }
 
@@ -245,7 +245,7 @@ article {
     }
 
     #initialImages {
-        margin: 80px auto;
+        margin: 80px auto 0 auto;
         width: 500px;
     }
 
