@@ -163,4 +163,4 @@ var WeatherGenie = function(runInDebug) {
 };
 
 //Start the application.
-var wg = new WeatherGenie(true);
+var wg = new WeatherGenie();
