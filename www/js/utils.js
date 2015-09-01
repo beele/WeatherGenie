@@ -27,28 +27,6 @@ function reloadExternalImages() {
 }
 
 /**
- * Determines the user's GEO location.
- */
-function determineGeoLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(onPositionKnown);
-    } else {
-        console.log("Geolocation is not supported or has been blocked by the user!");
-    }
-}
-
-/**
- * Executed when the user's GEO location has been found.
- * @param position
- */
-function onPositionKnown(position) {
-    lat = position.coords.latitude;
-    lon = position.coords.longitude;
-
-    //TODO: Perform an automated query with lat/lon
-}
-
-/**
  * Returns an object corresponding to the given condition type. The returned object has more information about the given condition.
  * @param condition The condition as received from the backend (wrapped openweathermap API).
  * @returns {{kind: string, bgIndex: number, weight: number}} An object containing more info about the background.

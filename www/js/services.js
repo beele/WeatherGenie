@@ -14,7 +14,6 @@ angular.module('weatherGenieApp.services', [])
         var weatherAPI = {};
 
         weatherAPI.getCityInformation = function (fakeScope, callback) {
-            console.log("DERP");
             console.log("Submitted: " + fakeScope.city);
             blockUI();
 
@@ -149,7 +148,7 @@ angular.module('weatherGenieApp.services', [])
                     }
 
                     //If no strike is available, show a dash!
-                    if(strike === null || strike === undefined) {
+                    if(strike === null) {
                         strike = {distance : "-"};
                     }
 
