@@ -87,7 +87,7 @@ var Blitzortung = function() {
         if(msg.returnData === undefined || msg.returnData.length === 0) {
             logger.DEBUG("No data available, returning error!");
 
-            callbackManager.returnAndRemoveCallbackForId(msg.handlerParams.callbackId)({ERROR: "No lightning data available!"});
+            callbackManager.returnAndRemoveCallbackForId(msg.handlerParams.callbackId)({warning: "No lightning data available!"});
         } else {
             var oLat = msg.handlerParams.lat;
             var oLon = msg.handlerParams.lon;

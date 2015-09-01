@@ -3,8 +3,13 @@ angular.module('weatherGenieApp.controllers', [])
     .controller('weatherController', function ($scope, weatherAPIService) {
 
         //Loop through all the backgrounds. This will be stopped when a search has been done.
-        $scope.bgInterval = setInterval(toggleBackground, 10000);
+        var bgInterval = setInterval(toggleBackground, 10000);
 
+        /**
+         * Perform the initial search, from the welcome screen.
+         * This will perform an animation into the full website.
+         * This calls the search() function to do the actual search.
+         */
         $scope.initialSearch = function () {
             //TODO: Do this with angular animation!
             //Perform some animations to go away from the initial screen.
@@ -26,16 +31,75 @@ angular.module('weatherGenieApp.controllers', [])
             $scope.search();
         };
 
+        /**
+         * Performs the actual search.
+         * Performs the following actions:
+         * - Hide the soft keyboard on mobile devices.
+         * - Block the UI to prevent unwanted user interaction.
+         * - Reload the external buienradar/blitzortung images.
+         * - Call the rest api via the injected weatherAPIService.
+         * --> weatherAPIService.getCityInformation(...);
+         * --> weatherAPIService.retrieveRainInformation(...);
+         * --> weatherAPIService.retrieveLightningInformation(...);
+         * - When all the calls to the service have returned the background will be determined and the UI will be unblocked.
+         * - After each individual call returns, some data will be put on the scope. If an error occurs that will be displayed!
+         */
         $scope.search = function () {
             hideSoftKeyboard();
+            blockUI();
             reloadExternalImages();
 
-            var clback = function onCityInformationRetrieved() {
-                weatherAPIService.retrieveRainInformation($scope, $scope.weatherData.latitude, $scope.weatherData.longitude);
-                weatherAPIService.retrieveLightningInformation($scope, $scope.weatherData.latitude, $scope.weatherData.longitude);
-                unblockUI();
-            };
+            //Start with the city weather information.
+            weatherAPIService.getCityInformation($scope.city, function(weatherData) {
 
-            weatherAPIService.getCityInformation($scope, clback);
+                //If there are no errors, continue and show data.
+                if(weatherData.error === null) {
+                    //Clear background interval!
+                    if (bgInterval !== null) {
+                        clearInterval(bgInterval);
+                        bgInterval = null;
+                    }
+                    //Start animations.
+                    calculateAndAnimsateSunPosition(weatherData);
+                    calculateAndAnimateWindDirectionPosition(weatherData);
+                    calculateAndAnimateWindSpeed(weatherData);
+                    $scope.weatherData = weatherData;
+                } else {
+                    blockUIWithDismissableError(weatherData.error);
+                    $scope.weatherData = null;
+                    return;
+                }
+
+                //Next collect the rain information.
+                weatherAPIService.retrieveRainInformation(weatherData.latitude, weatherData.longitude, function(rainData) {
+
+                    //If there are no errors, continue and show data.
+                    if(rainData.error === null) {
+                        $scope.rainData = rainData;
+                    } else {
+                        blockUIWithDismissableError(rainData.error);
+                        $scope.rainData = null;
+                        return;
+                    }
+
+                    //Finally collect lightning information.
+                    weatherAPIService.retrieveLightningInformation(weatherData.latitude, weatherData.longitude, function(lightningData) {
+
+                        //If there are no errors, continue and show data.
+                        if(lightningData.error === null) {
+                            $scope.lightningData = lightningData;
+                        } else {
+                            blockUIWithDismissableError(lightningData.error);
+                            $scope.lightningData = null;
+                            return;
+                        }
+
+                        //Show the most appropriate background image.
+                        determineBackgroundImage(weatherData, rainData, lightningData);
+                        //All data retrieved!
+                        unblockUI();
+                    });
+                });
+            });
         };
     });
