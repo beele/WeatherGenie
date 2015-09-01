@@ -46,6 +46,7 @@ var weatherGenie = angular.module('weatherGenie', [])
 
         $scope.search = function () {
             hideSoftKeyboard();
+            reloadExternalImages();
 
             var clback = function onCityInformationRetrieved() {
                 $scope.retrieveRainInformation($scope.weatherData.latitude, $scope.weatherData.longitude);
@@ -188,6 +189,11 @@ var weatherGenie = angular.module('weatherGenie', [])
                         } else {
                             farCount++;
                         }
+                    }
+
+                    //If no strike is available, show a dash!
+                    if(strike === null || strike === undefined) {
+                        strike = {distance : "-"};
                     }
 
                     $scope.lightningData = {

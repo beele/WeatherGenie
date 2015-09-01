@@ -18,6 +18,14 @@ function hideSoftKeyboard() {
     }
 }
 
+function reloadExternalImages() {
+    var lightingImg = $("#lightningImg");
+    var buienradarImg = $("#buienradarImg");
+
+    lightingImg.attr("src", "http://images.blitzortung.org/Images/image_b_fr.png?" + new Date().getTime());
+    buienradarImg.attr("src", "http://www.buienradar.be/image?" + new Date().getTime());
+}
+
 /**
  * Determines the user's GEO location.
  */
