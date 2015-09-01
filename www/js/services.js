@@ -1,8 +1,4 @@
-/************************************************************
- ***         Main javascript file for application         ***
- ***********************************************************/
-
-//Init charts:
+//Init charts.
 Chart.defaults.global.scaleOverride = true;
 Chart.defaults.global.scaleSteps = 5;
 Chart.defaults.global.scaleStepWidth = 1;
@@ -11,63 +7,24 @@ Chart.defaults.global.showTooltips = false;
 Chart.defaults.global.scaleLineColor = "rgba(255,255,255,.7)";
 Chart.defaults.global.scaleFontColor = "rgba(255,255,255,.7)";
 
-//Start angularJS.
-var weatherGenie = angular.module('weatherGenie', [])
+//Services.
+angular.module('weatherGenieApp.services', [])
+    .factory('weatherAPIService', function($http) {
 
-    //WeatherController definition.
-    .controller('weatherController', function ($scope, $http, $animate) {
+        var weatherAPI = {};
 
-        //TODO: Split up the code below into separate controllers!
-        
-        //determineGeoLocation();
-        //Loop through all the backgrounds. This will be stopped when a search has been done.
-        $scope.bgInterval = setInterval(toggleBackground, 10000);
-
-        $scope.initialSearch = function () {
-            //TODO: Do this with angular animation!
-            //Perform some animations to go away from the initial screen.
-            $("#initialSearch").animate({bottom: 1500, opacity: 0, height: 50}, 1500, "swing", function complete() {
-                $(this).toggleClass("hidden");
-            });
-
-            var item = $("#headerWrapper");
-            item.toggleClass("hidden");
-            item.fadeTo(2000, 1);
-            item = $("#content");
-            item.toggleClass("hidden");
-            item.fadeTo(2000, 1);
-            item = $("#footer");
-            item.toggleClass("hidden");
-            item.fadeTo(2000, 1);
-
-            //Perform the actual search!
-            $scope.search();
-        };
-
-        $scope.search = function () {
-            hideSoftKeyboard();
-            reloadExternalImages();
-
-            var clback = function onCityInformationRetrieved() {
-                $scope.retrieveRainInformation($scope.weatherData.latitude, $scope.weatherData.longitude);
-                $scope.retrieveLightningInformation($scope.weatherData.latitude, $scope.weatherData.longitude);
-                unblockUI();
-            };
-
-            $scope.getCityInformation(clback);
-        };
-
-        $scope.getCityInformation = function (callback) {
-            console.log("Submitted: " + $scope.city);
+        weatherAPI.getCityInformation = function (fakeScope, callback) {
+            console.log("DERP");
+            console.log("Submitted: " + fakeScope.city);
             blockUI();
 
-            $http.get('weather/' + $scope.city).then(
+            $http.get('weather/' + fakeScope.city).then(
                 function onResponse(response) {
                     var data = response.data;
 
                     //Check for errors from the backend (City not found,...).
                     if (data.error !== null) {
-                        $scope.weatherData = null;
+                        fakeScope.weatherData = null;
                         blockUIWithDismissableError(data.error);
                         return;
                     }
@@ -78,11 +35,11 @@ var weatherGenie = angular.module('weatherGenie', [])
                     data.sunriseString = unixTimeToTimeString(data.sunrise);
                     data.sunsetString = unixTimeToTimeString(data.sunset);
 
-                    var interval = $scope.bgInterval;
+                    var interval = fakeScope.bgInterval;
                     if (interval !== null) {
                         clearInterval(interval);
                         interval = null;
-                        $scope.bgInterval = null;
+                        fakeScope.bgInterval = null;
                     }
 
                     determineBackgroundImage(data);
@@ -90,7 +47,7 @@ var weatherGenie = angular.module('weatherGenie', [])
                     calculateAndAnimateWindDirectionPosition(data);
                     calculateAndAnimateWindSpeed(data);
 
-                    $scope.weatherData = data;
+                    fakeScope.weatherData = data;
                     callback();
                 },
                 function onError(response) {
@@ -99,7 +56,7 @@ var weatherGenie = angular.module('weatherGenie', [])
             );
         };
 
-        $scope.retrieveRainInformation = function (lat, lon) {
+        weatherAPI.retrieveRainInformation = function (fakeScope, lat, lon) {
             $http.get('weather/rain/' + lat + "&" + lon).then(
                 function onResponse(response) {
                     var data = response.data;
@@ -133,7 +90,7 @@ var weatherGenie = angular.module('weatherGenie', [])
                             break;
                     }
 
-                    $scope.rainData = {
+                    fakeScope.rainData = {
                         isRainingNow: currentRain !== 0,
                         intensity: currentRain
                     };
@@ -144,7 +101,7 @@ var weatherGenie = angular.module('weatherGenie', [])
             );
         };
 
-        $scope.retrieveLightningInformation = function (lat, lon) {
+        weatherAPI.retrieveLightningInformation = function (fakeScope, lat, lon) {
             $http.get('weather/lightning/' + lat + "&" + lon).then(
                 function onResponse(response) {
                     var data = response.data;
@@ -196,7 +153,7 @@ var weatherGenie = angular.module('weatherGenie', [])
                         strike = {distance : "-"};
                     }
 
-                    $scope.lightningData = {
+                    fakeScope.lightningData = {
                         closestStrike: strike,
                         closeCount: closeCount,
                         mediumCount: mediumCount,
@@ -208,4 +165,6 @@ var weatherGenie = angular.module('weatherGenie', [])
                 }
             );
         };
+
+        return weatherAPI;
     });
