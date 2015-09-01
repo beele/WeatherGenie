@@ -152,7 +152,7 @@ function determineBackgroundImage(weatherData, rainData, lightningData) {
 
     //Rain and or lightning override!
     var overriddenWeight = null;
-    if(lightningData.closestStrike.distance !== "-") {
+    if(lightningData.closestStrike.distance !== "-" && lightningData.closestStrike.distance < 25) {
         overriddenWeight = getWeatherConditionWeight(211);
     } else {
         if(rainData.isRainingNow === true) {
