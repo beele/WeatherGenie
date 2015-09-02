@@ -1,3 +1,12 @@
+//Init charts.
+Chart.defaults.global.scaleOverride = true;
+Chart.defaults.global.scaleSteps = 5;
+Chart.defaults.global.scaleStepWidth = 1;
+Chart.defaults.global.scaleStartValue = 0;
+Chart.defaults.global.showTooltips = false;
+Chart.defaults.global.scaleLineColor = "rgba(255,255,255,.7)";
+Chart.defaults.global.scaleFontColor = "rgba(255,255,255,.7)";
+
 /*-------------------------------------------------------------------------------------------------
  * ------------------------------------------------------------------------------------------------
  *                                           Controllers.
@@ -17,19 +26,19 @@ angular.module('weatherGenieApp.controllers', [])
         $scope.initialSearch = function () {
             //TODO: Do this with angular animation!
             //Perform some animations to go away from the initial screen.
-            $("#initialSearch").animate({bottom: 1500, opacity: 0, height: 50}, 1500, "swing", function complete() {
+            $("#initialSearch").animate({bottom: 2000, opacity: 0, height: 50}, 1500, "swing", function complete() {
                 $(this).toggleClass("hidden");
             });
 
             var item = $("#headerWrapper");
             item.toggleClass("hidden");
-            item.fadeTo(2000, 1);
+            item.fadeTo(2500, 1);
             item = $("#content");
             item.toggleClass("hidden");
-            item.fadeTo(2000, 1);
+            item.fadeTo(2500, 1);
             item = $("#footer");
             item.toggleClass("hidden");
-            item.fadeTo(2000, 1);
+            item.fadeTo(2500, 1);
 
             //Perform the actual search!
             $scope.search();
@@ -80,6 +89,13 @@ angular.module('weatherGenieApp.controllers', [])
                     //If there are no errors, continue and show data.
                     if(rainData.error === null) {
                         $scope.rainData = rainData;
+
+                        //Charting!
+                        var ctxCurrent = document.getElementById("currentCanvas").getContext("2d");
+                        var ctxPredict = document.getElementById("predictCanvas").getContext("2d");
+                        var lineChartCurrent = new Chart(ctxCurrent).Line(createChartData(rainData.originalData, true), {bezierCurve: false});
+                        var lineChartPredict = new Chart(ctxPredict).Line(createChartData(rainData.originalData, false), {bezierCurve: false});
+
                     } else {
                         blockUIWithDismissableError(rainData.error);
                         $scope.rainData = null;

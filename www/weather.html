@@ -111,12 +111,23 @@
             <!-- Temp, humidity and pressure -->
             <div class="row">
                 <article class="col-xs-12 col-md-4 bottomSpacing">
-                    <h2 id="weatherLocation">Weather in {{weatherData.location}}:</h2>
+                    <h2 id="weatherLocation">{{weatherData.location | placename}}</h2>
                     <br/>
 
+                    <h2>
+                        <span class="currentConditionTitle">Now:{{getWeatherConditionInfo(802).kind}}</span>
+                        <svg id="currentConditionSVG" height="100" width="100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                            <image x="0" y="0" height="100" width="100" xlink:href="{{ 'img/svg/' + (weatherData.conditions[0].id | openweathermapIconId) + '.svg' }}"></image>
+                        </svg>
+                    </h2>
+
                     <div id="weatherConditionsWrapper">
-                        <h2 class="weatherCondition" ng-repeat="condition in weatherData.conditions">
-                            - {{ condition.description }}
+                        <h2 class="weatherCondition" ng-repeat="prediction in weatherData.predictions" ng-if="$index > 0">
+                            <div class="predictionDayDate">{{ prediction.date | date:'d/M' }}</div>
+                            <svg class="conditionIcon" height="40" width="40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                                <image x="0" y="0" height="40" width="40" xlink:href="{{ 'img/svg/' + (prediction.iconcode | buienradarIconId) + '.svg' }}"></image>
+                            </svg>
+                            <div class="predictionDayTemp">{{ prediction.temperature }}°C</div>
                         </h2>
                     </div>
 
@@ -242,7 +253,7 @@
             <div class="row">
                 <article class="col-xs-12 col-md-6 bottomSpacing">
                     <div class="mapDiv">
-                        <h4>Lightning: <span class="innerTitle">[click of tap to view]</span></h4>
+                        <h4>Lightning: <span class="innerTitle">[click or tap to view]</span></h4>
                         <div id="lightning">
                             <a href="http://images.blitzortung.org/Images/image_b_fr.png" data-lightbox="image-1" data-title="Lightning">
                                 <img id="lightningImg" class="externalImage" src="http://images.blitzortung.org/Images/image_b_fr.png" alt="lightning">
@@ -252,7 +263,7 @@
                 </article>
                 <article class="col-xs-12 col-md-6 bottomSpacing">
                     <div class="mapDiv">
-                        <h4>Precipitation: <span class="innerTitle">[click of tap to view]</span></h4>
+                        <h4>Precipitation: <span class="innerTitle">[click or tap to view]</span></h4>
                         <div id="buienradar" class="map">
                             <a href="http://www.buienradar.be/image" data-lightbox="image-2" data-title="Precipitation">
                                 <img id="buienradarImg" class="externalImage" src="http://www.buienradar.be/image" alt="precipitation"/>

@@ -1,12 +1,3 @@
-//Init charts.
-Chart.defaults.global.scaleOverride = true;
-Chart.defaults.global.scaleSteps = 5;
-Chart.defaults.global.scaleStepWidth = 1;
-Chart.defaults.global.scaleStartValue = 0;
-Chart.defaults.global.showTooltips = false;
-Chart.defaults.global.scaleLineColor = "rgba(255,255,255,.7)";
-Chart.defaults.global.scaleFontColor = "rgba(255,255,255,.7)";
-
 /*-------------------------------------------------------------------------------------------------
  * ------------------------------------------------------------------------------------------------
  *                                            Services.
@@ -64,11 +55,12 @@ angular.module('weatherGenieApp.services', [])
 
                     //Check for errors from the backend.
                     if(data.error === null || data.error === undefined) {
-                        //Charting!
-                        var ctxCurrent = document.getElementById("currentCanvas").getContext("2d");
-                        var ctxPredict = document.getElementById("predictCanvas").getContext("2d");
-                        var lineChartCurrent = new Chart(ctxCurrent).Line(createChartData(data, true), {bezierCurve: false});
-                        var lineChartPredict = new Chart(ctxPredict).Line(createChartData(data, false), {bezierCurve: false});
+
+                        //Data integrity check:
+                        if(data.currentConditions === null || data.currentConditions === undefined) {
+                            callback({error: "No rain data found!"});
+                            return;
+                        }
 
                         //Process rain data and put in on the scope:
                         var currentRain = data.currentConditions.data[data.currentConditions.data.length - 1];
@@ -96,6 +88,7 @@ angular.module('weatherGenieApp.services', [])
                         var rainingData = {
                             isRainingNow: currentRain !== 0,
                             intensity: currentRain,
+                            originalData: data,
                             error: null
                         };
                         callback(rainingData);

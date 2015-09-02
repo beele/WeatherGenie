@@ -10,76 +10,76 @@ var bgTotal = 9;
 /**
  * Returns an object corresponding to the given condition type. The returned object has more information about the given condition.
  *
- * @param condition The condition as received from the backend (wrapped openweathermap API).
+ * @param conditionCode The condition id as received from the backend (wrapped openweathermap API).
  * @returns {{kind: string, bgIndex: number, weight: number}} An object containing more info about the background.
  */
-function getWeatherConditionWeight(condition) {
-    switch (condition) {
+function getWeatherConditionInfo(conditionCode) {
+    switch (conditionCode) {
         //Thunderstorm:
-        case 200	: return {kind: "thunderstorm with light rain",             bgIndex : 7, weight: 70};
-        case 201	: return {kind: "thunderstorm with rain",                   bgIndex : 7, weight: 70};
-        case 202	: return {kind: "thunderstorm with heavy rain",             bgIndex : 7, weight: 70};
-        case 210	: return {kind: "light thunderstorm",                       bgIndex : 7, weight: 70};
-        case 211	: return {kind: "thunderstorm",                             bgIndex : 7, weight: 70};
-        case 212	: return {kind: "heavy thunderstorm",                       bgIndex : 7, weight: 70};
-        case 221	: return {kind: "ragged thunderstorm",                      bgIndex : 7, weight: 70};
-        case 230	: return {kind: "thunderstorm with light drizzle",          bgIndex : 7, weight: 70};
-        case 231	: return {kind: "thunderstorm with drizzle",                bgIndex : 7, weight: 70};
-        case 232	: return {kind: "thunderstorm with heavy drizzle",          bgIndex : 7, weight: 70};
+        case 200	: return {kind: "thunderstorm with light rain",             bgIndex: 7, weight: 70, icon: "cond_thunder"};
+        case 201	: return {kind: "thunderstorm with rain",                   bgIndex: 7, weight: 70, icon: "cond_thunder"};
+        case 202	: return {kind: "thunderstorm with heavy rain",             bgIndex: 7, weight: 70, icon: "cond_thunder"};
+        case 210	: return {kind: "light thunderstorm",                       bgIndex: 7, weight: 70, icon: "cond_thunder"};
+        case 211	: return {kind: "thunderstorm",                             bgIndex: 7, weight: 70, icon: "cond_thunder"};
+        case 212	: return {kind: "heavy thunderstorm",                       bgIndex: 7, weight: 70, icon: "cond_thunder"};
+        case 221	: return {kind: "ragged thunderstorm",                      bgIndex: 7, weight: 70, icon: "cond_thunder"};
+        case 230	: return {kind: "thunderstorm with light drizzle",          bgIndex: 7, weight: 70, icon: "cond_thunder"};
+        case 231	: return {kind: "thunderstorm with drizzle",                bgIndex: 7, weight: 70, icon: "cond_thunder"};
+        case 232	: return {kind: "thunderstorm with heavy drizzle",          bgIndex: 7, weight: 70, icon: "cond_thunder"};
 
         //Drizzle:
-        case 300	: return {kind: "light intensity drizzle",                  bgIndex : 5, weight: 50};
-        case 301	: return {kind: "drizzle",                                  bgIndex : 5, weight: 50};
-        case 302	: return {kind: "heavy intensity drizzle",                  bgIndex : 5, weight: 50};
-        case 310	: return {kind: "light intensity drizzle rain",             bgIndex : 5, weight: 50};
-        case 311	: return {kind: "drizzle rain",                             bgIndex : 5, weight: 50};
-        case 312	: return {kind: "heavy intensity drizzle rain",             bgIndex : 5, weight: 50};
-        case 313	: return {kind: "shower rain and drizzle",                  bgIndex : 5, weight: 50};
-        case 314	: return {kind: "heavy shower rain and drizzle",            bgIndex : 5, weight: 50};
-        case 321	: return {kind: "shower drizzle",                           bgIndex : 5, weight: 50};
+        case 300	: return {kind: "light intensity drizzle",                  bgIndex: 5, weight: 50, icon: "cond_light_rain"};
+        case 301	: return {kind: "drizzle",                                  bgIndex: 5, weight: 50, icon: "cond_light_rain"};
+        case 302	: return {kind: "heavy intensity drizzle",                  bgIndex: 5, weight: 50, icon: "cond_light_rain"};
+        case 310	: return {kind: "light intensity drizzle rain",             bgIndex: 5, weight: 50, icon: "cond_light_rain"};
+        case 311	: return {kind: "drizzle rain",                             bgIndex: 5, weight: 50, icon: "cond_light_rain"};
+        case 312	: return {kind: "heavy intensity drizzle rain",             bgIndex: 5, weight: 50, icon: "cond_light_rain"};
+        case 313	: return {kind: "shower rain and drizzle",                  bgIndex: 5, weight: 50, icon: "cond_light_rain"};
+        case 314	: return {kind: "heavy shower rain and drizzle",            bgIndex: 5, weight: 50, icon: "cond_light_rain"};
+        case 321	: return {kind: "shower drizzle",                           bgIndex: 5, weight: 50, icon: "cond_light_rain"};
 
         //Rain:
-        case 500	: return {kind: "light rain",                               bgIndex : 6, weight: 60};
-        case 501	: return {kind: "moderate rain",                            bgIndex : 6, weight: 60};
-        case 502	: return {kind: "heavy intensity rain",                     bgIndex : 6, weight: 60};
-        case 503	: return {kind: "very heavy rain",                          bgIndex : 6, weight: 60};
-        case 504	: return {kind: "extreme rain",                             bgIndex : 6, weight: 60};
-        case 511	: return {kind: "freezing rain",                            bgIndex : 6, weight: 60};
-        case 520	: return {kind: "light intensity shower rain",              bgIndex : 6, weight: 60};
-        case 521	: return {kind: "shower rain",                              bgIndex : 6, weight: 60};
-        case 522	: return {kind: "heavy intensity shower rain",              bgIndex : 6, weight: 60};
-        case 531	: return {kind: "ragged shower rain",                       bgIndex : 6, weight: 60};
+        case 500	: return {kind: "light rain",                               bgIndex: 6, weight: 60, icon: "cond_partly_clouded_rain"};
+        case 501	: return {kind: "moderate rain",                            bgIndex: 6, weight: 60, icon: "cond_rain"};
+        case 502	: return {kind: "heavy intensity rain",                     bgIndex: 6, weight: 60, icon: "cond_rain"};
+        case 503	: return {kind: "very heavy rain",                          bgIndex: 6, weight: 60, icon: "cond_rain"};
+        case 504	: return {kind: "extreme rain",                             bgIndex: 6, weight: 60, icon: "cond_rain"};
+        case 511	: return {kind: "freezing rain",                            bgIndex: 6, weight: 60, icon: "cond_rain"};
+        case 520	: return {kind: "light intensity shower rain",              bgIndex: 6, weight: 60, icon: "cond_partly_clouded_rain"};
+        case 521	: return {kind: "shower rain",                              bgIndex: 6, weight: 60, icon: "cond_rain"};
+        case 522	: return {kind: "heavy intensity shower rain",              bgIndex: 6, weight: 60, icon: "cond_rain"};
+        case 531	: return {kind: "ragged shower rain",                       bgIndex: 6, weight: 60, icon: "cond_partly_clouded_rain"};
 
         //Snow:
-        case 600	: return {kind: "light snow",                               bgIndex : 8, weight: 60};
-        case 601	: return {kind: "snow",                                     bgIndex : 8, weight: 60};
-        case 602	: return {kind: "heavy snow",                               bgIndex : 8, weight: 60};
-        case 611	: return {kind: "sleet",                                    bgIndex : 8, weight: 60};
-        case 612	: return {kind: "shower sleet",                             bgIndex : 8, weight: 60};
-        case 615	: return {kind: "light rain and snow",                      bgIndex : 8, weight: 60};
-        case 616	: return {kind: "rain and snow",                            bgIndex : 8, weight: 60};
-        case 620	: return {kind: "light shower snow",                        bgIndex : 8, weight: 60};
-        case 621	: return {kind: "shower snow",                              bgIndex : 8, weight: 60};
-        case 622	: return {kind: "heavy shower snow",                        bgIndex : 8, weight: 60};
+        case 600	: return {kind: "light snow",                               bgIndex: 8, weight: 60, icon: "cond_light_snow"};
+        case 601	: return {kind: "snow",                                     bgIndex: 8, weight: 60, icon: "cond_snow"};
+        case 602	: return {kind: "heavy snow",                               bgIndex: 8, weight: 60, icon: "cond_snow"};
+        case 611	: return {kind: "sleet",                                    bgIndex: 8, weight: 60, icon: "cond_snow"};
+        case 612	: return {kind: "shower sleet",                             bgIndex: 8, weight: 60, icon: "cond_snow"};
+        case 615	: return {kind: "light rain and snow",                      bgIndex: 8, weight: 60, icon: "cond_light_snow"};
+        case 616	: return {kind: "rain and snow",                            bgIndex: 8, weight: 60, icon: "cond_snow"};
+        case 620	: return {kind: "light shower snow",                        bgIndex: 8, weight: 60, icon: "cond_light_snow"};
+        case 621	: return {kind: "shower snow",                              bgIndex: 8, weight: 60, icon: "cond_snow"};
+        case 622	: return {kind: "heavy shower snow",                        bgIndex: 8, weight: 60, icon: "cond_snow"};
 
         //Atmosphere:
-        case 701	: return {kind: "mist",                                     bgIndex : 9, weight: 50};
-        case 711	: return {kind: "smoke",                                    bgIndex : 9, weight: 50};
-        case 721	: return {kind: "haze",                                     bgIndex : 9, weight: 50};
-        case 731	: return {kind: "sand, dust whirls",                        bgIndex : 9, weight: 50};
-        case 741	: return {kind: "fog",                                      bgIndex : 9, weight: 50};
-        case 751	: return {kind: "sand",                                     bgIndex : 9, weight: 50};
-        case 761	: return {kind: "dust",                                     bgIndex : 9, weight: 50};
-        case 762	: return {kind: "volcanic ash",                             bgIndex : 9, weight: 50};
+        case 701	: return {kind: "mist",                                     bgIndex: 9, weight: 50, icon: "cond_fog"};
+        case 711	: return {kind: "smoke",                                    bgIndex: 9, weight: 50, icon: "cond_fog"};
+        case 721	: return {kind: "haze",                                     bgIndex: 9, weight: 50, icon: "cond_fog"};
+        case 731	: return {kind: "sand, dust whirls",                        bgIndex: 9, weight: 50, icon: "cond_fog"};
+        case 741	: return {kind: "fog",                                      bgIndex: 9, weight: 50, icon: "cond_fog"};
+        case 751	: return {kind: "sand",                                     bgIndex: 9, weight: 50, icon: "cond_fog"};
+        case 761	: return {kind: "dust",                                     bgIndex: 9, weight: 50, icon: "cond_fog"};
+        case 762	: return {kind: "volcanic ash",                             bgIndex: 9, weight: 50, icon: "cond_fog"};
         /*case 771	: return {kind: "squalls"};
         case 781	: return {kind: "tornado"};*/
 
         //Clouds:
-        case 800	: return {kind: "clear sky",                                bgIndex : 1, weight: 10};
-        case 801	: return {kind: "few clouds",                               bgIndex : 2, weight: 20};
-        case 802	: return {kind: "scattered clouds",                         bgIndex : 3, weight: 30};
-        case 803	: return {kind: "broken clouds",                            bgIndex : 4, weight: 40};
-        case 804	: return {kind: "overcast clouds",                          bgIndex : 4, weight: 40};
+        case 800	: return {kind: "clear sky",                                bgIndex: 1, weight: 10, icon: "sun"};
+        case 801	: return {kind: "few clouds",                               bgIndex: 2, weight: 20, icon: "cond_partly_clouded"};
+        case 802	: return {kind: "scattered clouds",                         bgIndex: 3, weight: 30, icon: "cond_partly_clouded"};
+        case 803	: return {kind: "broken clouds",                            bgIndex: 4, weight: 40, icon: "cond_partly_clouded"};
+        case 804	: return {kind: "overcast clouds",                          bgIndex: 4, weight: 40, icon: "cond_overcast"};
 
         //Extreme:
         /*case 900	: return {kind: "tornado"};
@@ -104,6 +104,36 @@ function getWeatherConditionWeight(condition) {
         case 961	: return {kind: "violent storm"};
         case 962	: return {kind: "hurricane"};*/
         default     : return null;
+    }
+}
+
+/**
+ * Returns the SVG icon filename (without folder prepend and extension append) for the given weather prediction code.
+ *
+ * @param code The weather prediction code.
+ * @returns {String}
+ */
+function getImageForPredictionCode(code) {
+    switch (code) {
+        case "a"    : return "sun";
+        case "b"    : return "cond_partly_clouded";
+        case "c"    : return "cond_overcast";
+        case "d"    : return "cond_fog";
+        case "f"    : return "cond_light_rain";
+        case "g"    : return "cond_thunder";
+        case "h"    : return "cond_partly_clouded_rain";
+        case "i"    : return "cond_snow";
+        case "j"    : return "cond_partly_clouded";
+        case "m"    : return "cond_light_rain";
+        case "n"    : return "cond_fog";
+        case "q"    : return "cond_rain";
+        case "r"    : return "cond_partly_clouded";
+        case "s"    : return "cond_thunder";
+        case "t"    : return "cond_snow";
+        case "u"    : return "cond_light_snow";
+        case "v"    : return "cond_light_snow";
+        case "w"    : return "cond_snow";
+        default     : return code;
     }
 }
 
@@ -142,7 +172,7 @@ function determineBackgroundImage(weatherData, rainData, lightningData) {
 
     for(var i = 0 ; i < conditions.length ; i++) {
         console.log("Current condition: " + JSON.stringify(conditions[i]));
-        var weight = getWeatherConditionWeight(conditions[i].id);
+        var weight = getWeatherConditionInfo(conditions[i].id);
         if(weight !== null) {
             weights.push(weight);
         }
@@ -155,25 +185,25 @@ function determineBackgroundImage(weatherData, rainData, lightningData) {
     //Rain and or lightning override!
     var overriddenWeight = null;
     if(lightningData.closestStrike.distance !== "-" && lightningData.closestStrike.distance < 25) {
-        overriddenWeight = getWeatherConditionWeight(211);
+        overriddenWeight = getWeatherConditionInfo(211);
     } else {
         if(rainData.isRainingNow === true) {
             switch (rainData.intensity) {
-                case 1  : overriddenWeight = getWeatherConditionWeight(500);
+                case 1  : overriddenWeight = getWeatherConditionInfo(500);
                     break;
-                case 2  : overriddenWeight = getWeatherConditionWeight(501);
+                case 2  : overriddenWeight = getWeatherConditionInfo(501);
                     break;
-                case 3  : overriddenWeight = getWeatherConditionWeight(502);
+                case 3  : overriddenWeight = getWeatherConditionInfo(502);
                     break;
-                case 4  : overriddenWeight = getWeatherConditionWeight(503);
+                case 4  : overriddenWeight = getWeatherConditionInfo(503);
                     break;
-                case 5  : overriddenWeight = getWeatherConditionWeight(504);
+                case 5  : overriddenWeight = getWeatherConditionInfo(504);
                     break;
             }
         } else {
             //TODO: Possibly take into account the rain over time data!
             if(weights[0].bgIndex === 5 || weights[0].bgIndex === 6 || weights[0].bgIndex === 8) {
-                overriddenWeight = getWeatherConditionWeight(801);
+                overriddenWeight = getWeatherConditionInfo(801);
             }
         }
     }
@@ -268,6 +298,12 @@ function createChartData(data, isForCurrentRainData) {
         conditions = data.currentConditions;
     } else {
         conditions = data.predictedConditions;
+    }
+
+    //Check for error after data assignment.
+    if(conditions === null || conditions === undefined) {
+        blockUIWithDismissableError("Cannot plot rain data!");
+        return null;
     }
 
     var labels = [];
