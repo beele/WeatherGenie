@@ -78,7 +78,7 @@ function getWeatherConditionInfo(conditionCode) {
         case 800	: return {kind: "clear sky",                                bgIndex: 1, weight: 10, icon: "sun"};
         case 801	: return {kind: "few clouds",                               bgIndex: 2, weight: 20, icon: "cond_partly_clouded"};
         case 802	: return {kind: "scattered clouds",                         bgIndex: 3, weight: 30, icon: "cond_partly_clouded"};
-        case 803	: return {kind: "broken clouds",                            bgIndex: 4, weight: 40, icon: "cond_partly_clouded"};
+        case 803	: return {kind: "broken clouds",                            bgIndex: 4, weight: 40, icon: "cond_overcast"};
         case 804	: return {kind: "overcast clouds",                          bgIndex: 4, weight: 40, icon: "cond_overcast"};
 
         //Extreme:
