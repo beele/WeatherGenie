@@ -612,7 +612,6 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
 /*********************************
 *** CSS for weather conditions ***
 *********************************/
-
 #lightning {
 
 }
@@ -661,4 +660,12 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
         width: 350px;
         height: 225px;
     }
+}
+
+/*********************************
+***  CSS for external images.  ***
+*********************************/
+.externalImage {
+    height: 190px;
+    margin-top: 10px;
 }
