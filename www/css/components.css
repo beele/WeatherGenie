@@ -158,6 +158,23 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
     text-transform: capitalize;
 }
 
+.measurementIcon {
+    float: left;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.measurementText {
+    float: left;
+    margin-top: 13px;
+    margin-bottom: 10px;
+    margin-left: 35px;
+}
+
+.measurementWrapper {
+    height: 60px;
+}
+
 /****************************
 *** CSS for sun animation ***
 ****************************/
@@ -434,15 +451,15 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
     }
 
     #sunUpContainer {
-        left: 27px;
+        left: 63px;
     }
 
     #sunDownContainer {
-        right: 27px;
+        right: 57px;
     }
 
     #windDirectionContainer {
-        left: 33px;
+        left: 64px;
         margin-left: auto;
     }
 
@@ -452,7 +469,7 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
     }
 
     #windSpeedContainer {
-        right: 16px;
+        right: 50px;
         margin-left: auto;
     }
 
@@ -471,15 +488,15 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
     }
 
     #sunUpContainer {
-        left: 27px;
+        left: 65px;
     }
 
     #sunDownContainer {
-        right: 27px;
+        right: 55px;
     }
 
     #windDirectionContainer {
-        left: 33px;
+        left: 65px;
         margin-left: auto;
     }
 
@@ -489,7 +506,7 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
     }
 
     #windSpeedContainer {
-        right: 16px;
+        right: 48px;
         margin-left: auto;
     }
 
@@ -578,7 +595,7 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
         left:auto;
         right:auto;
         margin-top: 80px;
-        margin-left: 306px;
+        margin-left: 300px;
     }
 }
 

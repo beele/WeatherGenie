@@ -18,6 +18,10 @@ h1, h2, h3, h4, h5 {
     margin: 0 0 0 0;
 }
 
+.innerTitle {
+    font-size: 10px;
+}
+
 .topSpacing {
     margin-top: 80px;
 }
@@ -62,6 +66,19 @@ article {
 
 .centeredText {
     text-align: center;
+}
+
+a:link {
+    color: #fffaeb;
+}
+a:visited {
+    color: #fffaeb;
+}
+a:hover {
+    color: #a4a39e;
+}
+a:active {
+    color: #4b4944;
 }
 
 /******************************

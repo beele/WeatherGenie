@@ -3,8 +3,10 @@
  *                             Functions for background selection.
  * ------------------------------------------------------------------------------------------------
  ------------------------------------------------------------------------------------------------*/
+//Background vars.
 var bgCounter = 1;
 var bgTotal = 9;
+
 /**
  * Returns an object corresponding to the given condition type. The returned object has more information about the given condition.
  *

@@ -125,28 +125,43 @@
                     <h2>Measurements:</h2>
                     <br/>
 
-                    <div id="temperatureWrapper">
-                        <h2>Temp: {{ weatherData.avgTemp | number:0 }} &deg;C</h2>
+                    <div id="temperatureWrapper" class="measurementWrapper">
+                        <svg id="temperatureSVG" class="measurementIcon" height="40" width="40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                            <image x="0" y="0" height="40" width="40" xlink:href="img/svg/temp.svg"></image>
+                        </svg>
+                        <h2 class="measurementText">{{ weatherData.avgTemp | number:0 }} &deg;C</h2>
                     </div>
 
-                    <div id="humidityWrapper">
-                        <h2>RH: {{ weatherData.relHumidity }} %</h2>
+                    <div id="humidityWrapper" class="measurementWrapper">
+                        <svg id="humiditySVG" class="measurementIcon" height="40" width="40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                            <image x="0" y="0" height="40" width="40" xlink:href="img/svg/humidity.svg"></image>
+                        </svg>
+                        <h2 class="measurementText">{{ weatherData.relHumidity }} %</h2>
                     </div>
 
-                    <div id="pressureWrapper">
-                        <h2>BP: {{ weatherData.pressure | number:0 }} hPa</h2>
+                    <div id="pressureWrapper" class="measurementWrapper">
+                        <svg id="pressureSVG" class="measurementIcon" height="40" width="40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                            <image x="0" y="0" height="40" width="40" xlink:href="img/svg/pressure.svg"></image>
+                        </svg>
+                        <h2 class="measurementText">{{ weatherData.pressure | number:0 }} hPa</h2>
                     </div>
                 </article>
                 <article class="col-xs-12 col-md-4 bottomSpacing">
                     <h2>Rain and lightning:</h2>
                     <br/>
 
-                    <div id="rainWrapper">
-                        <h2>Rain: {{ rainData.intensity }} mm/u</h2>
+                    <div id="lightningWrapper" class="measurementWrapper">
+                        <svg id="lightningSVG" class="measurementIcon" height="40" width="40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                            <image x="0" y="0" height="40" width="40" xlink:href="img/svg/lightning.svg"></image>
+                        </svg>
+                        <h2 class="measurementText">{{ lightningData.closestStrike.distance | optionalDistance }}</h2>
                     </div>
 
-                    <div id="lightningWrapper">
-                        <h2>Lightning: {{ lightningData.closestStrike.distance | number:0 }} km</h2>
+                    <div id="rainWrapper" class="measurementWrapper">
+                        <svg id="rainSVG" class="measurementIcon" height="40" width="40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                            <image x="0" y="0" height="40" width="40" xlink:href="img/svg/rain.svg"></image>
+                        </svg>
+                        <h2 class="measurementText">{{ rainData.intensity }} mm/u</h2>
                     </div>
                 </article>
             </div>
@@ -211,13 +226,13 @@
             <div class="row">
                 <article class="col-xs-12 col-md-6 bottomSpacing">
                     <div class="graphDiv">
-                        <h4>Current rain conditions:</h4>
+                        <h4>Current rain: <span class="innerTitle">[x: minutes y: intensity]</span></h4>
                         <canvas id="currentCanvas"></canvas>
                     </div>
                 </article>
                 <article class="col-xs-12 col-md-6 bottomSpacing">
                     <div class="graphDiv">
-                        <h4>Predicted rain conditions:</h4>
+                        <h4>Predicted rain: <span class="innerTitle">[x: minutes y: intensity]</span></h4>
                         <canvas id="predictCanvas"></canvas>
                     </div>
                 </article>
@@ -249,7 +264,7 @@
         </div>
 
         <footer id="footer" class="transparent hidden">
-            Weather Genie uses Node.js and AngularJS! All resources used for educational purposes.
+            <a href="https://github.com/beele/weathergenie">Weather Genie uses Node.js and AngularJS! All resources used for educational purposes.</a>
         </footer>
 
         <!-- Scripts -->
@@ -269,9 +284,10 @@
         <script src="js/lib/angular.min.js"></script>
         <script src="js/lib/chart.js"></script>-->
 
-        <script src="js/app.js">       </script>
+        <script src="js/app.js">        </script>
         <script src="js/controllers.js"></script>
         <script src="js/services.js">   </script>
+        <script src="js/filters.js">    </script>
         <script src="js/utils.js">      </script>
     </body>
 </html>
