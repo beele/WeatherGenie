@@ -117,7 +117,7 @@
                     <h2>
                         <span class="currentConditionTitle">Now:{{getWeatherConditionInfo(802).kind}}</span>
                         <svg id="currentConditionSVG" height="100" width="100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-                            <image x="0" y="0" height="100" width="100" xlink:href="{{ 'img/svg/' + (weatherData.conditions[0].id | openweathermapIconId) + '.svg' }}"></image>
+                            <image x="0" y="0" height="100" width="100" xlink:href="" ng-attr-xlink:href="{{ 'img/svg/' + (weatherData.conditions[0].id | openweathermapIconId) + '.svg' }}"></image>
                         </svg>
                     </h2>
 
@@ -125,7 +125,7 @@
                         <h2 class="weatherCondition" ng-repeat="prediction in weatherData.predictions" ng-if="$index > 0">
                             <div class="predictionDayDate">{{ prediction.date | date:'d/M' }}</div>
                             <svg class="conditionIcon" height="40" width="40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-                                <image x="0" y="0" height="40" width="40" xlink:href="{{ 'img/svg/' + (prediction.iconcode | buienradarIconId) + '.svg' }}"></image>
+                                <image x="0" y="0" height="40" width="40" xlink:href="" ng-attr-xlink:href="{{ 'img/svg/' + (prediction.iconcode | buienradarIconId) + '.svg' }}"></image>
                             </svg>
                             <div class="predictionDayTemp">{{ prediction.temperature }}°C</div>
                         </h2>
