@@ -1,34 +1,45 @@
 <!DOCTYPE html>
-<html ng-app="weatherGenie" lang="en">
+<html ng-app="weatherGenieApp" lang="en">
     <head lang="en">
         <!-- Meta information -->
         <meta charset="utf-8"/>
-        <meta http-equiv="X-UA-Compatible"  content="IE=edge"/>
-        <meta name="viewport"               content="width=device-width, initial-scale=1"/>
-        <meta name="author"                 content="Kevin Van den Abeele"/>
-        <meta name="keywords"               content="Weather Belgium forecast rain wind mist fog drizzle sun sunshine thunder thunderstorm precipitation conditions"/>
-        <meta name="description"            content="Your number one source for weather information!"/>
-        <meta property="og:description"     content="Your number one source for weather information!"/>
+        <meta http-equiv="X-UA-Compatible"                  content="IE=edge"/>
+        <meta name="viewport"                               content="width=device-width, initial-scale=1"/>
+        <meta name="author"                                 content="Kevin Van den Abeele"/>
+        <meta name="keywords"                               content="Weather Belgium forecast rain wind mist fog drizzle sun sunshine thunder thunderstorm precipitation conditions"/>
+        <meta name="description"                            content="Your number one source for weather information!"/>
+        <meta property="og:description"                     content="Your number one source for weather information!"/>
+        <meta name="apple-mobile-web-app-capable"           content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style"  content="black">
 
         <!-- Page title -->
         <title>Weather Genie</title>
 
-        <!-- Can also use the below lines because of the mvc:resources tags in weatherGenie-dispatcher-servlet.xml -->
-        <!-- With the config in weatherGenie-dispatcher-servlet.xml and the file locations relative to the .jsp pages, the IDE has content assist! -->
-        <link rel="shortcut icon"   href="favicon.ico" type="image/x-icon" />
-        <link rel="image_src"       href="img/thumb.jpg" />
+        <!-- Icons and thumbnail image -->
+        <link rel="shortcut icon"                       href="img/logo/favicon.ico" type="image/x-icon" />
+        <link rel="image_src"                           href="img/thumb.jpg" />
+        <link rel="apple-touch-icon"                    href="img/logo/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="57x57"      href="img/logo/apple-touch-icon-57x57.png" />
+        <link rel="apple-touch-icon" sizes="72x72"      href="img/logo/apple-touch-icon-72x72.png" />
+        <link rel="apple-touch-icon" sizes="76x76"      href="img/logo/apple-touch-icon-76x76.png" />
+        <link rel="apple-touch-icon" sizes="114x114"    href="img/logo/apple-touch-icon-114x114.png" />
+        <link rel="apple-touch-icon" sizes="120x120"    href="img/logo/apple-touch-icon-120x120.png" />
+        <link rel="apple-touch-icon" sizes="144x144"    href="img/logo/apple-touch-icon-144x144.png" />
+        <link rel="apple-touch-icon" sizes="152x152"    href="img/logo/apple-touch-icon-152x152.png" />
+        <link rel="apple-touch-icon" sizes="180x180"    href="img/logo/apple-touch-icon-180x180.png" />
 
         <!-- Web fonts! -->
         <link href='http://fonts.googleapis.com/css?family=Lato:400' rel='stylesheet' type='text/css' />
 
-        <!-- Local stylesheets -->
-        <!-- TODO: CDN fallback to local files -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" />
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.1/css/lightbox.min.css" rel="stylesheet" />
+        <!-- Stylesheets -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css"   rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.1/css/lightbox.min.css"            rel="stylesheet" />
 
+        <!-- TODO: CDN fallback to local files -->
         <!--<link href="css/lib/bootstrap.min.css"  rel="stylesheet" />
         <link href="css/lib/lightbox.css"       rel="stylesheet" media="screen" />-->
 
+        <!-- Local stylesheets -->
         <link href="css/master.css"             rel="stylesheet" media="screen" />
         <link href="css/components.css"         rel="stylesheet" media="screen" />
     </head>
@@ -100,12 +111,23 @@
             <!-- Temp, humidity and pressure -->
             <div class="row">
                 <article class="col-xs-12 col-md-4 bottomSpacing">
-                    <h2 id="weatherLocation">Weather in {{weatherData.location}}:</h2>
+                    <h2 id="weatherLocation">{{weatherData.location | placename}}</h2>
                     <br/>
 
+                    <h2>
+                        <span class="currentConditionTitle">Now:{{getWeatherConditionInfo(802).kind}}</span>
+                        <svg id="currentConditionSVG" height="100" width="100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                            <image x="0" y="0" height="100" width="100" xlink:href="" ng-attr-xlink:href="{{ 'img/svg/' + (weatherData.conditions[0].id | openweathermapIconId) + '.svg' }}"></image>
+                        </svg>
+                    </h2>
+
                     <div id="weatherConditionsWrapper">
-                        <h2 class="weatherCondition" ng-repeat="condition in weatherData.conditions">
-                            - {{ condition.description }}
+                        <h2 class="weatherCondition" ng-repeat="prediction in weatherData.predictions" ng-if="$index > 0">
+                            <div class="predictionDayDate">{{ prediction.date | date:'d/M' }}</div>
+                            <svg class="conditionIcon" height="40" width="40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                                <image x="0" y="0" height="40" width="40" xlink:href="" ng-attr-xlink:href="{{ 'img/svg/' + (prediction.iconcode | buienradarIconId) + '.svg' }}"></image>
+                            </svg>
+                            <div class="predictionDayTemp">{{ prediction.temperature }}°C</div>
                         </h2>
                     </div>
 
@@ -114,28 +136,43 @@
                     <h2>Measurements:</h2>
                     <br/>
 
-                    <div id="temperatureWrapper">
-                        <h2>Temp: {{ weatherData.avgTemp | number:0 }} &deg;C</h2>
+                    <div id="temperatureWrapper" class="measurementWrapper">
+                        <svg id="temperatureSVG" class="measurementIcon" height="40" width="40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                            <image x="0" y="0" height="40" width="40" xlink:href="img/svg/temp.svg"></image>
+                        </svg>
+                        <h2 class="measurementText">{{ weatherData.avgTemp | number:0 }} &deg;C</h2>
                     </div>
 
-                    <div id="humidityWrapper">
-                        <h2>RH: {{ weatherData.relHumidity }} %</h2>
+                    <div id="humidityWrapper" class="measurementWrapper">
+                        <svg id="humiditySVG" class="measurementIcon" height="40" width="40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                            <image x="0" y="0" height="40" width="40" xlink:href="img/svg/humidity.svg"></image>
+                        </svg>
+                        <h2 class="measurementText">{{ weatherData.relHumidity }} %</h2>
                     </div>
 
-                    <div id="pressureWrapper">
-                        <h2>BP: {{ weatherData.pressure | number:0 }} hPa</h2>
+                    <div id="pressureWrapper" class="measurementWrapper">
+                        <svg id="pressureSVG" class="measurementIcon" height="40" width="40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                            <image x="0" y="0" height="40" width="40" xlink:href="img/svg/pressure.svg"></image>
+                        </svg>
+                        <h2 class="measurementText">{{ weatherData.pressure | number:0 }} hPa</h2>
                     </div>
                 </article>
                 <article class="col-xs-12 col-md-4 bottomSpacing">
                     <h2>Rain and lightning:</h2>
                     <br/>
 
-                    <div id="rainWrapper">
-                        <h2>Rain: {{ rainData.intensity }} mm/u</h2>
+                    <div id="lightningWrapper" class="measurementWrapper">
+                        <svg id="lightningSVG" class="measurementIcon" height="40" width="40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                            <image x="0" y="0" height="40" width="40" xlink:href="img/svg/lightning.svg"></image>
+                        </svg>
+                        <h2 class="measurementText">{{ lightningData.closestStrike.distance | optionalDistance }}</h2>
                     </div>
 
-                    <div id="lightningWrapper">
-                        <h2>Lightning: {{ lightningData.closestStrike.distance | number:0 }} km</h2>
+                    <div id="rainWrapper" class="measurementWrapper">
+                        <svg id="rainSVG" class="measurementIcon" height="40" width="40" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+                            <image x="0" y="0" height="40" width="40" xlink:href="img/svg/rain.svg"></image>
+                        </svg>
+                        <h2 class="measurementText">{{ rainData.intensity }} mm/u</h2>
                     </div>
                 </article>
             </div>
@@ -200,14 +237,14 @@
             <div class="row">
                 <article class="col-xs-12 col-md-6 bottomSpacing">
                     <div class="graphDiv">
-                        <h4>Current rain conditions:</h4>
-                        <canvas id="currentCanvas" width="350" height="205"></canvas>
+                        <h4>Current rain: <span class="innerTitle">[x: minutes y: intensity]</span></h4>
+                        <canvas id="currentCanvas"></canvas>
                     </div>
                 </article>
                 <article class="col-xs-12 col-md-6 bottomSpacing">
                     <div class="graphDiv">
-                        <h4>Predicted rain conditions:</h4>
-                        <canvas id="predictCanvas" width="350" height="225"></canvas>
+                        <h4>Predicted rain: <span class="innerTitle">[x: minutes y: intensity]</span></h4>
+                        <canvas id="predictCanvas"></canvas>
                     </div>
                 </article>
             </div>
@@ -216,20 +253,20 @@
             <div class="row">
                 <article class="col-xs-12 col-md-6 bottomSpacing">
                     <div class="mapDiv">
-                        <h4>Lightning:</h4>
+                        <h4>Lightning: <span class="innerTitle">[click or tap to view]</span></h4>
                         <div id="lightning">
                             <a href="http://images.blitzortung.org/Images/image_b_fr.png" data-lightbox="image-1" data-title="Lightning">
-                                <img src="http://images.blitzortung.org/Images/image_b_fr.png" alt="lightning">
+                                <img id="lightningImg" class="externalImage" src="http://images.blitzortung.org/Images/image_b_fr.png" alt="lightning">
                             </a>
                         </div>
                     </div>
                 </article>
                 <article class="col-xs-12 col-md-6 bottomSpacing">
                     <div class="mapDiv">
-                        <h4>Precipitation:</h4>
+                        <h4>Precipitation: <span class="innerTitle">[click or tap to view]</span></h4>
                         <div id="buienradar" class="map">
                             <a href="http://www.buienradar.be/image" data-lightbox="image-2" data-title="Precipitation">
-                                <img src="http://www.buienradar.be/image" alt="precipitation"/>
+                                <img id="buienradarImg" class="externalImage" src="http://www.buienradar.be/image" alt="precipitation"/>
                             </a>
                         </div>
                     </div>
@@ -238,18 +275,19 @@
         </div>
 
         <footer id="footer" class="transparent hidden">
-            Weather Genie uses Node.js and AngularJS! All resources used for educational purposes.
+            <a href="https://github.com/beele/weathergenie">Weather Genie uses Node.js and AngularJS! All resources used for educational purposes.</a>
         </footer>
 
         <!-- Scripts -->
-        <!-- TODO: CDN fallback to local files -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.1/js/lightbox.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.66.0-2013.10.09/jquery.blockUI.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js">                                </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js">               </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.1/js/lightbox.min.js">                        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.66.0-2013.10.09/jquery.blockUI.min.js">    </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular.min.js">                           </script>
+        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.5/angular-route.min.js">                     </script>-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js">                               </script>
 
+        <!-- TODO: CDN fallback to local files -->
         <!--<script src="js/lib/jquery.js"></script>
         <script src="js/lib/bootstrap.min.js"></script>
         <script src="js/lib/lightbox.min.js"></script>
@@ -257,7 +295,10 @@
         <script src="js/lib/angular.min.js"></script>
         <script src="js/lib/chart.js"></script>-->
 
-        <script src="js/utils.js"></script>
-        <script src="js/main.js"></script>
+        <script src="js/app.js">        </script>
+        <script src="js/controllers.js"></script>
+        <script src="js/services.js">   </script>
+        <script src="js/filters.js">    </script>
+        <script src="js/utils.js">      </script>
     </body>
 </html>

@@ -1,72 +1,139 @@
-/************************************************************
- ***                  Contains util methods               ***
- ***********************************************************/
-//TODO: Remove evil global vars.
+/*-------------------------------------------------------------------------------------------------
+ * ------------------------------------------------------------------------------------------------
+ *                             Functions for background selection.
+ * ------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------*/
+//Background vars.
 var bgCounter = 1;
 var bgTotal = 9;
 
-var lat = null;
-var lon = null;
-
-var styleSheetSelection = null;
-
-function hideSoftKeyboard() {
-    document.activeElement.blur();
-    var inputs = document.querySelectorAll('input');
-    for(var i=0; i < inputs.length; i++) {
-        inputs[i].blur();
-    }
-}
-
-/**
- * Determines the user's GEO location.
- */
-function determineGeoLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(onPositionKnown);
-    } else {
-        console.log("Geolocation is not supported or has been blocked by the user!");
-    }
-}
-
-/**
- * Executed when the user's GEO location has been found.
- * @param position
- */
-function onPositionKnown(position) {
-    lat = position.coords.latitude;
-    lon = position.coords.longitude;
-
-    //TODO: Perform an automated query with lat/lon
-}
-
 /**
  * Returns an object corresponding to the given condition type. The returned object has more information about the given condition.
- * @param condition The condition as received from the backend (wrapped openweathermap API).
+ *
+ * @param conditionCode The condition id as received from the backend (wrapped openweathermap API).
  * @returns {{kind: string, bgIndex: number, weight: number}} An object containing more info about the background.
  */
-function getWeatherConditionWeight(condition) {
-    switch (condition) {
-        //Day conditions:
-        case "01d": return {kind : "clear sky",         bgIndex : 1, weight: 10};
-        case "02d": return {kind : "few clouds",        bgIndex : 2, weight: 20};
-        case "03d": return {kind : "scattered clouds",  bgIndex : 3, weight: 30};
-        case "04d": return {kind : "broken clouds",     bgIndex : 4, weight: 40};
-        case "09d": return {kind : "mist",              bgIndex : 5, weight: 50};
-        case "10d": return {kind : "showers",           bgIndex : 6, weight: 50};
-        case "11d": return {kind : "rain",              bgIndex : 7, weight: 60};
-        case "13d": return {kind : "snow",              bgIndex : 8, weight: 60};
-        case "50d": return {kind : "thunderstorm",      bgIndex : 9, weight: 70};
-        //Night conditions:
-        case "01n": return {kind : "clear sky",         bgIndex : 1, weight: 10};
-        case "02n": return {kind : "few clouds",        bgIndex : 2, weight: 20};
-        case "03n": return {kind : "scattered clouds",  bgIndex : 3, weight: 30};
-        case "04n": return {kind : "broken clouds",     bgIndex : 4, weight: 40};
-        case "09n": return {kind : "mist",              bgIndex : 5, weight: 50};
-        case "10n": return {kind : "showers",           bgIndex : 6, weight: 50};
-        case "11n": return {kind : "rain",              bgIndex : 7, weight: 60};
-        case "13n": return {kind : "snow",              bgIndex : 8, weight: 60};
-        case "50n": return {kind : "thunderstorm",      bgIndex : 9, weight: 70};
+function getWeatherConditionInfo(conditionCode) {
+    switch (conditionCode) {
+        //Thunderstorm:
+        case 200	: return {kind: "thunderstorm with light rain",             bgIndex: 7, weight: 70, icon: "cond_thunder"};
+        case 201	: return {kind: "thunderstorm with rain",                   bgIndex: 7, weight: 70, icon: "cond_thunder"};
+        case 202	: return {kind: "thunderstorm with heavy rain",             bgIndex: 7, weight: 70, icon: "cond_thunder"};
+        case 210	: return {kind: "light thunderstorm",                       bgIndex: 7, weight: 70, icon: "cond_thunder"};
+        case 211	: return {kind: "thunderstorm",                             bgIndex: 7, weight: 70, icon: "cond_thunder"};
+        case 212	: return {kind: "heavy thunderstorm",                       bgIndex: 7, weight: 70, icon: "cond_thunder"};
+        case 221	: return {kind: "ragged thunderstorm",                      bgIndex: 7, weight: 70, icon: "cond_thunder"};
+        case 230	: return {kind: "thunderstorm with light drizzle",          bgIndex: 7, weight: 70, icon: "cond_thunder"};
+        case 231	: return {kind: "thunderstorm with drizzle",                bgIndex: 7, weight: 70, icon: "cond_thunder"};
+        case 232	: return {kind: "thunderstorm with heavy drizzle",          bgIndex: 7, weight: 70, icon: "cond_thunder"};
+
+        //Drizzle:
+        case 300	: return {kind: "light intensity drizzle",                  bgIndex: 5, weight: 50, icon: "cond_light_rain"};
+        case 301	: return {kind: "drizzle",                                  bgIndex: 5, weight: 50, icon: "cond_light_rain"};
+        case 302	: return {kind: "heavy intensity drizzle",                  bgIndex: 5, weight: 50, icon: "cond_light_rain"};
+        case 310	: return {kind: "light intensity drizzle rain",             bgIndex: 5, weight: 50, icon: "cond_light_rain"};
+        case 311	: return {kind: "drizzle rain",                             bgIndex: 5, weight: 50, icon: "cond_light_rain"};
+        case 312	: return {kind: "heavy intensity drizzle rain",             bgIndex: 5, weight: 50, icon: "cond_light_rain"};
+        case 313	: return {kind: "shower rain and drizzle",                  bgIndex: 5, weight: 50, icon: "cond_light_rain"};
+        case 314	: return {kind: "heavy shower rain and drizzle",            bgIndex: 5, weight: 50, icon: "cond_light_rain"};
+        case 321	: return {kind: "shower drizzle",                           bgIndex: 5, weight: 50, icon: "cond_light_rain"};
+
+        //Rain:
+        case 500	: return {kind: "light rain",                               bgIndex: 6, weight: 60, icon: "cond_partly_clouded_rain"};
+        case 501	: return {kind: "moderate rain",                            bgIndex: 6, weight: 60, icon: "cond_rain"};
+        case 502	: return {kind: "heavy intensity rain",                     bgIndex: 6, weight: 60, icon: "cond_rain"};
+        case 503	: return {kind: "very heavy rain",                          bgIndex: 6, weight: 60, icon: "cond_rain"};
+        case 504	: return {kind: "extreme rain",                             bgIndex: 6, weight: 60, icon: "cond_rain"};
+        case 511	: return {kind: "freezing rain",                            bgIndex: 6, weight: 60, icon: "cond_rain"};
+        case 520	: return {kind: "light intensity shower rain",              bgIndex: 6, weight: 60, icon: "cond_partly_clouded_rain"};
+        case 521	: return {kind: "shower rain",                              bgIndex: 6, weight: 60, icon: "cond_rain"};
+        case 522	: return {kind: "heavy intensity shower rain",              bgIndex: 6, weight: 60, icon: "cond_rain"};
+        case 531	: return {kind: "ragged shower rain",                       bgIndex: 6, weight: 60, icon: "cond_partly_clouded_rain"};
+
+        //Snow:
+        case 600	: return {kind: "light snow",                               bgIndex: 8, weight: 60, icon: "cond_light_snow"};
+        case 601	: return {kind: "snow",                                     bgIndex: 8, weight: 60, icon: "cond_snow"};
+        case 602	: return {kind: "heavy snow",                               bgIndex: 8, weight: 60, icon: "cond_snow"};
+        case 611	: return {kind: "sleet",                                    bgIndex: 8, weight: 60, icon: "cond_snow"};
+        case 612	: return {kind: "shower sleet",                             bgIndex: 8, weight: 60, icon: "cond_snow"};
+        case 615	: return {kind: "light rain and snow",                      bgIndex: 8, weight: 60, icon: "cond_light_snow"};
+        case 616	: return {kind: "rain and snow",                            bgIndex: 8, weight: 60, icon: "cond_snow"};
+        case 620	: return {kind: "light shower snow",                        bgIndex: 8, weight: 60, icon: "cond_light_snow"};
+        case 621	: return {kind: "shower snow",                              bgIndex: 8, weight: 60, icon: "cond_snow"};
+        case 622	: return {kind: "heavy shower snow",                        bgIndex: 8, weight: 60, icon: "cond_snow"};
+
+        //Atmosphere:
+        case 701	: return {kind: "mist",                                     bgIndex: 9, weight: 50, icon: "cond_fog"};
+        case 711	: return {kind: "smoke",                                    bgIndex: 9, weight: 50, icon: "cond_fog"};
+        case 721	: return {kind: "haze",                                     bgIndex: 9, weight: 50, icon: "cond_fog"};
+        case 731	: return {kind: "sand, dust whirls",                        bgIndex: 9, weight: 50, icon: "cond_fog"};
+        case 741	: return {kind: "fog",                                      bgIndex: 9, weight: 50, icon: "cond_fog"};
+        case 751	: return {kind: "sand",                                     bgIndex: 9, weight: 50, icon: "cond_fog"};
+        case 761	: return {kind: "dust",                                     bgIndex: 9, weight: 50, icon: "cond_fog"};
+        case 762	: return {kind: "volcanic ash",                             bgIndex: 9, weight: 50, icon: "cond_fog"};
+        /*case 771	: return {kind: "squalls"};
+        case 781	: return {kind: "tornado"};*/
+
+        //Clouds:
+        case 800	: return {kind: "clear sky",                                bgIndex: 1, weight: 10, icon: "sun"};
+        case 801	: return {kind: "few clouds",                               bgIndex: 2, weight: 20, icon: "cond_partly_clouded"};
+        case 802	: return {kind: "scattered clouds",                         bgIndex: 3, weight: 30, icon: "cond_partly_clouded"};
+        case 803	: return {kind: "broken clouds",                            bgIndex: 4, weight: 40, icon: "cond_overcast"};
+        case 804	: return {kind: "overcast clouds",                          bgIndex: 4, weight: 40, icon: "cond_overcast"};
+
+        //Extreme:
+        /*case 900	: return {kind: "tornado"};
+        case 901	: return {kind: "tropical storm"};
+        case 902	: return {kind: "hurricane"};
+        case 903	: return {kind: "cold"};
+        case 904	: return {kind: "hot"};
+        case 905	: return {kind: "windy"};
+        case 906	: return {kind: "hail"};*/
+
+        //Extra:
+        /*case 951	: return {kind: "calm"};
+        case 952	: return {kind: "light breeze"};
+        case 953	: return {kind: "gentle breeze"};
+        case 954	: return {kind: "moderate breeze"};
+        case 955	: return {kind: "fresh breeze"};
+        case 956	: return {kind: "strong breeze"};
+        case 957	: return {kind: "high wind, near gale"};
+        case 958	: return {kind: "gale"};
+        case 959	: return {kind: "severe gale"};
+        case 960	: return {kind: "storm"};
+        case 961	: return {kind: "violent storm"};
+        case 962	: return {kind: "hurricane"};*/
+        default     : return null;
+    }
+}
+
+/**
+ * Returns the SVG icon filename (without folder prepend and extension append) for the given weather prediction code.
+ *
+ * @param code The weather prediction code.
+ * @returns {String}
+ */
+function getImageForPredictionCode(code) {
+    switch (code) {
+        case "a"    : return "sun";
+        case "b"    : return "cond_partly_clouded";
+        case "c"    : return "cond_overcast";
+        case "d"    : return "cond_fog";
+        case "f"    : return "cond_light_rain";
+        case "g"    : return "cond_thunder";
+        case "h"    : return "cond_partly_clouded_rain";
+        case "i"    : return "cond_snow";
+        case "j"    : return "cond_partly_clouded";
+        case "m"    : return "cond_light_rain";
+        case "n"    : return "cond_fog";
+        case "q"    : return "cond_rain";
+        case "r"    : return "cond_partly_clouded";
+        case "s"    : return "cond_thunder";
+        case "t"    : return "cond_snow";
+        case "u"    : return "cond_light_snow";
+        case "v"    : return "cond_light_snow";
+        case "w"    : return "cond_snow";
+        default     : return code;
     }
 }
 
@@ -83,6 +150,7 @@ function toggleBackground() {
 
 /**
  * Swaps the background images between from and to indexes.
+ *
  * @param from The index to swap from.
  * @param to The index to swap to.
  */
@@ -93,27 +161,70 @@ function swapPageBackground(from, to) {
 
 /**
  * Determines the correct background image for the given weather data.
- * @param weatherData The weatherData as received by the call to the REST API.
+ *
+ * @param weatherData The weather data as received by the call to the REST API.
+ * @param rainData The rain data as received by the call to the REST API.
+ * @param lightningData The lightning data as received by the call to the REST API.
  */
-function determineBackgroundImage(weatherData) {
+function determineBackgroundImage(weatherData, rainData, lightningData) {
     var conditions = weatherData.conditions;
     var weights = [];
 
-    console.log("Determining background image...");
     for(var i = 0 ; i < conditions.length ; i++) {
-        console.log(conditions[0]);
-        weights.push(getWeatherConditionWeight(conditions[0].icon));
+        console.log("Current condition: " + JSON.stringify(conditions[i]));
+        var weight = getWeatherConditionInfo(conditions[i].id);
+        if(weight !== null) {
+            weights.push(weight);
+        }
     }
 
     weights.sort(function(a,b) { return parseFloat(a.weight) - parseFloat(b.weight) });
-    console.log(weights);
-    //TODO: What if there are multiple same level conditions => Random one?
+    console.log("Sorted conditions:");
+    console.log(JSON.stringify(weights));
+
+    //Rain and or lightning override!
+    var overriddenWeight = null;
+    if(lightningData.closestStrike.distance !== "-" && lightningData.closestStrike.distance < 25) {
+        overriddenWeight = getWeatherConditionInfo(211);
+    } else {
+        if(rainData.isRainingNow === true) {
+            switch (rainData.intensity) {
+                case 1  : overriddenWeight = getWeatherConditionInfo(500);
+                    break;
+                case 2  : overriddenWeight = getWeatherConditionInfo(501);
+                    break;
+                case 3  : overriddenWeight = getWeatherConditionInfo(502);
+                    break;
+                case 4  : overriddenWeight = getWeatherConditionInfo(503);
+                    break;
+                case 5  : overriddenWeight = getWeatherConditionInfo(504);
+                    break;
+            }
+        } else {
+            //TODO: Possibly take into account the rain over time data!
+            if(weights[0].bgIndex === 5 || weights[0].bgIndex === 6 || weights[0].bgIndex === 8) {
+                overriddenWeight = getWeatherConditionInfo(801);
+            }
+        }
+    }
+    //Make sure our overridden condition is on the top of the list of conditions!
+    if(overriddenWeight !== null) {
+        console.log("Condition overridden to: " + JSON.stringify(overriddenWeight));
+        weights.unshift(overriddenWeight);
+    }
+
+    //TODO: Night backgrounds!
     if(weights !== null && weights.length > 0) {
         swapPageBackground(bgCounter, weights[0].bgIndex);
         bgCounter = weights[0].bgIndex;
     }
 }
 
+/*-------------------------------------------------------------------------------------------------
+ * ------------------------------------------------------------------------------------------------
+ *                             Functions for background selection.
+ * ------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------*/
 function calculateAndAnimsateSunPosition(weatherData) {
     var now = new Date();
     var sunUp = new Date(weatherData.sunrise * 1000);
@@ -158,12 +269,41 @@ function calculateAndAnimateWindSpeed(weatherData) {
     },100);
 }
 
+/*-------------------------------------------------------------------------------------------------
+ * ------------------------------------------------------------------------------------------------
+ *                                     Other weather functions.
+ * ------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------*/
+/**
+ * Reloads the external images.
+ */
+function reloadExternalImages() {
+    var lightingImg = $("#lightningImg");
+    var buienradarImg = $("#buienradarImg");
+
+    lightingImg.attr("src", "http://images.blitzortung.org/Images/image_b_fr.png?" + new Date().getTime());
+    buienradarImg.attr("src", "http://www.buienradar.be/image?" + new Date().getTime());
+}
+
+/**
+ * Creates data to plot a chart.
+ *
+ * @param data The data to plot on the graph.
+ * @param isForCurrentRainData, True when the data passed is the current rain data, false if it is predicted rain data.
+ * @returns {{labels: [text], datasets: [dataset]}}
+ */
 function createChartData(data, isForCurrentRainData) {
     var conditions = null;
     if(isForCurrentRainData) {
         conditions = data.currentConditions;
     } else {
         conditions = data.predictedConditions;
+    }
+
+    //Check for error after data assignment.
+    if(conditions === null || conditions === undefined) {
+        blockUIWithDismissableError("Cannot plot rain data!");
+        return null;
     }
 
     var labels = [];
@@ -194,13 +334,27 @@ function createChartData(data, isForCurrentRainData) {
     return result;
 }
 
-/*----------------------------------------------------------------------------------
-------------------------------------------------------------------------------------
-                   Non weather specific javascript util functions
-------------------------------------------------------------------------------------
-----------------------------------------------------------------------------------*/
+/*-------------------------------------------------------------------------------------------------
+ * ------------------------------------------------------------------------------------------------
+ *                           Non weather specific javascript util functions.
+ * ------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------*/
+var styleSheetSelection = null;
+
+/**
+ * Hides the soft keyboard on mobile devices.
+ */
+function hideSoftKeyboard() {
+    document.activeElement.blur();
+    var inputs = document.querySelectorAll('input');
+    for(var i=0; i < inputs.length; i++) {
+        inputs[i].blur();
+    }
+}
+
 /**
  * Converts any given UNIX timestamp into a timeString (hh:mm).
+ *
  * @param unixTimeStamp The timestamp to convert.
  * @returns {string} The converted timestamp in string format (hh:mm)
  */
@@ -221,6 +375,7 @@ function unixTimeToTimeString(unixTimeStamp) {
 
 /**
  * Finds the given keyframe by name.
+ *
  * @param rule The name of the keyframe rule to find in any document css.
  * @returns {*}
  */
@@ -257,6 +412,7 @@ function findKeyframesRule(rule) {
 
 /**
  * Restarts a pure css animation, and supports altering animation end state parameters.
+ *
  * @param animationName The name of the CSS keyframe based animation.
  * @param animationClass The name of the CSS class that contains the animation definition.
  * @param objectParentId The id of the wrapper object of the animated object.
@@ -322,8 +478,14 @@ function deleteFromRules(rules, ruleToDelete) {
     }
 }
 
+/*-------------------------------------------------------------------------------------------------
+ * ------------------------------------------------------------------------------------------------
+ *                                  UI blocking and unblocking.
+ * ------------------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------------------*/
 /**
  * Blocks the UI for the whole page, This will prevent the user from interacting with the page.
+ *
  * @param message The message to show to the user.
  */
 function blockUI(message) {
@@ -346,6 +508,7 @@ function blockUI(message) {
 
 /**
  * Blocks the UI with a given error message. The user can dismiss the error message by clicking anywhere on the page!
+ *
  * @param message The message to show to the user.
  */
 function blockUIWithDismissableError(message) {

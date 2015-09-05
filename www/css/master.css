@@ -18,6 +18,10 @@ h1, h2, h3, h4, h5 {
     margin: 0 0 0 0;
 }
 
+.innerTitle {
+    font-size: 10px;
+}
+
 .topSpacing {
     margin-top: 80px;
 }
@@ -64,6 +68,19 @@ article {
     text-align: center;
 }
 
+a:link {
+    color: #fffaeb;
+}
+a:visited {
+    color: #fffaeb;
+}
+a:hover {
+    color: #a4a39e;
+}
+a:active {
+    color: #4b4944;
+}
+
 /******************************
 ***   CSS for page header   ***
 ******************************/
@@ -73,7 +90,7 @@ article {
 }
 
 #headerTitle h1 {
-    margin: 0 !important;
+    margin: 0;
 }
 
 #headerSearch {
@@ -103,7 +120,25 @@ article {
     margin: 0 auto;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 370px) {
+
+    #headerTitleText {
+        display: none;
+    }
+
+    #shortHeaderTitleText {
+        margin-left: -10px !important;
+        display: inline;
+        font-size: 20pt;
+    }
+
+    #headerSearch {
+        margin-top: 7px;
+        margin-right: -10px;
+    }
+}
+
+@media (min-width: 370px) {
 
     #headerTitleText {
         display: none;
@@ -115,6 +150,7 @@ article {
 
     #headerSearch {
         margin-top: 5px;
+        /* margin-right: 85px; */
     }
 }
 
@@ -126,6 +162,10 @@ article {
 
     #shortHeaderTitleText {
         display: none;
+    }
+
+    #headerSearch {
+        margin-right: 0;
     }
 
     #headerContent {
@@ -149,6 +189,9 @@ article {
 ***   CSS for welcome search   ***
 *********************************/
 #initialSearch {
+    overflow-x: hidden;
+    overflow-y: hidden;
+
     position: absolute;
     margin: auto;
 
@@ -163,7 +206,33 @@ article {
     background-color: rgba(20, 20, 20, 0.6);
 }
 
-@media (max-width: 550px) {
+@media (max-width: 370px) {
+    #initialSearchTitle {
+        width: auto;
+        font-size: 400%;
+        text-align: center;
+    }
+
+    #initialImages {
+        margin: 50px auto 0 auto;
+        width: 350px;
+    }
+
+    .svgFirst {
+        margin-right: 5px;
+    }
+
+    .svgInbetween {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .svgLast {
+        margin-left: -15px;
+    }
+}
+
+@media (min-width: 370px) {
     #initialSearchTitle {
         width: 350px;
         font-size: 400%;
@@ -196,7 +265,7 @@ article {
     }
 
     #initialImages {
-        margin: 80px auto;
+        margin: 80px auto 0 auto;
         width: 500px;
     }
 

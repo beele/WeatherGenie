@@ -1,4 +1,11 @@
 /*************************
+***  CSS for content   ***
+*************************/
+#content {
+    overflow-x: hidden;
+}
+
+/*************************
 *** CSS for search box ***
 *************************/
 input {
@@ -25,7 +32,19 @@ form.searchForm input.searchText {
     height: 28px;
 }
 
-@media (max-width: 550px) {
+@media (max-width: 370px) {
+    .searchTextLarge {
+        width: 228px;
+        font-size: 140%;
+    }
+
+    .searchFormLarge {
+        margin: 50px auto 0;
+        width: 280px;
+    }
+}
+
+@media (min-width: 370px) {
     .searchTextLarge {
         width: 273px;
         font-size: 165%;
@@ -130,8 +149,52 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
     font-size: 300%;
 }
 
+.currentConditionTitle {
+    float: left;
+    margin-top: 12px;
+}
+
 .weatherCondition {
     text-transform: capitalize;
+    float: left;
+    width: 70px;
+}
+
+.predictionDayDate {
+    font-size: 18px;
+    margin-left: 17px;
+}
+
+.conditionIcon {
+    margin-left: 10px;
+}
+
+.predictionDayTemp {
+    font-size: 18px;
+    margin-left: 8px;
+}
+
+.measurementIcon {
+    float: left;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.measurementText {
+    float: left;
+    margin-top: 13px;
+    margin-bottom: 10px;
+    margin-left: 35px;
+}
+
+.measurementWrapper {
+    height: 60px;
+}
+
+#currentConditionSVG {
+    margin-top: -18px;
+    margin-bottom: 3px;
+    margin-left: 17px;
 }
 
 /****************************
@@ -401,24 +464,24 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
     animation-name: windSpeedAnimation;
 }
 
-@media (max-width: 767px) {
+@media(max-width: 370px) {
     #sunContainer {
         transform: scale(0.7);
         -webkit-transform: scale(0.7);
         margin-top: 37px;
-        margin-left: -50px;
+        margin-left: -75px;
     }
 
     #sunUpContainer {
-        left: 27px;
+        left: 63px;
     }
 
     #sunDownContainer {
-        right: 27px;
+        right: 57px;
     }
 
     #windDirectionContainer {
-        left: 33px;
+        left: 64px;
         margin-left: auto;
     }
 
@@ -428,7 +491,44 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
     }
 
     #windSpeedContainer {
-        right: 16px;
+        right: 50px;
+        margin-left: auto;
+    }
+
+    #windWrapper {
+        right: 160px;
+        margin-left: auto;
+    }
+}
+
+@media (min-width: 370px) {
+    #sunContainer {
+        transform: scale(0.7);
+        -webkit-transform: scale(0.7);
+        margin-top: 37px;
+        margin-left: -50px;
+    }
+
+    #sunUpContainer {
+        left: 65px;
+    }
+
+    #sunDownContainer {
+        right: 55px;
+    }
+
+    #windDirectionContainer {
+        left: 65px;
+        margin-left: auto;
+    }
+
+    #compassWrapper {
+        left: 10px;
+        margin-left: auto;
+    }
+
+    #windSpeedContainer {
+        right: 48px;
         margin-left: auto;
     }
 
@@ -439,7 +539,96 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
 }
 
 @media (min-width: 768px) {
+    #sunContainer {
+        transform: scale(1);
+        -webkit-transform: scale(1);
+        margin-top: 0;
+        margin-left: 0;
+    }
 
+    #sunUpContainer {
+        left: 136px;
+    }
+
+    #sunDownContainer {
+        right: 136px;
+    }
+
+    #windDirectionContainer {
+        left:auto;
+        right:auto;
+        margin-top: 10px;
+        margin-left: -15px;
+    }
+
+    #compassWrapper {
+        left:auto;
+        right:auto;
+        margin-top: 100px;
+        margin-left:-72px;
+    }
+
+    #windSpeedContainer {
+        left:auto;
+        right:auto;
+        margin-top: 10px;
+        margin-left: 405px;
+    }
+
+    #windWrapper {
+        left:auto;
+        right:auto;
+        margin-top: 80px;
+        margin-left: 360px;
+    }
+}
+
+@media (min-width: 992px) {
+    #sunUpContainer {
+        left: 18px;
+    }
+
+    #sunDownContainer {
+        right: 23px;
+    }
+
+    #windDirectionContainer {
+        left:auto;
+        right:auto;
+        margin-top: 10px;
+        margin-left: 75px;
+    }
+
+    #compassWrapper {
+        left:auto;
+        right:auto;
+        margin-top: 100px;
+        margin-left: 19px;
+    }
+
+    #windSpeedContainer {
+        left:auto;
+        right:auto;
+        margin-top: 10px;
+        margin-left: 350px;
+    }
+
+    #windWrapper {
+        left:auto;
+        right:auto;
+        margin-top: 80px;
+        margin-left: 300px;
+    }
+}
+
+@media (min-width: 1200px) {
+    #sunUpContainer {
+        left: 70px;
+    }
+
+    #sunDownContainer {
+        right: 73px;
+    }
 }
 
 /*********************************
@@ -449,14 +638,56 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
 
 }
 
-#lightning img {
-    width: 350px;
-}
-
 #buienradar {
 
 }
 
-#buienradar img {
-    width: 350px;
+@media (max-width: 370px) {
+
+    #lightning img {
+        width: 290px;
+    }
+
+    #buienradar img {
+        width: 290px;
+    }
+
+    #currentCanvas {
+        width: 290px;
+        height: 205px;
+    }
+
+    #predictCanvas {
+        width: 290px;
+        height: 225px;
+    }
+}
+
+@media (min-width: 370px) {
+
+    #lightning img {
+        width: 350px;
+    }
+
+    #buienradar img {
+        width: 350px;
+    }
+
+    #currentCanvas {
+        width: 350px;
+        height: 205px;
+    }
+
+    #predictCanvas {
+        width: 350px;
+        height: 225px;
+    }
+}
+
+/*********************************
+***  CSS for external images.  ***
+*********************************/
+.externalImage {
+    height: 190px;
+    margin-top: 10px;
 }
