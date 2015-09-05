@@ -162,7 +162,9 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
 
 .predictionDayDate {
     font-size: 18px;
-    margin-left: 17px;
+    margin-left: 10px;
+    width: 40px;
+    text-align: center;
 }
 
 .conditionIcon {
@@ -171,7 +173,9 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
 
 .predictionDayTemp {
     font-size: 18px;
-    margin-left: 8px;
+    margin-left: 10px;
+    width: 40px;
+    text-align: center;
 }
 
 .measurementIcon {
@@ -403,7 +407,7 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
 }
 
 #windDirectionSVG {
-    
+
 }
 
 #windSpeedContainer {
