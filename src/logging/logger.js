@@ -2,7 +2,7 @@
  * Creates a logger that will print with the given application part.
  *
  * @param applicationPart
- * @returns {{INIT: Function, INFO: Function, DEBUG: Function, ERROR: Function}}
+ * @returns {{INIT: Function, INFO: Function, DEBUG: Function, WARNING: Function, ERROR: Function}}
  */
 function makeLogger(applicationPart) {
     /*-------------------------------------------------------------------------------------------------
@@ -66,6 +66,14 @@ function makeLogger(applicationPart) {
          */
         DEBUG : function(message) {
             log("DEBUG", message);
+        },
+        /**
+         * Print a message of the type WARNING.
+         *
+         * @param message The message to print.
+         */
+        WARNING : function(message) {
+            log("WARNING", message);
         },
         /**
          * Print a message of the type ERROR.
