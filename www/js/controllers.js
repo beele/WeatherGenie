@@ -17,6 +17,7 @@ angular.module('weatherGenieApp.controllers', [])
 
         //Loop through all the backgrounds. This will be stopped when a search has been done.
         var bgInterval = setInterval(toggleBackground, 10000);
+        var animationPlaying = false;
 
         /**
          * Perform the initial search, from the welcome screen.
@@ -24,24 +25,59 @@ angular.module('weatherGenieApp.controllers', [])
          * This calls the search() function to do the actual search.
          */
         $scope.initialSearch = function () {
-            //TODO: Do this with angular animation!
+            animationPlaying = true;
+
             //Perform some animations to go away from the initial screen.
             $("#initialSearch").animate({bottom: 2000, opacity: 0, height: 50}, 1500, "swing", function complete() {
-                $(this).toggleClass("hidden");
+                $(this).addClass("hidden");
+                animationPlaying = false;
             });
 
             var item = $("#headerWrapper");
-            item.toggleClass("hidden");
-            item.fadeTo(2500, 1);
+            item.removeClass("hidden");
+            item.fadeTo(2000, 1);
             item = $("#content");
-            item.toggleClass("hidden");
-            item.fadeTo(2500, 1);
+            item.removeClass("hidden");
+            item.fadeTo(2000, 1);
             item = $("#footer");
-            item.toggleClass("hidden");
-            item.fadeTo(2500, 1);
+            item.removeClass("hidden");
+            item.fadeTo(2000, 1);
 
             //Perform the actual search!
             $scope.search();
+        };
+
+        /**
+         * Resets the UI to show the initial search.
+         * Will clear any text entered in the initial search field!
+         */
+        $scope.reset = function () {
+            $scope.city = "";
+
+            var resetAnimation = function(){
+                $("#headerWrapper").fadeTo(1000, 0, function complete() {
+                    $("#headerWrapper").addClass("hidden");
+                });
+                $("#content").fadeTo(1000, 0, function complete() {
+                    $("#content").addClass("hidden");
+                });
+                $("#footer").fadeTo(1000, 0, function complete() {
+                    $("#footer").addClass("hidden");
+                });
+
+                var item = $("#initialSearch");
+                item.removeClass("hidden");
+                item.animate({bottom: 0, opacity: 1, height: 400}, 1500, "swing", function complete() {
+                    bgInterval = setInterval(toggleBackground, 10000);
+                });
+            };
+
+            //Defer reset animation if the initial animation is still playing!
+            if(animationPlaying) {
+                setTimeout(resetAnimation, 1500);
+            } else {
+                resetAnimation();
+            }
         };
 
         /**
@@ -78,7 +114,8 @@ angular.module('weatherGenieApp.controllers', [])
                     calculateAndAnimateWindSpeed(weatherData);
                     $scope.weatherData = weatherData;
                 } else {
-                    blockUIWithDismissableError(weatherData.error);
+                    $scope.reset();
+                    blockUIWithDismissableError(weatherData.error + "</br></br>Be sure to search for a city in Belgium!");
                     $scope.weatherData = null;
                     return;
                 }
@@ -97,7 +134,8 @@ angular.module('weatherGenieApp.controllers', [])
                         var lineChartPredict = new Chart(ctxPredict).Line(createChartData(rainData.originalData, false), {bezierCurve: false});
 
                     } else {
-                        blockUIWithDismissableError(rainData.error);
+                        $scope.reset();
+                        blockUIWithDismissableError(rainData.error + "</br></br>Be sure to search for a city in Belgium!");
                         $scope.rainData = null;
                         return;
                     }
@@ -109,7 +147,8 @@ angular.module('weatherGenieApp.controllers', [])
                         if(lightningData.error === null) {
                             $scope.lightningData = lightningData;
                         } else {
-                            blockUIWithDismissableError(lightningData.error);
+                            $scope.reset();
+                            blockUIWithDismissableError(lightningData.error + "</br></br>Be sure to search for a city in Belgium!");
                             $scope.lightningData = null;
                             return;
                         }

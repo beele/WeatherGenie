@@ -189,6 +189,9 @@ a:active {
 ***   CSS for welcome search   ***
 *********************************/
 #initialSearch {
+    overflow-x: hidden;
+    overflow-y: hidden;
+
     position: absolute;
     margin: auto;
 

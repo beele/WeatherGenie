@@ -8,11 +8,6 @@
 /*************************
 *** CSS for search box ***
 *************************/
-#initialSearch {
-    overflow-x: hidden;
-    overflow-y: hidden;
-}
-
 input {
     outline: 0 !important;
 }
