@@ -32,15 +32,13 @@ var WeatherService = function() {
         var lat = parseFloat(pieces[0].replace(",","."));
         var lon = parseFloat(pieces[1].replace(",","."));
 
-        var callback = function(result) {
+        //Make a call to the buienradar service.
+        buienradar.geographicPrediction(lat, lon, function (result) {
             var resp = response;
             resp.writeHead(200, {});
             resp.write(JSON.stringify(result, null, 4));
             resp.end();
-        };
-
-        //Make a call to the buienradar service.
-        buienradar.geographicPrediction(lat, lon, callback);
+        });
     };
 
     /**
@@ -61,15 +59,13 @@ var WeatherService = function() {
         var x = pieces[0] * 10;
         var y = pieces[1] * 8;
 
-        var callback = function(result) {
+        //Make a call to the buienradar service.
+        buienradar.geographicPredictionForBlock(x, y, function (result) {
             var resp = response;
             resp.writeHead(200, {});
             resp.write(JSON.stringify(result, null, 4));
             resp.end();
-        };
-
-        //Make a call to the buienradar service.
-        buienradar.geographicPredictionForBlock(x, y, callback);
+        });
     };
 
     /**
@@ -81,14 +77,12 @@ var WeatherService = function() {
     this.showRainMaps = function(request, response) {
         logger.INFO("showRainMaps method was called!");
 
-        var callback = function(result) {
+        buienradar.showRainMaps(function (result) {
             var resp = response;
             resp.writeHead(200, {});
             resp.write(JSON.stringify(result, null, 4));
             resp.end();
-        };
-
-        buienradar.showRainMaps(callback);
+        });
     };
 
     /**
@@ -109,14 +103,12 @@ var WeatherService = function() {
         var lat = parseFloat(pieces[0].replace(",","."));
         var lon = parseFloat(pieces[1].replace(",","."));
 
-        var callback = function(result) {
+        blitzortung.lightningData(lat, lon, function(result) {
             var resp = response;
             resp.writeHead(200, {});
             resp.write(JSON.stringify(result, null, 4));
             resp.end();
-        };
-
-        blitzortung.lightningData(callback, lat, lon);
+        });
     };
 
     /**
@@ -128,14 +120,12 @@ var WeatherService = function() {
     this.showLightingCache = function(request, response) {
         logger.INFO("showLightingCache method was called!");
 
-        var callback = function(result) {
+        blitzortung.showLightingCache(function(result) {
             var resp = response;
             resp.writeHead(200, {});
             resp.write(JSON.stringify(result, null, 4));
             resp.end();
-        };
-
-        blitzortung.showLightingCache(callback);
+        });
     };
 
     /**
@@ -151,21 +141,19 @@ var WeatherService = function() {
         //Once in the callback for that function, make a call to the forecast of the buienradar.
         //Consolidate the data in the second callback end write the response.
 
-        var callback = function(data) {
-            var callback2 = function(data2) {
+        //TODO: Right now only the openweathermap data is cached!
+        //TODO: The data from the buienradar weather call should be added and also cached!
+        var pieces = request.url.split("/");
+        openweathermap.retrieveWeatherInfo(pieces[pieces.length - 1].toLowerCase(), function(data) {
+            buienradar.geographicConditionForecast(data.placeName, function(data2) {
                 data.predictions = data2;
 
                 var resp = response;
                 resp.writeHead(200, {});
                 resp.write(JSON.stringify(data, 0, 4));
                 resp.end();
-            };
-
-            buienradar.geographicConditionForecast(data.placeName, callback2);
-        };
-
-        var pieces = request.url.split("/");
-        openweathermap.retrieveWeatherInfo(pieces[pieces.length - 1], callback);
+            });
+        });
     };
 
     /**
@@ -177,14 +165,12 @@ var WeatherService = function() {
     this.showWeatherCache = function(request, response) {
         logger.INFO("showWeatherCache method was called!");
 
-        var callback = function(data) {
+        openweathermap.showWeatherCache(function (data) {
             var resp = response;
             resp.writeHead(200, {});
             resp.write(JSON.stringify(data, 0, 4));
             resp.end();
-        };
-
-        openweathermap.showWeatherCache(callback);
+        });
     };
 
     /*-------------------------------------------------------------------------------------------------
