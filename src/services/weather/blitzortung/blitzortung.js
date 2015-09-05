@@ -60,11 +60,11 @@ var Blitzortung = function() {
      * Will retrieve all lightning data, calculate the distance between the caller's position and return the results.
      * This will partially be handled by the "lightningDataMessageHandler" function.
      *
-     * @param callback The callback function to execute when done.
      * @param lat The latitude position of the caller.
      * @param lon The longitude position of the caller.
+     * @param callback The callback function to execute when done.
      */
-    this.lightningData = function(callback, lat, lon) {
+    this.lightningData = function(lat, lon, callback) {
         logger.INFO("lightningData method was called!");
 
         var id = callbackManager.generateIdForCallback(callback);

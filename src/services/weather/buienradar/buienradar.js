@@ -134,11 +134,9 @@ var BuienRadar = function() {
     this.geographicConditionForecast = function(city, callback) {
         logger.INFO("executing: geographicConditionForecast(" + city + "," + callback + ")");
 
-        var clbck = function(data) {
-            retrieveDailyForecast(data, callback)
-        };
-
-        retrieveLocationIdForCity(city, clbck);
+        retrieveLocationIdForCity(city, function(data) {
+            retrieveDailyForecast(data, callback);
+        });
     };
 
     /**
