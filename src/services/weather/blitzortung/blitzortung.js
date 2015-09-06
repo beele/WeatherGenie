@@ -20,11 +20,17 @@ var Blitzortung = function() {
      *
      * When the socket is opened, a command is send to start receiving all lightning strikes in a given geographic area (southern europe).
      * Only strikes that are within 300km of the geographic center of Belgium will be saved to the cache, all others will be discarded.
+     *
+     * @param resetRetryCount When given and set to true, will reset the retryCount to 0.
      */
-    this.setupBlitzortungWebSocket = function() {
+    this.setupBlitzortungWebSocket = function(resetRetryCount) {
+        if(resetRetryCount !== null && resetRetryCount !== undefined) {
+            retryCount = resetRetryCount === true ? 0 : retryCount;
+        }
+
         //Safety check.
         if(retryCount === 0 && webSocket !== null) {
-            logger.ERROR("A connection to blitzortung is already open!");
+            logger.WARNING("A connection to blitzortung is already open!");
             return;
         } else if(retryCount > 5) {
             logger.ERROR("Cannot (re)conntect to blitzortung websocket!");
@@ -34,6 +40,7 @@ var Blitzortung = function() {
         //Connect to websocket from blitzortung.org
         webSocket = new WebSocket("ws://ws.blitzortung.org:808" + retryCount, "", {headers: {origin: "http://www.blitzortung.org"}});
         webSocket.on("open", function startupLightingSocket() {
+            logger.INFO("Websocket connection to blitzortung opened!");
             retryCount = 0;
 
             //North america.
@@ -44,7 +51,7 @@ var Blitzortung = function() {
         webSocket.on("message", function lightningDataReceived(data) {
             var data = JSON.parse(data);
 
-            //Check to see if the strike was in the radius (300km) of the geographic center of belgium.
+            //Check to see if the strike was in the radius (300km) of the geographic center of Belgium.
             //Only send the strike when in range.
             if(getDistanceBetweenTwoLatLonPoints(50.6404438,4.66775, data.lat, data.lon) <= 300) {
                 logger.DEBUG("Lightning in range received!");
@@ -150,6 +157,7 @@ var Blitzortung = function() {
 
         //The retryCount acts as the count for retries and as the port number.
         retryCount++;
+        webSocket = null;
         self.setupBlitzortungWebSocket();
     }
 

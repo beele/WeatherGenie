@@ -54,7 +54,7 @@ var IntervalWorker = function() {
      */
     function setupBlitzortung() {
         logger.INFO("Attempting to setup websocket connect to blitzortung...");
-        blitzortung.setupBlitzortungWebSocket();
+        blitzortung.setupBlitzortungWebSocket(true);
     }
 
     /**
