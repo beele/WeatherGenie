@@ -524,7 +524,9 @@ function blockUIWithDismissableError(message) {
     message = "An error occurred: " + message + "<br/>Click to close this message!";
 
     $(".blockMsg").html(message);
-    $(".blockUI").click(unblockUI);
+    $(".blockUI").bind("click touchstart", function(){
+        unblockUI();
+    });
 }
 
 /**
