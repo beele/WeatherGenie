@@ -182,6 +182,7 @@ function determineBackgroundImage(weatherData, rainData, lightningData) {
     console.log("Sorted conditions:");
     console.log(JSON.stringify(weights));
 
+    //TODO: When overriding we should also set a condition to override (instead of only overriding the background image)
     //Rain and or lightning override!
     var overriddenWeight = null;
     if(lightningData.closestStrike.distance !== "-" && lightningData.closestStrike.distance < 25) {
@@ -201,8 +202,16 @@ function determineBackgroundImage(weatherData, rainData, lightningData) {
                     break;
             }
         } else {
-            //TODO: Possibly take into account the rain over time data!
-            if(weights[0].bgIndex === 5 || weights[0].bgIndex === 6 || weights[0].bgIndex === 8) {
+            //Check predicted rain. (the first hour only)
+            for(var i = 0; i < 6 ; i++) {
+                var willRain = rainData.originalData.predictedConditions.data[i].intensity > 0;
+                if(willRain) {
+                    overriddenWeight = getWeatherConditionInfo(501);
+                    break;
+                }
+            }
+
+            if(overriddenWeight === null && (weights[0].bgIndex === 5 || weights[0].bgIndex === 6 || weights[0].bgIndex === 8)) {
                 overriddenWeight = getWeatherConditionInfo(801);
             }
         }
