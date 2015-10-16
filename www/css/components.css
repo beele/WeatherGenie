@@ -695,3 +695,8 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
     height: 190px;
     margin-top: 10px;
 }
+
+.blockUI {
+    left: auto !important;
+    width: 100% !important;
+}
