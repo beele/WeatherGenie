@@ -1,6 +1,6 @@
 var GenericEndpoints = function() {
     var logger      = require("../logging/logger").makeLogger("SERV-GENERICRST");
-    var sys         = require("sys");
+    var util         = require("util");
     var fs          = require("fs-extra");
     var formidable  = require('formidable');
 
@@ -67,7 +67,7 @@ var GenericEndpoints = function() {
             //Show the client what was received.
             response.writeHead(200, {'content-type': 'text/plain'});
             response.write('Received upload:\n\n');
-            response.end(sys.inspect({fields: fields, files: files}));
+            response.end(util.inspect({fields: fields, files: files}));
         });
 
         //Start processing the form.

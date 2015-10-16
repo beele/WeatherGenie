@@ -4,6 +4,10 @@ var OpenWeatherMap = function() {
     var messageFactory  = require("../../../util/messagefactory").getInstance();
     var callbackManager = require("../../../util/callbackmanager").getInstance();
 
+    //Configuration.
+    var Config          = require("../../../../resources/config");
+    var config          = new Config();
+
     //Private variables.
     var threshold       = 120 * 60 * 1000;
 
@@ -118,7 +122,7 @@ var OpenWeatherMap = function() {
         var options = {
             host: 'api.openweathermap.org',
             port: '80',
-            path: '/data/2.5/weather?q=' + placeName + "," + countryCode,
+            path: '/data/2.5/weather?q=' + placeName + "," + countryCode + "&appid=" + config.keys.openweatherMapApiKey,
             method: 'POST'
         };
 
@@ -131,9 +135,15 @@ var OpenWeatherMap = function() {
             });
             res.on('end', function() {
                 logger.DEBUG(data);
-                data = JSON.parse(data);
 
                 var info = {};
+                try {
+                    data = JSON.parse(data);
+                } catch(error) {
+                    info.error = data.message;
+                    callbackManager.returnAndRemoveCallbackForId(callbackId)(info);
+                    return;
+                }
 
                 //Check for errors in the data that has been returned.
                 if(data.cod === "404") {
