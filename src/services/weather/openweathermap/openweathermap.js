@@ -146,7 +146,7 @@ var OpenWeatherMap = function() {
                 }
 
                 //Check for errors in the data that has been returned.
-                if(data.cod === "404") {
+                if(data.cod >= 400) {
                     logger.ERROR("Error: " + data.cod + " details: " + data.message);
                     info.error = data.message;
                     callbackManager.returnAndRemoveCallbackForId(callbackId)(info);
