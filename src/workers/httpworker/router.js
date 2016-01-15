@@ -1,4 +1,12 @@
-var Router = function(mappedEndpoints) {
+/**
+ * Router constructor, use this to create a new instance of a Router.
+ * This will handle the routing of requests and file serving!
+ *
+ * @param mappedEndpoints The object containing information about the available endpoints.
+ * @param options The object that contains any options/settings the router should take into account!
+ * @constructor
+ */
+var Router = function(mappedEndpoints, options) {
     var logger  = require("./../../logging/logger").makeLogger("ROUTER---------");
     var fs      = require("fs");
     var mime    = require("mime");
@@ -27,8 +35,11 @@ var Router = function(mappedEndpoints) {
         } else {
             if(pathName.length > 1 && pathName.substring(pathName.length - 1) === "/") {
                 //Handle folder access.
-                //TODO: Implement ability to list folder content based on env/config setting?
-                displayError(response, 403, "Folder access is forbidden!", pathName);
+                if(options.canListDir) {
+                    tryAndListDirectory(response, pathName);
+                } else {
+                    displayError(response, 403, "Folder access is forbidden!", pathName);
+                }
             } else {
                 //Handle REST endpoint access.
                 tryAndHandleRestEndpoint(handles, pathName, request, response)
@@ -96,6 +107,31 @@ var Router = function(mappedEndpoints) {
                 });
             }
         });
+    }
+
+    /**
+     * Will try and list the contents of any given folder.
+     *
+     * @param response The response to write to.
+     * @param pathName The name of the folder to list its contens of.
+     */
+    function tryAndListDirectory(response, pathName) {
+        //Async read the contents of the directory.
+        try {
+            fs.readdir("www" + pathName, function onFolderContentsRead(error, files) {
+                var content = {path: pathName, files: []};
+
+                for(var i = 0; i < files.length; i++) {
+                    content.files.push({name: files[i], path: pathName + files[i]});
+                }
+
+                response.writeHead(200, {});
+                response.write(JSON.stringify(content, null, 4));
+                response.end();
+            });
+        } catch (error) {
+            displayError(response, 500, "Cannot list directory!", pathName);
+        }
     }
 
     /**

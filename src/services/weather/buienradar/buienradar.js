@@ -3,10 +3,12 @@ var BuienRadar = function() {
     var http                = require("http");
     var messageFactory      = require("../../../util/messagefactory").getInstance();
     var callbackManager     = require("../../../util/callbackmanager").getInstance();
+    var brokerconstants     = require("../../../workers/databroker/databrokerconstants").getInstance();
 
     //Private variables.
     var currentRainMap      = null;
     var predictRainMap      = null;
+    var threshold           = 120 * 60 * 1000;
 
     /*-------------------------------------------------------------------------------------------------
      * ------------------------------------------------------------------------------------------------
@@ -25,8 +27,10 @@ var BuienRadar = function() {
         logger.INFO("executing: geographicPrediction(" + lat + "," + lon + "," + callback + ")");
 
         var id = callbackManager.generateIdForCallback(callback);
-        messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER, "retrieveData", {key: "rainMaps"},
-                                                "buienradar", "geographicPredictionMessageHandler", {lat: lat, lon: lon, callbackId: id});
+        messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER,
+                                                brokerconstants.BROKER_RETRIEVE_DATA, {key: "rainMaps"},
+                                                "buienradar", "geographicPredictionMessageHandler", {lat: lat, lon: lon, callbackId: id}
+        );
     };
 
     /**
@@ -70,8 +74,10 @@ var BuienRadar = function() {
         logger.INFO("executing: geographicPredictionForBlock(" + x + "," + y + ")");
 
         var id = callbackManager.generateIdForCallback(callback);
-        messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER, "retrieveData", {key: "rainMaps"},
-                                                "buienradar", "geographicPredictionForBlockMessageHandler", {x: x, y: y, callbackId: id});
+        messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER,
+                                                brokerconstants.BROKER_RETRIEVE_DATA, {key: "rainMaps"},
+                                                "buienradar", "geographicPredictionForBlockMessageHandler", {x: x, y: y, callbackId: id}
+        );
     };
 
     /**
@@ -108,8 +114,10 @@ var BuienRadar = function() {
         logger.INFO("executing showRainMaps()");
 
         var id = callbackManager.generateIdForCallback(callback);
-        messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER, "retrieveData", {key: "rainMaps"},
-                                                "buienradar", "showRainMapsMessageHandler", {callbackId: id});
+        messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER,
+                                                brokerconstants.BROKER_RETRIEVE_DATA, {key: "rainMaps"},
+                                                "buienradar", "showRainMapsMessageHandler", {callbackId: id}
+        );
     };
 
     /**
@@ -134,9 +142,58 @@ var BuienRadar = function() {
     this.geographicConditionForecast = function(city, callback) {
         logger.INFO("executing: geographicConditionForecast(" + city + "," + callback + ")");
 
-        retrieveLocationIdForCity(city, function(data) {
-            retrieveDailyForecast(data, callback);
-        });
+        var id = callbackManager.generateIdForCallback(callback);
+        messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER,
+                                                brokerconstants.BROKER_RETRIEVE_CACHE, {cacheName: "weather_buienradar"},
+                                                "buienradar", "geographicConditionForecastMessageHandler", {city: city, callbackId: id}
+        );
+    };
+
+    /**
+     * Handles the returned data from the "geographicConditionForecast" function.
+     * The cache will be pruned for old items (even if the names do not match).
+     * If a valid data is found in the cache, that item is returned.
+     * If no valid data is found, new data will be fetched via the "retrieveLocationIdForCity" and "retrieveDailyForecast" functions.
+     * @param msg The original message with the requested data (or error) added.
+     */
+    this.geographicConditionForecastMessageHandler = function(msg) {
+        logger.INFO("executing geographicConditionForecastMessageHandler");
+        logger.DEBUG(JSON.stringify(msg));
+
+        var city = msg.handlerParams.city;
+        var result = null;
+
+        var now = new Date();
+        var obsoleteIndexes = [];
+
+        for(var i = 0 ; i < msg.returnData.length ; i++) {
+            var info = msg.returnData[i];
+            var previous = new Date(info.timeStamp);
+
+            if((+previous + threshold) > +now) {
+                if(info.city === city) {
+                    logger.DEBUG("Weather for location found in cache!");
+                    result = info;
+                }
+            } else {
+                logger.DEBUG("Weather cache index " + i + " is outdated!");
+                obsoleteIndexes.push(i);
+            }
+        }
+
+        if(result === null) {
+            retrieveLocationIdForCity(city, function(locationId) {
+                retrieveDailyForecast(city, locationId, msg.handlerParams.callbackId);
+            });
+        } else {
+            callbackManager.returnAndRemoveCallbackForId(msg.handlerParams.callbackId)(result);
+        }
+
+        //Send the obsolete indexes if any to the broker to have them removed!
+        if(obsoleteIndexes.length > 0) {
+            logger.DEBUG("Removing obsolete weather data from cache");
+            messageFactory.sendSimpleMessage(messageFactory.TARGET_BROKER, brokerconstants.BROKER_REMOVE_FROM_CACHE, {cacheName: "weather_buienradar", value: obsoleteIndexes});
+        }
     };
 
     /**
@@ -260,6 +317,35 @@ var BuienRadar = function() {
         return {frames: numberOfFrames, imageWidth: data.shape[1], imageHeight: data.shape[2], xBlocks: xBlocks, yBlocks: yBlocks, data:blockData};
     };
 
+    /**
+     * Shows the complete contents of the weather cache.
+     * Mainly provided for debugging purposes.
+     * This will partially be handled by the "retrieveBuienradarWeatherCacheMessageHandler" function.
+     *
+     * @param callback The callback function to execute when done.
+     */
+    this.retrieveBuienradarWeatherCache = function(callback) {
+        logger.INFO("executing: retrieveBuienradarWeatherCache(" + callback + ")");
+
+        var id = callbackManager.generateIdForCallback(callback);
+        messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER,
+                                                brokerconstants.BROKER_RETRIEVE_CACHE, {cacheName: "weather_buienradar"},
+                                                "buienradar", "retrieveBuienradarWeatherCacheMessageHandler", {callbackId: id}
+        );
+    };
+
+    /**
+     * Handles the returned data from the "retrieveBuienradarWeatherCache" function.
+     *
+     * @param msg The original message with the requested data (or error) added.
+     */
+    this.retrieveBuienradarWeatherCacheMessageHandler = function(msg) {
+        logger.INFO("executing: retrieveBuienradarWeatherCacheMessageHandler");
+        logger.DEBUG(JSON.stringify(msg));
+
+        callbackManager.returnAndRemoveCallbackForId(msg.handlerParams.callbackId)(msg.returnData);
+    };
+
     /*-------------------------------------------------------------------------------------------------
      * ------------------------------------------------------------------------------------------------
      *                                        Private functions
@@ -311,10 +397,11 @@ var BuienRadar = function() {
      * Will call the callback with null as data if no forecast was found or an error occurred.
      * Forecasts are limited to the 5 first days!
      *
+     * @param city The name of the city that was searched for.
      * @param locationId The location id of the city for which we want the daily forecasts.
-     * @param callback The callback function to execute when done.
+     * @param callbackId callback id.
      */
-    function retrieveDailyForecast(locationId, callback) {
+    function retrieveDailyForecast(city, locationId, callbackId) {
         var options = {
             host: 'www.buienradar.be',
             port: '80',
@@ -338,8 +425,11 @@ var BuienRadar = function() {
                     data = JSON.parse(data);
 
                     if(data.days !== undefined && data.days.length > 0) {
+                        data["city"] = city;
+                        data["timeStamp"] = new Date();
                         //Only return the five first days!
-                        callback(data.days.splice(0, 5));
+                        messageFactory.sendSimpleMessage(messageFactory.TARGET_BROKER, brokerconstants.BROKER_ADD_TO_CACHE, {cacheName: "weather_buienradar", value: data});
+                        callbackManager.returnAndRemoveCallbackForId(callbackId)(data.days.splice(0, 5));
                     } else {
                         logger.ERROR("No daily forecast found for city with id: " + locationId);
                         callback(null);
