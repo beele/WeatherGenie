@@ -46,14 +46,12 @@ article {
 .mapDiv {
     width: 350px;
     height: 100%;
-    margin: 0 auto;
     overflow: hidden;
 }
 
 .graphDiv {
     width: 350px;
     height: 100%;
-    margin: 0 auto;
 }
 
 .transparent {
