@@ -639,31 +639,51 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
 *** CSS for weather conditions ***
 *********************************/
 #lightning {
-
+    position: absolute;
+    left: 50%;
 }
 
 #buienradar {
+    position: absolute;
+    left: 50%;
+}
 
+#currentCanvas {
+    position: absolute;
+    left: 50%;
+}
+
+#predictCanvas {
+    position: absolute;
+    left: 50%;
 }
 
 @media (max-width: 370px) {
 
     #lightning img {
         width: 290px;
+
+        margin: 0px 0px 0px -145px;
     }
 
     #buienradar img {
         width: 290px;
+
+        margin: 0px 0px 0px -145px;
     }
 
     #currentCanvas {
         width: 290px;
         height: 205px;
+
+        margin: 0px 0px 0px -145px;
     }
 
     #predictCanvas {
         width: 290px;
         height: 225px;
+
+        margin: 0px 0px 0px -145px;
     }
 }
 
@@ -671,20 +691,28 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
 
     #lightning img {
         width: 350px;
+
+        margin: 0px 0px 0px -175px;
     }
 
     #buienradar img {
         width: 350px;
+
+        margin: 0px 0px 0px -175px;
     }
 
     #currentCanvas {
         width: 350px;
         height: 205px;
+
+        margin: 0px 0px 0px -175px;
     }
 
     #predictCanvas {
         width: 350px;
         height: 225px;
+
+        margin: 0px 0px 0px -175px;
     }
 }
 

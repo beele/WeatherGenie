@@ -188,17 +188,27 @@ function determineBackgroundImage(weatherData, rainData, lightningData) {
     if(lightningData.closestStrike.distance !== "-" && lightningData.closestStrike.distance < 25) {
         overriddenWeight = getWeatherConditionInfo(211);
     } else {
+        var isSnow = false;
+        if(weatherData.minTemp < 1) {
+            isSnow = true;
+        }
+
         if(rainData.isRainingNow === true) {
             switch (rainData.intensity) {
-                case 1  : overriddenWeight = getWeatherConditionInfo(500);
+                case 1  :
+                    overriddenWeight = getWeatherConditionInfo(!isSnow ? 500 : 600);
                     break;
-                case 2  : overriddenWeight = getWeatherConditionInfo(501);
+                case 2  :
+                    overriddenWeight = getWeatherConditionInfo(!isSnow ? 501 : 601);
                     break;
-                case 3  : overriddenWeight = getWeatherConditionInfo(502);
+                case 3  :
+                    overriddenWeight = getWeatherConditionInfo(!isSnow ? 502 : 602);
                     break;
-                case 4  : overriddenWeight = getWeatherConditionInfo(503);
+                case 4  :
+                    overriddenWeight = getWeatherConditionInfo(!isSnow ? 503 : 621);
                     break;
-                case 5  : overriddenWeight = getWeatherConditionInfo(504);
+                case 5  :
+                    overriddenWeight = getWeatherConditionInfo(!isSnow ? 504 : 622);
                     break;
             }
         } else {
@@ -206,8 +216,11 @@ function determineBackgroundImage(weatherData, rainData, lightningData) {
             for(var i = 0; i < 6 ; i++) {
                 var willRain = rainData.originalData.predictedConditions.data[i].intensity > 0;
                 if(willRain) {
-                    overriddenWeight = getWeatherConditionInfo(501);
-                    break;
+                    if(isSnow) {
+                        overriddenWeight = getWeatherConditionInfo(601);
+                    } else {
+                        overriddenWeight = getWeatherConditionInfo(501);
+                    }
                 }
             }
 
