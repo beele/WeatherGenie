@@ -1,10 +1,14 @@
-var WeatherGenie = function(runInDebug) {
+var WeatherGenie = function() {
     var logger          = require("./logging/logger").makeLogger("STARTUP--------");
     var cluster         = require("cluster");
     var Worker          = require("./workers/worker");
 
+    //Configuration.
+    var Config  = require("../resources/config");
+    var config  = new Config();
+
     //Private variables.
-    var debug           = runInDebug === undefined ? false : runInDebug;
+    var debug           = config.settings.debug;
     var broker          = null;
     var intWorker       = null;
     var messageHandlers = null;
@@ -28,7 +32,7 @@ var WeatherGenie = function(runInDebug) {
         if (cluster.isMaster) {
             logger.INIT("--------------------------------------------------------------------------");
             logger.INIT("--------------------------------------------------------------------------");
-            logger.INIT("                       WELCOME TO WEATHERGENIE RC1                        ");
+            logger.INIT("                       WELCOME TO WEATHERGENIE V1                         ");
             logger.INIT("--------------------------------------------------------------------------");
             logger.INIT("--------------------------------------------------------------------------");
 
@@ -58,9 +62,19 @@ var WeatherGenie = function(runInDebug) {
         intWorker = cluster.fork({name: "interval", debug: debug});
         intWorker.on("message", messageHandlers.onIntervalWorkerMessageReceived);
 
+        //If the number of HTTP workers is specified in the config.js file (and is higher than 0) use this number to determine the amount of workers to fork.
+        //Otherwise use the number of cores available on the machine (and is fewer than 2 cores are present, fork only one http worker).
+        var numberOfHttpServants = 1;
+        if(config.settings.numberOfHTTPWorkers > 0) {
+            logger.INIT("Forking HTTP workers according to number defined in the config file...");
+            numberOfHttpServants = config.settings.numberOfHTTPWorkers;
+        } else {
+            logger.INIT("Forking HTTP workers according to the number of available cores on this machine...");
+            var cores = require("os").cpus().length;
+            numberOfHttpServants = cores - 2 > 0 ? cores - 2 : 1;
+        }
+
         //Fork normal server worker instances. These will handle all HTTP requests.
-        var cores = require("os").cpus().length;
-        var numberOfHttpServants = cores - 2 > 0 ? cores - 2 : 1;
         for (var i = 0; i < numberOfHttpServants; i++) {
             logger.INIT("Starting new server worker...");
 
@@ -119,7 +133,6 @@ var WeatherGenie = function(runInDebug) {
             /**
              * Handler for messages received from the HTTP worker(s).
              * The message will be forwarded to the target. (for now almost always the data broker)
-             * TODO: Implement further.
              *
              * @param msg
              */
@@ -135,7 +148,6 @@ var WeatherGenie = function(runInDebug) {
             /**
              * Handler for messages received from the interval worker.
              * The message will be forwarded to the target. (for now almost always the data broker)
-             * TODO: Implement further.
              *
              * @param msg The message sent by the interval worker that needs to be forwarded to the correct target.
              */

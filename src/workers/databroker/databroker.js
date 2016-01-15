@@ -12,8 +12,9 @@ var DataBroker = function () {
      * ------------------------------------------------------------------------------------------------
      ------------------------------------------------------------------------------------------------*/
     this.setupDefaultCaches = function() {
-        createCache({data : {cacheName: "lightning" , maxSize: 250}});
-        createCache({data : {cacheName: "weather"   , maxSize: 50}});
+        createCache({data : {cacheName: "lightning"             , maxSize: 250}});
+        createCache({data : {cacheName: "weather_openweathermap", maxSize: 50}});
+        createCache({data : {cacheName: "weather_buienradar"    , maxSize: 50}});
     };
 
     /*-------------------------------------------------------------------------------------------------
@@ -41,7 +42,6 @@ var DataBroker = function () {
      */
     function messageReceived(msg) {
         logger.DEBUG("Broker received message from worker: " + msg.workerId);
-        //TODO: NOT ALL THAT SAFE!
         eval(msg.targetFunc)(msg);
     }
 

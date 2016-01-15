@@ -3,6 +3,7 @@ var OpenWeatherMap = function() {
     var http            = require("http");
     var messageFactory  = require("../../../util/messagefactory").getInstance();
     var callbackManager = require("../../../util/callbackmanager").getInstance();
+    var brokerconstants = require("../../../workers/databroker/databrokerconstants").getInstance();
 
     //Configuration.
     var Config          = require("../../../../resources/config");
@@ -27,8 +28,10 @@ var OpenWeatherMap = function() {
         logger.INFO("executing retrieveWeatherInfo(" + placeName + "," + callback + ")");
 
         var id = callbackManager.generateIdForCallback(callback);
-        messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER, "retrieveCache", {cacheName: "weather"},
-                                                "openweathermap", "retrieveWeatherInfoMessageHandler", {placeName: placeName, callbackId: id});
+        messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER,
+                                                brokerconstants.BROKER_RETRIEVE_CACHE, {cacheName: "weather_openweathermap"},
+                                                "openweathermap", "retrieveWeatherInfoMessageHandler", {placeName: placeName, callbackId: id}
+        );
     };
 
     /**
@@ -73,32 +76,37 @@ var OpenWeatherMap = function() {
         //Send the obsolete indexes if any to the broker to have them removed!
         if(obsoleteIndexes.length > 0) {
             logger.DEBUG("Removing obsolete weather data from cache");
-            messageFactory.sendSimpleMessage(messageFactory.TARGET_BROKER, "removeFromCache", {cacheName: "weather", value: obsoleteIndexes});
+            messageFactory.sendSimpleMessage(   messageFactory.TARGET_BROKER,
+                                                brokerconstants.BROKER_REMOVE_FROM_CACHE,
+                                                {cacheName: "weather_openweathermap", value: obsoleteIndexes}
+            );
         }
     };
 
     /**
      * Shows the complete contents of the weather cache.
      * Mainly provided for debugging purposes.
-     * This will partially be handled by the "showWeatherCacheMessageHandler" function.
+     * This will partially be handled by the "retrieveOpenweathermapWeatherCacheMessageHandler" function.
      *
      * @param callback The callback function to execute when done.
      */
-    this.showWeatherCache = function(callback) {
-        logger.INFO("executing: showWeatherCache(" + callback + ")");
+    this.retrieveOpenweathermapWeatherCache = function(callback) {
+        logger.INFO("executing: retrieveOpenweathermapWeatherCache(" + callback + ")");
 
         var id = callbackManager.generateIdForCallback(callback);
-        messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER, "retrieveCache", {cacheName: "weather"},
-                                                "openweathermap", "showWeatherCacheMessageHandler", {callbackId: id});
+        messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER,
+                                                brokerconstants.BROKER_RETRIEVE_CACHE, {cacheName: "weather_openweathermap"},
+                                                "openweathermap", "retrieveOpenweathermapWeatherCacheMessageHandler", {callbackId: id}
+        );
     };
 
     /**
-     * Handles the returned data from the "showWeatherCache" function.
+     * Handles the returned data from the "retrieveOpenweathermapWeatherCache" function.
      *
      * @param msg The original message with the requested data (or error) added.
      */
-    this.showWeatherCacheMessageHandler = function(msg) {
-        logger.INFO("executing: showWeatherCacheMessageHandler");
+    this.retrieveOpenweathermapWeatherCacheMessageHandler = function(msg) {
+        logger.INFO("executing: retrieveOpenweathermapWeatherCacheMessageHandler");
         logger.DEBUG(JSON.stringify(msg));
 
         callbackManager.returnAndRemoveCallbackForId(msg.handlerParams.callbackId)(msg.returnData);
@@ -188,7 +196,7 @@ var OpenWeatherMap = function() {
                 info.error = null;
                 info.timeStamp = new Date();
 
-                messageFactory.sendSimpleMessage(messageFactory.TARGET_BROKER, "addToCache", {cacheName: "weather", value: info});
+                messageFactory.sendSimpleMessage(messageFactory.TARGET_BROKER, brokerconstants.BROKER_ADD_TO_CACHE, {cacheName: "weather_openweathermap", value: info});
                 callbackManager.returnAndRemoveCallbackForId(callbackId)(info);
             });
         }).end();

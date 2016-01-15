@@ -1,5 +1,5 @@
 var DataBrokerConstants = (function() {
-    var logger = require("../logging/logger").makeLogger("CONSTANTS------");
+    var logger = require("../../logging/logger").makeLogger("CONSTANTS------");
 
     //Private variables.
     var instance;
@@ -16,16 +16,16 @@ var DataBrokerConstants = (function() {
          * ------------------------------------------------------------------------------------------------
          ------------------------------------------------------------------------------------------------*/
         return {
-            FUNC_SAVE_DATA            : "saveData",
-            FUNC_UPDATE_DATA          : "updateData",
-            FUNC_RETRIEVE_DATA        : "retrieveData",
-            FUNC_DElETE_DATA          : "deleteData",
+            BROKER_SAVE_DATA            : "saveData",
+            BROKER_UPDATE_DATA          : "updateData",
+            BROKER_RETRIEVE_DATA        : "retrieveData",
+            BROKER_DElETE_DATA          : "deleteData",
 
-            FUNC_CREATE_CACHE         : "createCache",
-            FUNC_ADD_TO_CACHE         : "addToCache",
-            FUNC_RETRIEVE_CACHE       : "retrieveCache",
-            FUNC_REMOVE_FROM_CACHE    : "removeFromCache",
-            FUNC_CLEAR_CACHE          : "clearCache"
+            BROKER_CREATE_CACHE         : "createCache",
+            BROKER_ADD_TO_CACHE         : "addToCache",
+            BROKER_RETRIEVE_CACHE       : "retrieveCache",
+            BROKER_REMOVE_FROM_CACHE    : "removeFromCache",
+            BROKER_CLEAR_CACHE          : "clearCache"
         };
     }
 

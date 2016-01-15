@@ -140,9 +140,6 @@ var WeatherService = function() {
         //First call the openweathermap to retrieve the general weather information.
         //Once in the callback for that function, make a call to the forecast of the buienradar.
         //Consolidate the data in the second callback end write the response.
-
-        //TODO: Right now only the openweathermap data is cached!
-        //TODO: The data from the buienradar weather call should be added and also cached!
         var pieces = request.url.split("/");
         openweathermap.retrieveWeatherInfo(pieces[pieces.length - 1].toLowerCase(), function(data) {
             buienradar.geographicConditionForecast(data.placeName, function(data2) {
@@ -165,11 +162,15 @@ var WeatherService = function() {
     this.showWeatherCache = function(request, response) {
         logger.INFO("showWeatherCache method was called!");
 
-        openweathermap.showWeatherCache(function (data) {
-            var resp = response;
-            resp.writeHead(200, {});
-            resp.write(JSON.stringify(data, 0, 4));
-            resp.end();
+        openweathermap.retrieveOpenweathermapWeatherCache(function (data) {
+            buienradar.retrieveBuienradarWeatherCache(function (data2) {
+                var result = { opeweatherMap: data, buienradar: data2};
+
+                var resp = response;
+                resp.writeHead(200, {});
+                resp.write(JSON.stringify(result, 0, 4));
+                resp.end();
+            });
         });
     };
 
