@@ -428,8 +428,9 @@ var BuienRadar = function() {
                         data["city"] = city;
                         data["timeStamp"] = new Date();
                         //Only return the five first days!
-                        messageFactory.sendSimpleMessage(messageFactory.TARGET_BROKER, brokerconstants.BROKER_ADD_TO_CACHE, {cacheName: "weather_buienradar", value: data});
-                        callbackManager.returnAndRemoveCallbackForId(callbackId)(data.days.splice(0, 5));
+                        var predictionDays = data.days.splice(0, 5);
+                        messageFactory.sendSimpleMessage(messageFactory.TARGET_BROKER, brokerconstants.BROKER_ADD_TO_CACHE, {cacheName: "weather_buienradar", value: predictionDays});
+                        callbackManager.returnAndRemoveCallbackForId(callbackId)(predictionDays);
                     } else {
                         logger.ERROR("No daily forecast found for city with id: " + locationId);
                         callback(null);
