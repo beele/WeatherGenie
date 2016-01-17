@@ -216,7 +216,7 @@ var DataBroker = function () {
                 //Send the obsolete indexes if any to the broker to have them removed!
                 if(obsoleteIndexes.length > 0) {
                     logger.DEBUG("Removing obsolete weather data from cache");
-                    removeFromCache({cacheName: msg.data.cacheName, value: obsoleteIndexes});
+                    removeFromCache({data :{cacheName: msg.data.cacheName, value: obsoleteIndexes}});
                 }
 
                 if(msg.returnData === null || msg.returnData === undefined) {
