@@ -9,9 +9,6 @@ var OpenWeatherMap = function() {
     var Config          = require("../../../../resources/config");
     var config          = new Config();
 
-    //Private variables.
-    var threshold       = 120 * 60 * 1000;
-
     /*-------------------------------------------------------------------------------------------------
      * ------------------------------------------------------------------------------------------------
      *                                        Public functions
@@ -29,7 +26,7 @@ var OpenWeatherMap = function() {
 
         var id = callbackManager.generateIdForCallback(callback);
         messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER,
-                                                brokerconstants.BROKER_RETRIEVE_CACHE, {cacheName: "weather_openweathermap"},
+                                                brokerconstants.BROKER_RETRIEVE_FROM_CACHE, {cacheName: "weather_openweathermap", valueId: "placeName", valueIdValue: placeName},
                                                 "openweathermap", "retrieveWeatherInfoMessageHandler", {placeName: placeName, callbackId: id}
         );
     };
@@ -37,7 +34,7 @@ var OpenWeatherMap = function() {
     /**
      * Handles the returned data from the "retrieveWeatherInfo" function.
      * The cache will be pruned for old items (even if the names do not match).
-     * If a valid data is found in the cache, that item is returned.
+     * If a valid data is found in the cache, that item is returned.d
      * If no valid data is found, new data will be fetched via the "getRemoteWeather" function.
      *
      * @param msg The original message with the requested data (or error) added.
@@ -46,40 +43,11 @@ var OpenWeatherMap = function() {
         logger.INFO("executing retrieveWeatherInfoMessageHandler");
         logger.DEBUG(JSON.stringify(msg));
 
-        var placeName = msg.handlerParams.placeName;
-        var result = null;
-
-        var now = new Date();
-        var obsoleteIndexes = [];
-
-        for(var i = 0 ; i < msg.returnData.length ; i++) {
-            var info = msg.returnData[i];
-            var previous = new Date(info.timeStamp);
-
-            if((+previous + threshold) > +now) {
-                if(info.placeName === placeName) {
-                    logger.DEBUG("Weather for location found in cache!");
-                    result = info;
-                }
-            } else {
-                logger.DEBUG("Weather cache index " + i + " is outdated!");
-                obsoleteIndexes.push(i);
-            }
-        }
-
+        var result = msg.returnData;
         if(result === null) {
-            getRemoteWeather("BE", placeName, msg.handlerParams.callbackId);
+            getRemoteWeather("BE", msg.handlerParams.placeName, msg.handlerParams.callbackId);
         } else {
             callbackManager.returnAndRemoveCallbackForId(msg.handlerParams.callbackId)(result);
-        }
-
-        //Send the obsolete indexes if any to the broker to have them removed!
-        if(obsoleteIndexes.length > 0) {
-            logger.DEBUG("Removing obsolete weather data from cache");
-            messageFactory.sendSimpleMessage(   messageFactory.TARGET_BROKER,
-                                                brokerconstants.BROKER_REMOVE_FROM_CACHE,
-                                                {cacheName: "weather_openweathermap", value: obsoleteIndexes}
-            );
         }
     };
 

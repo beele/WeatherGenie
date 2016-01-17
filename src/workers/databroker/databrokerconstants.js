@@ -24,6 +24,7 @@ var DataBrokerConstants = (function() {
             BROKER_CREATE_CACHE         : "createCache",
             BROKER_ADD_TO_CACHE         : "addToCache",
             BROKER_RETRIEVE_CACHE       : "retrieveCache",
+            BROKER_RETRIEVE_FROM_CACHE  : "retrieveFromCache",
             BROKER_REMOVE_FROM_CACHE    : "removeFromCache",
             BROKER_CLEAR_CACHE          : "clearCache"
         };

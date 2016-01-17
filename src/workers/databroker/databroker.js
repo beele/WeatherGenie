@@ -1,8 +1,13 @@
 var DataBroker = function () {
     var logger = require("../../logging/logger").makeLogger("DATABROKER-----");
 
+    //Configuration.
+    var Config          = require("../../../resources/config");
+    var config          = new Config();
+
     //Private variables.
-    var dataStore = null;
+    var dataStore       = null;
+    var cacheStale      = config.settings.cacheStaleThresholdInMinutes * 60 * 1000;
 
     init();
 
@@ -160,6 +165,64 @@ var DataBroker = function () {
         if(isMessageWithHandlers(msg)) {
             if(dataStore[msg.data.cacheName] !== undefined) {
                 msg.returnData = dataStore[msg.data.cacheName].data;
+            } else {
+                msg.returnData = null;
+                logger.ERROR("Cannot find cache: " + msg.data.cacheName + " in dataStore");
+            }
+            process.send(msg);
+        }
+    }
+
+    /**
+     * Retrieves a match from the cache.
+     * Data should come from the "data" object on the message. the "valueId" object should contain a string that is the path to the value that will be compared to the value in "valueIdValue".
+     * The object "cacheName" should be present.
+     * The object "valueId" should be present.
+     * The object "valueIdValue" should be present.
+     *
+     * @param msg The message that contains the name of the cache to retrieve the matching object from.
+     */
+    function retrieveFromCache(msg) {
+        if(isMessageWithHandlers(msg)) {
+            if(dataStore[msg.data.cacheName] !== undefined) {
+                var cache = dataStore[msg.data.cacheName].data;
+                var key = msg.data.valueId;
+
+                //Cache checking vars.
+                var now = new Date();
+                var obsoleteIndexes = [];
+
+                for(var i = 0; i < cache.length; i++) {
+                    var entry = cache[i];
+
+                    //We use a handy trick to allow for string based notation to get a value in a chain of objects/arrays.
+                    var getter = new Function("obj", "return obj." + key + ";");
+                    var value = getter(cache[i]);
+
+                    //Perform stale checks on all values.
+                    var previous = new Date(entry.timeStamp);
+                    if((+previous + cacheStale) > +now) {
+                        //Check if the wanted value matches the given value => cache match!
+                        if(msg.data.valueIdValue.toLowerCase() === value.toLowerCase()) {
+                            logger.DEBUG("Valid cached entry found!");
+                            msg.returnData = entry;
+                        }
+                    } else {
+                        logger.DEBUG("Cache index " + i + " is outdated!");
+                        obsoleteIndexes.push(i);
+                    }
+                }
+
+                //Send the obsolete indexes if any to the broker to have them removed!
+                if(obsoleteIndexes.length > 0) {
+                    logger.DEBUG("Removing obsolete weather data from cache");
+                    removeFromCache({cacheName: msg.data.cacheName, value: obsoleteIndexes});
+                }
+
+                if(msg.returnData === null || msg.returnData === undefined) {
+                    msg.returnData = null;
+                    logger.ERROR("Cannot find value in cache: " + msg.data.cacheName + " (" + msg.data.valueId + " with value: " + msg.data.valueIdValue + ")");
+                }
             } else {
                 msg.returnData = null;
                 logger.ERROR("Cannot find cache: " + msg.data.cacheName + " in dataStore");

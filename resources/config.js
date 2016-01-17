@@ -5,7 +5,9 @@ var Config = function() {
             debug: false,
             serverPort: 8080,
             canListDirectories: false,
-            numberOfHTTPWorkers: -1
+            numberOfHTTPWorkers: -1,
+
+            cacheStaleThresholdInMinutes: 120
         },
 
         keys: {

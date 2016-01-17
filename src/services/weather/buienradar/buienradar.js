@@ -144,7 +144,7 @@ var BuienRadar = function() {
 
         var id = callbackManager.generateIdForCallback(callback);
         messageFactory.sendMessageWithHandler(  messageFactory.TARGET_BROKER,
-                                                brokerconstants.BROKER_RETRIEVE_CACHE, {cacheName: "weather_buienradar"},
+                                                brokerconstants.BROKER_RETRIEVE_FROM_CACHE, {cacheName: "weather_buienradar", valueId: "city", valueIdValue: city},
                                                 "buienradar", "geographicConditionForecastMessageHandler", {city: city, callbackId: id}
         );
     };
@@ -160,39 +160,13 @@ var BuienRadar = function() {
         logger.INFO("executing geographicConditionForecastMessageHandler");
         logger.DEBUG(JSON.stringify(msg));
 
-        var city = msg.handlerParams.city;
-        var result = null;
-
-        var now = new Date();
-        var obsoleteIndexes = [];
-
-        for(var i = 0 ; i < msg.returnData.length ; i++) {
-            var info = msg.returnData[i];
-            var previous = new Date(info.timeStamp);
-
-            if((+previous + threshold) > +now) {
-                if(info.city === city) {
-                    logger.DEBUG("Weather for location found in cache!");
-                    result = info;
-                }
-            } else {
-                logger.DEBUG("Weather cache index " + i + " is outdated!");
-                obsoleteIndexes.push(i);
-            }
-        }
-
+        var result = msg.returnData;
         if(result === null) {
-            retrieveLocationIdForCity(city, function(locationId) {
-                retrieveDailyForecast(city, locationId, msg.handlerParams.callbackId);
+            retrieveLocationIdForCity(msg.handlerParams.city, function(locationId) {
+                retrieveDailyForecast(msg.handlerParams.city, locationId, msg.handlerParams.callbackId);
             });
         } else {
             callbackManager.returnAndRemoveCallbackForId(msg.handlerParams.callbackId)(result);
-        }
-
-        //Send the obsolete indexes if any to the broker to have them removed!
-        if(obsoleteIndexes.length > 0) {
-            logger.DEBUG("Removing obsolete weather data from cache");
-            messageFactory.sendSimpleMessage(messageFactory.TARGET_BROKER, brokerconstants.BROKER_REMOVE_FROM_CACHE, {cacheName: "weather_buienradar", value: obsoleteIndexes});
         }
     };
 
