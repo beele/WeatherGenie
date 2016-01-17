@@ -162,7 +162,7 @@ var OpenWeatherMap = function() {
                 }
 
                 info.error = null;
-                info.timeStamp = new Date();
+                info.timestamp = new Date();
 
                 messageFactory.sendSimpleMessage(messageFactory.TARGET_BROKER, brokerconstants.BROKER_ADD_TO_CACHE, {cacheName: "weather_openweathermap", value: info});
                 callbackManager.returnAndRemoveCallbackForId(callbackId)(info);

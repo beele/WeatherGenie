@@ -400,11 +400,11 @@ var BuienRadar = function() {
 
                     if(data.days !== undefined && data.days.length > 0) {
                         data["city"] = city;
-                        data["timeStamp"] = new Date();
+                        data["timestamp"] = new Date();
                         //Only return the five first days!
-                        var predictionDays = data.days.splice(0, 5);
-                        messageFactory.sendSimpleMessage(messageFactory.TARGET_BROKER, brokerconstants.BROKER_ADD_TO_CACHE, {cacheName: "weather_buienradar", value: predictionDays});
-                        callbackManager.returnAndRemoveCallbackForId(callbackId)(predictionDays);
+                        data.days = data.days.splice(0, 5);
+                        messageFactory.sendSimpleMessage(messageFactory.TARGET_BROKER, brokerconstants.BROKER_ADD_TO_CACHE, {cacheName: "weather_buienradar", value: data});
+                        callbackManager.returnAndRemoveCallbackForId(callbackId)(data);
                     } else {
                         logger.ERROR("No daily forecast found for city with id: " + locationId);
                         callbackManager.returnAndRemoveCallbackForId(callbackId)(null);

@@ -143,7 +143,7 @@ var WeatherService = function() {
         var pieces = request.url.split("/");
         openweathermap.retrieveWeatherInfo(pieces[pieces.length - 1].toLowerCase(), function(data) {
             buienradar.geographicConditionForecast(data.placeName, function(data2) {
-                data.predictions = data2;
+                data.predictions = data2.days;
 
                 var resp = response;
                 resp.writeHead(200, {});

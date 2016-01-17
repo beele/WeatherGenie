@@ -200,7 +200,7 @@ var DataBroker = function () {
                     var value = getter(cache[i]);
 
                     //Perform stale checks on all values.
-                    var previous = new Date(entry.timeStamp);
+                    var previous = new Date(entry.timestamp);
                     if((+previous + cacheStale) > +now) {
                         //Check if the wanted value matches the given value => cache match!
                         if(msg.data.valueIdValue.toLowerCase() === value.toLowerCase()) {
