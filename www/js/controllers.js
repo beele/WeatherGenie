@@ -13,7 +13,7 @@ Chart.defaults.global.scaleFontColor = "rgba(255,255,255,.7)";
  * ------------------------------------------------------------------------------------------------
  ------------------------------------------------------------------------------------------------*/
 angular.module('weatherGenieApp.controllers', [])
-    .controller('weatherController', function ($scope, weatherAPIService) {
+    .controller('weatherController', function ($scope, $location,weatherAPIService) {
 
         //Loop through all the backgrounds. This will be stopped when a search has been done.
         var bgInterval = setInterval(toggleBackground, 10000);
@@ -161,4 +161,11 @@ angular.module('weatherGenieApp.controllers', [])
                 });
             });
         };
+
+        //Check if the URL contains a location param and value, if present do a search for this!
+        var urlLocation = $location.search().location;
+        if(urlLocation !== null && urlLocation !== undefined) {
+            $scope.city = urlLocation;
+            $scope.initialSearch();
+        }
     });

@@ -419,7 +419,7 @@ var BuienRadar = function() {
             res.on('end', function() {
                 if(this.statusCode !== 200) {
                     logger.ERROR("No daily forecast found for city with id: " + locationId);
-                    callback(null);
+                    callbackManager.returnAndRemoveCallbackForId(callbackId)(null);
                 } else {
                     //logger.DEBUG(data);
                     data = JSON.parse(data);
@@ -433,7 +433,7 @@ var BuienRadar = function() {
                         callbackManager.returnAndRemoveCallbackForId(callbackId)(predictionDays);
                     } else {
                         logger.ERROR("No daily forecast found for city with id: " + locationId);
-                        callback(null);
+                        callbackManager.returnAndRemoveCallbackForId(callbackId)(null);
                     }
                 }
             });

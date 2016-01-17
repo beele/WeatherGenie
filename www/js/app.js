@@ -8,3 +8,11 @@ var app = angular.module('weatherGenieApp', [
     'weatherGenieApp.services',
     'weatherGenieApp.filters'
 ]);
+
+app.config(['$locationProvider', function applyConfiguration($locationProvider) {
+    $locationProvider.html5Mode({
+        enabled: true,
+        requireBase: false
+    });
+    $locationProvider.hashPrefix('!');
+}]);
