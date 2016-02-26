@@ -661,15 +661,15 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
 @media (max-width: 370px) {
 
     #lightning img {
-        width: 290px;
+        /*width: 290px;*/
 
-        margin: 0px 0px 0px -145px;
+        margin: 0px 0px 0px -95px;
     }
 
     #buienradar img {
-        width: 290px;
+        /*width: 290px;*/
 
-        margin: 0px 0px 0px -145px;
+        margin: 0px 0px 0px -95px;
     }
 
     #currentCanvas {
@@ -690,15 +690,15 @@ form.searchForm input.searchText:focus:-ms-input-placeholder {
 @media (min-width: 370px) {
 
     #lightning img {
-        width: 350px;
+        /*width: 350px;*/
 
-        margin: 0px 0px 0px -175px;
+        margin: 0px 0px 0px -95px;
     }
 
     #buienradar img {
-        width: 350px;
+        /*width: 350px;*/
 
-        margin: 0px 0px 0px -175px;
+        margin: 0px 0px 0px -95px;
     }
 
     #currentCanvas {

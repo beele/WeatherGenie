@@ -30,6 +30,7 @@ var Blitzortung = function() {
 
         //Safety check.
         if(retryCount === 0 && webSocket !== null) {
+            //TODO: The correct check would be to try and send a message, if this works then the socket is still open, otherwise it is in an undead state!
             logger.WARNING("A connection to blitzortung is already open!");
             return;
         } else if(retryCount > 5) {
