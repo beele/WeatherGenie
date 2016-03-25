@@ -36,7 +36,7 @@ var CallbackManager = (function() {
              * @returns {string} The generated id.
              */
             generateIdForCallback : function(callback) {
-                var id = new Date().getTime() + "--" + (Math.random() * 6);
+                var id = process.hrtime() + "--" + (Math.random() * 6);
                 callbacks[id] = callback;
 
                 logger.DEBUG("Id generated for callback: " + id);

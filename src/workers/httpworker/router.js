@@ -75,36 +75,28 @@ var Router = function(mappedEndpoints, options) {
      * @param fullPath The full path of the requested resource.
      */
     function tryAndServeFile(response, fullPath) {
-        //Read and present the file.
-        fs.exists(fullPath, function(exists) {
-            //If the file does not exist, present a 404 error.
-            if(!exists) {
+        fs.readFile(fullPath, "binary", function(error, file) {
+            if(error) {
+                //If there was an error while reading the file, present a 500 error.
+                logger.ERROR("Error serving file!", fullPath);
+
                 displayError(response, 404, "Resource not found!", fullPath);
             } else {
-                fs.readFile(fullPath, "binary", function(error, file) {
-                    if(error) {
-                        //If there was an error while reading the file, present a 500 error.
-                        logger.ERROR("Error serving file!", fullPath);
+                var cntType = mime.lookup(fullPath);
+                logger.DEBUG("Serving: " + fullPath + "\t (" + cntType + ")");
 
-                        displayError(response, 500, "Error while serving content!");
-                    } else {
-                        var cntType = mime.lookup(fullPath);
-                        logger.DEBUG("Serving: " + fullPath + "\t (" + cntType + ")");
+                //Present the file.
+                response.setHeader("Content-Type", cntType);
+                response.setHeader("Size", file.length);
 
-                        //Present the file.
-                        response.setHeader("Content-Type", cntType);
-                        response.setHeader("Size", file.length);
+                //Add caching for images!
+                if(cntType.indexOf("image") > -1) {
+                    response.setHeader("Cache-Control", "max-age=2678400, must-revalidate");
+                }
 
-                        //Add caching for images!
-                        if(cntType.indexOf("image") > -1) {
-                            response.setHeader("Cache-Control", "max-age=2678400, must-revalidate");
-                        }
-
-                        response.writeHead(200);
-                        response.write(file, "binary");
-                        response.end();
-                    }
-                });
+                response.writeHead(200);
+                response.write(file, "binary");
+                response.end();
             }
         });
     }
