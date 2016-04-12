@@ -9,6 +9,11 @@ var Blitzortung = function() {
     var webSocket       = null;
     var retryCount      = 0;
 
+    //Western Europe.
+    var boundary        = '{"west":-12,"east":20,"north":56,"south":33.6}';
+    //North America
+    //var boundary        = '{"west":-130,"east":-60,"north":62.5,"south":2.3}';
+
     /*-------------------------------------------------------------------------------------------------
      * ------------------------------------------------------------------------------------------------
      *                                        Public functions
@@ -30,7 +35,14 @@ var Blitzortung = function() {
 
         //Safety check.
         if(retryCount === 0 && webSocket !== null) {
-            //TODO: The correct check would be to try and send a message, if this works then the socket is still open, otherwise it is in an undead state!
+            webSocket.send(boundary, function ack(error) {
+                if(error !== undefined) {
+                    //An error occurred
+                    logger.ERROR("Connection to blitzortung is in a zombie state, resetting...");
+                    onWebsocketFailure(null, null);
+                }
+            });
+
             logger.WARNING("A connection to blitzortung is already open!");
             return;
         } else if(retryCount > 5) {
@@ -43,11 +55,7 @@ var Blitzortung = function() {
         webSocket.on("open", function startupLightingSocket() {
             logger.INFO("Websocket connection to blitzortung opened!");
             retryCount = 0;
-
-            //North america.
-            //ws.send('{"west":-130,"east":-60,"north":62.5,"south":2.3}');
-            //Western europe.
-            webSocket.send('{"west":-12,"east":20,"north":56,"south":33.6}');
+            webSocket.send(boundary);
         });
         webSocket.on("message", function lightningDataReceived(data) {
             var data = JSON.parse(data);

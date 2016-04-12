@@ -2,6 +2,10 @@ var IntervalWorker = function() {
     var logger          = require("../../logging/logger").makeLogger("INTERVALWORKER-");
     var messageFactory  = require("../../util/messagefactory").getInstance();
 
+    //Configuration.
+    var Config          = require("../../../resources/config");
+    var config          = new Config();
+
     //Required private imports for functionality.
     var BuienRadar      = require("../../services/weather/buienradar/buienradar");
     var GifProcessor    = require("../../util/gifprocessor");
@@ -10,6 +14,9 @@ var IntervalWorker = function() {
     var buienradar      = null;
     var gifProcessor    = null;
     var blitzortung     = null;
+
+    var historyImageURL = null;
+    var predictImageURL = null;
 
     init();
 
@@ -30,6 +37,9 @@ var IntervalWorker = function() {
         gifProcessor    = new GifProcessor();
         blitzortung     = new Blitzortung();
 
+        historyImageURL = config.urls.buienradar_past;
+        predictImageURL = config.urls.buienradar_pred;
+
         //Set up the blitzortung service.
         setupBlitzortung();
         //Init buienradar image data the first time.
@@ -39,11 +49,11 @@ var IntervalWorker = function() {
         setInterval(function() {
             logger.INFO("Refreshing data (8 minutes elapsed)");
 
-            //The blitzortung websocket has a tendency of closing a lot. We will attempt a reconnection every 8 minutes.
+            //The blitzortung websocket has a tendency of closing a lot. We will attempt a reconnection every 8 minutes (default setting).
             //If the connection is still open, nothing happens (the blitzortung service will also try to reconnect itself a few times)
             setupBlitzortung();
             refreshBuienradarImages();
-        }, 480000 );
+        }, config.settings.intervalWorkerIntervalInMilliseconds );
 
         logger.INFO("Interval worker started!");
     }
@@ -64,7 +74,7 @@ var IntervalWorker = function() {
     function refreshBuienradarImages() {
         logger.INFO("Attempting to update buienradar rain map...");
 
-        gifProcessor.retrieveAndCorrectImages(function onImagesLoaded(currentImageData, predictImageData) {
+        gifProcessor.retrieveAndCorrectImages(historyImageURL, predictImageURL, function onImagesLoaded(currentImageData, predictImageData) {
             var now = buienradar.convertImageToRainMap(currentImageData);
             var pre = buienradar.convertImageToRainMap(predictImageData);
             var result = {currentRainMap: now, predictRainMap: pre};

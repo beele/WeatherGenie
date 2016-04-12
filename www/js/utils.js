@@ -304,7 +304,7 @@ function reloadExternalImages() {
     var buienradarImg = $("#buienradarImg");
 
     lightingImg.attr("src", "http://images.blitzortung.org/Images/image_b_fr.png?" + new Date().getTime());
-    buienradarImg.attr("src", "http://www.buienradar.be/image?" + new Date().getTime());
+    buienradarImg.attr("src", "https://api.buienradar.nl/image/1.0/radarmapbe/?ext=gif&hist=-1&forc=13&step=0&w=550&h=512");
 }
 
 /**

@@ -4,8 +4,11 @@ var GifProcessor = function() {
     var pixels = require("get-pixels");
 
     //Private variables.
-    var currentImageData = null;
-    var predictImageData = null;
+    var currentImageData    = null;
+    var predictImageData    = null;
+
+    var historyImageURL     = null;
+    var predictImageURL     = null;
 
     /*-------------------------------------------------------------------------------------------------
      * ------------------------------------------------------------------------------------------------
@@ -17,7 +20,10 @@ var GifProcessor = function() {
      *
      * @param callback Callback function, executed when the images have been loaded an processed.
      */
-     this.retrieveAndCorrectImages = function(callback) {
+     this.retrieveAndCorrectImages = function(_historyImageURL, _predictImageURL, callback) {
+         historyImageURL = _historyImageURL;
+         predictImageURL = _predictImageURL;
+
         var imageLoader = async.seq(getCurrentWeatherImage, getPredictiveWeatherImage);
         imageLoader(function(err) {
             logger.DEBUG("Images updated!");
@@ -37,7 +43,7 @@ var GifProcessor = function() {
      * @param callback async callback function.
      */
     function getCurrentWeatherImage(callback) {
-        pixels("http://www.buienradar.be/image", function (error, data) {
+        pixels(historyImageURL, function (error, data) {
             if(error) {
                 logger.ERROR(error);
                 return;
@@ -53,7 +59,7 @@ var GifProcessor = function() {
      * @param callback async callback function.
      */
     function getPredictiveWeatherImage(callback) {
-        pixels("http://www.buienradar.be/image?type=forecast&fn=buienradarbe-1x1-ani550x512.gif", function (error, data) {
+        pixels(predictImageURL, function (error, data) {
             if(error) {
                 logger.ERROR(error);
                 return;
