@@ -17,6 +17,7 @@ var IntervalWorker = function() {
 
     var historyImageURL = null;
     var predictImageURL = null;
+    var blitzortungURL  = null;
 
     init();
 
@@ -39,6 +40,7 @@ var IntervalWorker = function() {
 
         historyImageURL = config.urls.buienradar_past;
         predictImageURL = config.urls.buienradar_pred;
+        blitzortungURL  = config.urls.blitzortung_ws;
 
         //Set up the blitzortung service.
         setupBlitzortung();
@@ -64,7 +66,7 @@ var IntervalWorker = function() {
      */
     function setupBlitzortung() {
         logger.INFO("Attempting to setup websocket connect to blitzortung...");
-        blitzortung.setupBlitzortungWebSocket(true);
+        blitzortung.setupBlitzortungWebSocket(blitzortungURL, true);
     }
 
     /**
