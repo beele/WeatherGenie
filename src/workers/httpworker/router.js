@@ -78,7 +78,7 @@ var Router = function(mappedEndpoints, options) {
         fs.readFile(fullPath, "binary", function(error, file) {
             if(error) {
                 //If there was an error while reading the file, present a 500 error.
-                logger.ERROR("Error serving file!", fullPath);
+                logger.ERROR("Error serving file: " + error, fullPath);
 
                 displayError(response, 404, "Resource not found!", fullPath);
             } else {
