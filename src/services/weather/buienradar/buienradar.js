@@ -333,9 +333,9 @@ var BuienRadar = function() {
      */
     function retrieveLocationIdForCity(city, callback) {
         var options = {
-            host: 'www.buienradar.be',
+            host: 'api.buienradar.nl',
             port: '80',
-            path: '/json/Places?term=' + encodeURI(city),
+            path: '/data/search/1.0/?query=' + encodeURI(city) + '&country=BE&locale=nl-BE',
             method: 'POST'
         };
 
@@ -355,7 +355,8 @@ var BuienRadar = function() {
                     data = JSON.parse(data);
 
                     if(data.length !== undefined && data.length > 0) {
-                        callback(data[0].id);
+                        var pieces = data[0].results[0].uri.split("/");
+                        callback(pieces[pieces.length - 1]);
                     } else {
                         logger.ERROR("Cannot find location id for: " + city);
                         callback(null);
@@ -376,9 +377,9 @@ var BuienRadar = function() {
      */
     function retrieveDailyForecast(city, locationId, callbackId) {
         var options = {
-            host: 'www.buienradar.be',
+            host: 'api.buienradar.nl',
             port: '80',
-            path: '/json/GetDailyForecast?geolocationid=' + locationId,
+            path: '/data/forecast/1.1/all/' + locationId,
             method: 'POST'
         };
 

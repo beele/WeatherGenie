@@ -303,8 +303,9 @@ function reloadExternalImages() {
     var lightingImg = $("#lightningImg");
     var buienradarImg = $("#buienradarImg");
 
-    lightingImg.attr("src", "http://images.blitzortung.org/Images/image_b_fr.png?" + new Date().getTime());
-    buienradarImg.attr("src", "http://www.buienradar.be/image?" + new Date().getTime());
+    //TODO: Find workaround for hacking detection!
+    //lightingImg.attr("src", "https://images.lightningmaps.org/blitzortung/europe/index.php?map=benelux?");
+    buienradarImg.attr("src", "https://api.buienradar.nl/image/1.0/radarmapbe/?ext=gif&hist=-1&forc=13&step=0&w=550&h=512");
 }
 
 /**

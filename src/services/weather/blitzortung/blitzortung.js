@@ -8,6 +8,12 @@ var Blitzortung = function() {
     var self            = this;
     var webSocket       = null;
     var retryCount      = 0;
+    var wsURL           = null;
+
+    //Western Europe.
+    var boundary        = '{"west":-12,"east":20,"north":56,"south":33.6}';
+    //North America
+    //var boundary        = '{"west":-130,"east":-60,"north":62.5,"south":2.3}';
 
     /*-------------------------------------------------------------------------------------------------
      * ------------------------------------------------------------------------------------------------
@@ -23,14 +29,23 @@ var Blitzortung = function() {
      *
      * @param resetRetryCount When given and set to true, will reset the retryCount to 0.
      */
-    this.setupBlitzortungWebSocket = function(resetRetryCount) {
+    this.setupBlitzortungWebSocket = function(socketURL, resetRetryCount) {
+        wsURL = socketURL;
+
         if(resetRetryCount !== null && resetRetryCount !== undefined) {
             retryCount = resetRetryCount === true ? 0 : retryCount;
         }
 
         //Safety check.
         if(retryCount === 0 && webSocket !== null) {
-            //TODO: The correct check would be to try and send a message, if this works then the socket is still open, otherwise it is in an undead state!
+            webSocket.send(boundary, function ack(error) {
+                if(error !== undefined) {
+                    //An error occurred
+                    logger.ERROR("Connection to blitzortung is in a zombie state, resetting...");
+                    onWebsocketFailure(null, null);
+                }
+            });
+
             logger.WARNING("A connection to blitzortung is already open!");
             return;
         } else if(retryCount > 5) {
@@ -39,15 +54,11 @@ var Blitzortung = function() {
         }
 
         //Connect to websocket from blitzortung.org
-        webSocket = new WebSocket("ws://ws.blitzortung.org:808" + retryCount, "", {headers: {origin: "http://www.blitzortung.org"}});
+        webSocket = new WebSocket(socketURL + ":808" + retryCount, "", {headers: {origin: "http://www.blitzortung.org"}});
         webSocket.on("open", function startupLightingSocket() {
             logger.INFO("Websocket connection to blitzortung opened!");
             retryCount = 0;
-
-            //North america.
-            //ws.send('{"west":-130,"east":-60,"north":62.5,"south":2.3}');
-            //Western europe.
-            webSocket.send('{"west":-12,"east":20,"north":56,"south":33.6}');
+            webSocket.send(boundary);
         });
         webSocket.on("message", function lightningDataReceived(data) {
             var data = JSON.parse(data);
@@ -159,7 +170,7 @@ var Blitzortung = function() {
         //The retryCount acts as the count for retries and as the port number.
         retryCount++;
         webSocket = null;
-        self.setupBlitzortungWebSocket();
+        self.setupBlitzortungWebSocket(wsURL, false);
     }
 
     /*-------------------------------------------------------------------------------------------------
