@@ -403,30 +403,25 @@ function unixTimeToTimeString(unixTimeStamp) {
  * @returns {*}
  */
 function findKeyframesRule(rule) {
-    if(styleSheetSelection === null) {
-        // gather all stylesheets into an array
-        var ss = document.styleSheets;
-        //But we only need the css files we have locally with the animations in them.
-        styleSheetSelection = [];
-        for(var i = 0 ; i < ss.length ; i++) {
-            styleSheetSelection.push(ss[i]);
-        }
-        //Only interested in our stylesheets!
-        //styleSheetSelection.push(ss[3]);
-        //styleSheetSelection.push(ss[4]);
-    }
-
     var rules = [];
-    // loop through the stylesheets
-    for (var i = 0; i < styleSheetSelection.length; ++i) {
-        var styleSheet = styleSheetSelection[i];
-        // loop through all the rules
-        if(styleSheet.cssRules !== null) {
-            for (var j = 0; j < styleSheet.cssRules.length; ++j) {
-                //Collect all the rules (including the ss[i].cssRules[j].type === window.CSSRule.WEBKIT_KEYFRAMES_RULE type for safari)
-                if (styleSheet.cssRules[j].name == rule) {
-                    rules.push(styleSheet.cssRules[j]);
-                }
+    var styleSheets = window.document.styleSheets;
+    var styleSheetsLength = styleSheets.length;
+    for(var i = 0; i < styleSheetsLength; i++){
+        var classes;
+        try {
+            classes = styleSheets[i].cssRules;
+        } catch(error) {
+            classes = styleSheets[i].rules;
+        }
+        if(classes === null || classes === undefined) {
+            continue;
+        }
+        var classesLength = classes.length;
+        for (var x = 0; x < classesLength; x++) {
+            //console.log("Check: " + classes[x].name + " vs " + rule);
+            if (classes[x].name === rule && (classes[x].type == CSSRule.KEYFRAMES_RULE || classes[x].type == window.CSSRule.WEBKIT_KEYFRAMES_RULE)) {
+                //console.log("Rule matched: " + classes[x].name);
+                rules.push(classes[x]);
             }
         }
     }
@@ -492,12 +487,16 @@ function addRule(rules, ruleName, rule) {
 }
 
 function deleteFromRules(rules, ruleToDelete) {
-    if(rules instanceof Array) {
-        for(var i = 0 ; i < rules.length ; i++) {
-            rules[i].deleteRule(ruleToDelete);
+    try {
+        if(rules instanceof Array) {
+            for(var i = 0 ; i < rules.length ; i++) {
+                rules[i].deleteRule(ruleToDelete);
+            }
+        } else {
+            rules.deleteRule(ruleToDelete);
         }
-    } else {
-        rules.deleteRule(ruleToDelete);
+    } catch (error) {
+        //Swallow any errors silently.
     }
 }
 
